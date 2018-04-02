@@ -4,16 +4,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from .serializers.user import (
-    UserCreateSerializer,
-    UserDetailSerializer,
-    PublicUserDetailSerializer
-)
+from .serializers import UserSerializer
 
 
 class Me(generics.RetrieveUpdateDestroyAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserDetailSerializer
+    serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
@@ -26,13 +22,13 @@ class Me(generics.RetrieveUpdateDestroyAPIView):
 
 class Create(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = UserCreateSerializer
+    serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
 
 class List(generics.ListAPIView):
     queryset = get_user_model().objects.all()
-    serializer_class = PublicUserDetailSerializer
+    serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
 

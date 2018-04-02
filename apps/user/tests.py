@@ -25,14 +25,3 @@ class UserTests(APITestCase):
 
         response = self.client.get(reverse('me'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-    def test_update_profile(self):
-        user = get_user_model().objects.create_user(
-            email='user@example.com',
-            password='secret',)
-        self.client.force_authenticate(user=user)
-
-        data = {'profile': {'about': 'hello there'}}
-        response = self.client.patch(reverse('me'), format='json', data=data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['profile']['about'], 'hello there')

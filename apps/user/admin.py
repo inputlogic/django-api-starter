@@ -6,13 +6,13 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'is_active')
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'first_name', 'last_name')}),
+        (None, {'fields': ('email', 'password')}),
         ('Permissions', {'fields': ('is_staff',)}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'password1', 'password2', 'first_name', 'last_name')
+            'fields': ('email', 'password1', 'password2')
         }),
         ('Permissions', {'fields': ('is_staff',)}),
     )
