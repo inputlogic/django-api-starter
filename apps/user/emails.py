@@ -21,7 +21,7 @@ def forgot_password(reset_token, user):
         custom_tags={
             '[RESET_URL]': settings.RESET_PASSWORD_URL.format(
                 reset_token=reset_token, user_id=user.id),
-            '[USER_EMAIl]': user.email
+            '[USER_EMAIL]': user.email
             },
         name='Forgot Password'
     )
