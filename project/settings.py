@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'authtools',
     'corsheaders',
     'django_extensions',
     'rest_framework',
@@ -59,7 +60,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [],
-        'APP_DIRS': False,
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
@@ -124,6 +125,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ),
+    'DEFAULT_METADATA_CLASS': 'drf_auto_endpoint.metadata.AutoMetadata',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # For browseable API
@@ -146,5 +148,16 @@ AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'django-starter'
+AWS_QUERYSTRING_AUTH = False
 
-RESET_PASSWORD_URL = 'http://localhost:5000/reset-password/{reset_token}/{user_id}'
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{web_url}/{path}'.format(
+    web_url=WEB_URL,
+    path='reset-password/{reset_token}/{user_id}'
+)
+
+SENDGRID_API_KEY = get('SENDGRID_API_KEY')
+SENDGRID_TEMPLATE_NEW_ACCOUNT = get('SENDGRID_TEMPLATE_NEW_ACCOUNT')
+SENDGRID_TEMPLATE_FORGOT_PASSWORD = get('SENDGRID_TEMPLATE_FORGOT_PASSWORD')
+
+SEND_EVENTS = get('SEND_EVENTS') == 'True'
