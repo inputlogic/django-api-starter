@@ -148,5 +148,16 @@ AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'django-starter'
+AWS_QUERYSTRING_AUTH = False
 
-RESET_PASSWORD_URL = 'http://localhost:5000/reset-password/{reset_token}/{user_id}'
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{web_url}/{path}'.format(
+    web_url=WEB_URL,
+    path='reset-password/{reset_token}/{user_id}'
+)
+
+SENDGRID_API_KEY = get('SENDGRID_API_KEY')
+SENDGRID_TEMPLATE_NEW_ACCOUNT = '570c4858-7724-41a4-a35c-e85044dce4fc'
+SENDGRID_TEMPLATE_FORGOT_PASSWORD = '83932415-67c8-47fd-859d-b8871b1c1f83'
+
+SEND_EVENTS = get('SEND_EVENTS') == 'True'
