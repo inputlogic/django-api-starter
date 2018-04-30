@@ -4,7 +4,12 @@ from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from .serializers import UserSerializer
+
+from .serializers import (
+    UserSerializer,
+    ForgotPasswordSerializer,
+    ResetPasswordSerializer
+)
 
 
 class Me(generics.RetrieveUpdateDestroyAPIView):
@@ -20,20 +25,30 @@ class Me(generics.RetrieveUpdateDestroyAPIView):
         return
 
 
-class Create(generics.CreateAPIView):
+class UserCreate(generics.CreateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
 
-class List(generics.ListAPIView):
+class UserList(generics.ListAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
 
 
-class CustomObtainAuthToken(ObtainAuthToken):
+class UserCustomObtainAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
         return Response({'token': token.key, 'userId': token.user_id})
+
+
+class UserForgotPassword(generics.CreateAPIView):
+    serializer_class = ForgotPasswordSerializer
+    permission_classes = (permissions.AllowAny,)
+
+
+class UserResetPassword(generics.CreateAPIView):
+    serializer_class = ResetPasswordSerializer
+    permission_classes = (permissions.AllowAny,)
