@@ -14,19 +14,27 @@ def get(variable):
     return os.environ.get(variable)
 
 
+# ==================================================================================================
+# DJANGO SETTINGS
+# ==================================================================================================
+
+
 DEV = 'dev'
+STAGING = 'staging'
 PRODUCTION = 'production'
 TESTING = 'test' in sys.argv
-ENV = os.environ.get('DJANGO_ENV', DEV)
+ENV = get('DJANGO_ENV')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
 SECRET_KEY = get('SECRET_KEY')
-DEBUG = True if ENV is DEV else False
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', ['*'])
+DEBUG = True if ENV == DEV else False
+ALLOWED_HOSTS = get('ALLOWED_HOSTS')
 
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
+    'jet',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -112,8 +120,66 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+if ENV != DEV:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
+            'datefmt': "%d/%b/%Y %H:%M:%S",
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
+        },
+        'apps': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+        },
+        'project': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+        },
+        'celery': {
+            'handlers': ['console'],
+            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
+        },
+    },
+}
+
+
+# ==================================================================================================
+# PROJECT SETTINGS
+# ==================================================================================================
+
+
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{web_url}/{path}'.format(
+    web_url=WEB_URL,
+    path='reset-password/{reset_token}/{user_id}'
+)
+
+
+# ==================================================================================================
+# 3RD PARTY SETTINGS
+# ==================================================================================================
+
 
 CORS_ORIGIN_ALLOW_ALL = True
 
@@ -144,20 +210,22 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
+
+JET_DEFAULT_THEME = 'default'
+JET_SIDE_MENU_COMPACT = True
+JET_CHANGE_FORM_SIBLING_LINKS = False
+JET_SIDE_MENU_ITEMS = [
+    {'label': 'Manage', 'items': [
+        {'name': 'user.user'},
+    ]}
+]
+
 AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = 'django-starter'
 AWS_QUERYSTRING_AUTH = False
 
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{web_url}/{path}'.format(
-    web_url=WEB_URL,
-    path='reset-password/{reset_token}/{user_id}'
-)
-
 SENDGRID_API_KEY = get('SENDGRID_API_KEY')
 SENDGRID_TEMPLATE_NEW_ACCOUNT = get('SENDGRID_TEMPLATE_NEW_ACCOUNT')
 SENDGRID_TEMPLATE_FORGOT_PASSWORD = get('SENDGRID_TEMPLATE_FORGOT_PASSWORD')
-
-SEND_EVENTS = get('SEND_EVENTS') == 'True'
