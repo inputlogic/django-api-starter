@@ -2,14 +2,22 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.views.generic import RedirectView
+from django.urls import reverse_lazy
 
 from .views import api_root
 
 
 urlpatterns = [
+    # API Index
     url(r'^$', api_root, name='index'),
-    url(r'^jet/', include('jet.urls', 'jet')),
+
+    # Admin
+    url(r'^admin/$', RedirectView.as_view(url=reverse_lazy('admin:user_user_changelist'))),
     url(r'^admin/', admin.site.urls),
+    url(r'^jet/', include('jet.urls', 'jet')),
+
+    # App routes
     url(r'^', include('apps.user.urls')),
 
     # DRF Browseable-API Auth
