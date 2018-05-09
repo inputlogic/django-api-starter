@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
-from rest_framework import serializers
 from django.contrib.auth.tokens import default_token_generator
+from rest_framework import serializers
+from rest_framework.exceptions import ParseError
 
 from . import emails
 
