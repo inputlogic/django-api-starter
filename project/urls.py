@@ -19,6 +19,7 @@ urlpatterns = [
 
     # App routes
     url(r'^', include('apps.user.urls')),
+    url(r'^', include('apps.content.urls')),
 
     # DRF Browseable-API Auth
     url(r'^api-auth/', include('rest_framework.urls')),
