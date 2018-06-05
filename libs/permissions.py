@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import IsAdminUser, SAFE_METHODS
 
 
 class IsOwnerOrReadOnly(permissions.BasePermission):
@@ -15,3 +16,9 @@ class IsOwnerOrReadOnly(permissions.BasePermission):
 
         # Write permissions are only allowed to the owner of the object.
         return obj.owner == request.user
+
+
+class IsAdminUserOrReadOnly(IsAdminUser):
+    def has_permission(self, request, view):
+        is_admin = super().has_permission(request, view)
+        return request.method in SAFE_METHODS or is_admin

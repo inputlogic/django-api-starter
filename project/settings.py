@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
 
     'apps.user',
+    'apps.content',
 ]
 
 MIDDLEWARE = [
@@ -217,6 +218,7 @@ JET_CHANGE_FORM_SIBLING_LINKS = False
 JET_SIDE_MENU_ITEMS = [
     {'label': 'Manage', 'items': [
         {'name': 'user.user'},
+        {'name': 'content.content'},
     ]}
 ]
 

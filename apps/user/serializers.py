@@ -7,12 +7,16 @@ from . import emails
 
 
 class UserSerializer(serializers.ModelSerializer):
+    is_admin = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'email', 'password', 'is_admin')
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+    def get_is_admin(self, obj):
+        return obj.is_staff
 
     def create(self, validated_data):
         password = validated_data.pop('password')
