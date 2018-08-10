@@ -9,13 +9,25 @@ log = logging.getLogger(__name__)
 
 
 class Task(models.Model):
+    WAITING = 'waiting'
+    COMPLETED = 'completed'
+    FAILED = 'failed'
+
+    STATUS_CHOICES = (
+        (WAITING, 'Waiting'),
+        (COMPLETED, 'Completed'),
+        (FAILED, 'Failed')
+    )
+
     handler = models.CharField(max_length=255, db_index=True)
-    args = models.TextField()
-    kwargs = models.TextField()
+    args = models.TextField(blank=True)
+    kwargs = models.TextField(blank=True)
+    error = models.TextField(blank=True)
     schedule = models.IntegerField(blank=True, null=True, db_index=True)
     run_at = models.DateTimeField(db_index=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(blank=True, null=True, db_index=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default=WAITING)
 
     class Meta:
         ordering = ('-completed_at', '-run_at')

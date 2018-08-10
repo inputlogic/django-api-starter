@@ -11,3 +11,11 @@ class SayHello(GenericAPIView):
     def get(self, request):
         tasks.say_hello(name=request.query_params.get('name', 'Dude'))
         return Response({'ok': True})
+
+
+class Fail(GenericAPIView):
+    permission_classes = (AllowAny,)
+
+    def get(self, request):
+        tasks.failing_task()
+        return Response({'ok': True})

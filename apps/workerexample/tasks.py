@@ -12,6 +12,26 @@ def say_hello(name):
     print('Hello', name)
 
 
+@task()
+def failing_task():
+    """
+    Example of how failed tasks work (they're logged in admin)
+
+    """
+    raise Exception('task failed :(')
+
+
+@task(schedule=10)
+def say_hello_every_10_seconds():
+    """
+    Example repeating task that will run every 10 seconds based on the `schedule` param.
+
+    Can also be called directly.
+
+    """
+    print('Howdy, its', datetime.utcnow())
+
+
 @task(schedule=30)
 def say_hello_every_30_seconds():
     """
@@ -20,4 +40,4 @@ def say_hello_every_30_seconds():
     Can also be called directly.
 
     """
-    print('Hey, its', datetime.utcnow())
+    print('Oh hai, its', datetime.utcnow())
