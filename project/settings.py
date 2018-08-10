@@ -191,6 +191,9 @@ RESET_PASSWORD_URL = '{web_url}/{path}'.format(
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+WORKERS_SLEEP = 1
+WORKERS_PURGE = 10
+
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',

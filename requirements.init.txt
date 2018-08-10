@@ -9,6 +9,7 @@ django-extensions
 django-filter
 django-jet
 django-storages
+django-workers
 djangorestframework
 djangorestframework-camel-case
 factory_boy
