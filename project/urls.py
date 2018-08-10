@@ -8,6 +8,10 @@ from django.urls import reverse_lazy
 from .views import api_root
 
 
+admin.site.site_title = settings.ADMIN_TITLE
+admin.site.site_header = settings.ADMIN_HEADER
+
+
 urlpatterns = [
     # API Index
     url(r'^$', api_root, name='index'),
@@ -20,6 +24,7 @@ urlpatterns = [
     # App routes
     url(r'^', include('apps.user.urls')),
     url(r'^', include('apps.content.urls')),
+    url(r'^', include('apps.workerexample.urls')),
 
     # DRF Browseable-API Auth
     url(r'^api-auth/', include('rest_framework.urls')),

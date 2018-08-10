@@ -1,3 +1,4 @@
+import logging.config
 import os
 import sys
 
@@ -27,12 +28,13 @@ ENV = get('DJANGO_ENV')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
 SECRET_KEY = get('SECRET_KEY')
-DEBUG = True if ENV == DEV else False
+DEBUG = False if ENV == PRODUCTION else True
 ALLOWED_HOSTS = get('ALLOWED_HOSTS')
 
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
+    'raven.contrib.django.raven_compat',
     'jet',
 
     'django.contrib.admin',
@@ -47,9 +49,13 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    'workers',
 
     'apps.user',
     'apps.content',
+
+    # !!! DELETE ME !!!
+    'apps.workerexample',
 ]
 
 MIDDLEWARE = [
@@ -83,19 +89,19 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-if ENV == PRODUCTION:
+if ENV in [STAGING, PRODUCTION]:
     import dj_database_url
     DATABASES = {
-        'default': dj_database_url.config(conn_max_age=500)
+        'default': dj_database_url.config(conn_max_age=500),
     }
 else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django-starter',
+            'NAME': 'django',
             'USER': 'postgres',
             'PASSWORD': 'postgres'
-        }
+        },
     }
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -126,43 +132,42 @@ if ENV != DEV:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
+LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
+    'root': {
+        'level': 'WARNING',
+        'handlers': ['console', 'sentry'],
+    },
     'formatters': {
-        'verbose': {
-            'format': "[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s",
-            'datefmt': "%d/%b/%Y %H:%M:%S",
-        },
-        'simple': {
-            'format': '%(levelname)s %(message)s'
+        'custom': {
+            'format': '%(levelname)s %(message)s (in %(module)s.%(funcName)s:%(lineno)s by %(name)s)',
+            'datefmt': '%Y-%m-%dT%H:%M:%S',
         },
     },
     'handlers': {
         'console': {
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
+            'formatter': 'custom'
+        },
+        'sentry': {
+            'level': 'WARNING',
+            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+            'tags': {'custom-tag': 'x'},
         },
     },
     'loggers': {
-        'django': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'INFO'),
-        },
-        'apps': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-        'project': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-        'celery': {
-            'handlers': ['console'],
-            'level': os.getenv('DJANGO_LOG_LEVEL', 'DEBUG'),
-        },
-    },
+        'apps': {'level': 'DEBUG'},
+        'project': {'level': 'DEBUG'},
+        'libs': {'level': 'DEBUG'},
+        'django': {'level': 'INFO'},
+        'gunicorn': {'level': 'WARNING'},
+        'workers': {'level': 'DEBUG'}
+    }
 }
+logging.config.dictConfig(LOGGING)
 
 
 # ==================================================================================================
@@ -170,6 +175,8 @@ LOGGING = {
 # ==================================================================================================
 
 
+ADMIN_TITLE = 'Admin'
+ADMIN_HEADER = 'Admin'
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{web_url}/{path}'.format(
     web_url=WEB_URL,
@@ -192,14 +199,14 @@ REST_FRAMEWORK = {
     'DEFAULT_PARSER_CLASSES': (
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ),
-    'DEFAULT_METADATA_CLASS': 'drf_auto_endpoint.metadata.AutoMetadata',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',  # For browseable API
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-        'libs.permissions.IsOwnerOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
+        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        # 'libs.permissions.IsOwnerOrReadOnly',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 25,
@@ -211,7 +218,6 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-
 JET_DEFAULT_THEME = 'default'
 JET_SIDE_MENU_COMPACT = True
 JET_CHANGE_FORM_SIBLING_LINKS = False
@@ -219,15 +225,21 @@ JET_SIDE_MENU_ITEMS = [
     {'label': 'Manage', 'items': [
         {'name': 'user.user'},
         {'name': 'content.content'},
+        {'name': 'workers.task'}
     ]}
 ]
 
 AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
+AWS_DEFAULT_ACL = 'public-read'
 AWS_LOCATION = 'django-starter'
 AWS_QUERYSTRING_AUTH = False
 
-SENDGRID_API_KEY = get('SENDGRID_API_KEY')
-SENDGRID_TEMPLATE_NEW_ACCOUNT = get('SENDGRID_TEMPLATE_NEW_ACCOUNT')
-SENDGRID_TEMPLATE_FORGOT_PASSWORD = get('SENDGRID_TEMPLATE_FORGOT_PASSWORD')
+if ENV != DEV:
+    # Heroku metadata requires: `heroku labs:enable runtime-dyno-metadata -a <app>`
+    RAVEN_CONFIG = {
+        'dsn': get('SENTRY_DSN'),
+        'release': get('HEROKU_SLUG_COMMIT'),
+        'environment': ENV
+    }
