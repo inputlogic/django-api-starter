@@ -49,8 +49,10 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_tracking',
     'workers',
 
+    'apps.support',
     'apps.user',
     'apps.content',
 
@@ -228,7 +230,8 @@ JET_SIDE_MENU_ITEMS = [
     {'label': 'Manage', 'items': [
         {'name': 'user.user'},
         {'name': 'content.content'},
-        {'name': 'workers.task'}
+        {'name': 'workers.task'},
+        {'name': 'support.dsapirequestlog', "label":"API Log"}
     ]}
 ]
 
