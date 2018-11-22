@@ -7,7 +7,6 @@ django-cors-headers
 django-dotenv
 django-extensions
 django-filter
-django-jet
 django-storages
 django-workers
 djangorestframework
