@@ -48,8 +48,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'workers',
 
-    'apps.user',
     'apps.content',
+    'apps.file',
+    'apps.user',
 
     # !!! DELETE ME !!!
     'apps.workerexample',
