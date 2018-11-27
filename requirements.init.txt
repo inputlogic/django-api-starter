@@ -13,6 +13,7 @@ djangorestframework
 djangorestframework-camel-case
 factory_boy
 gunicorn
+pillow
 psycopg2-binary
 raven
 requests
