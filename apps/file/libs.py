@@ -6,6 +6,16 @@ from botocore.client import Config
 from django.conf import settings
 
 
+def _client():
+    return boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_DEFAULT_REGION,
+        config=Config(s3={'addressing_style': 'path'})
+    )
+
+
 def upload_to_s3(file, destination):
     """
     file - A file like object/buffer
@@ -21,6 +31,19 @@ def upload_to_s3(file, destination):
         config=Config(s3={'addressing_style': 'path'})
     )
     return s3.upload_fileobj(file, bucket, destination)
+
+
+def get_signed_url(method):
+    """
+        method: 'put' or 'get'
+
+    """
+    return _client().generate_presigned_url(method + '_object', {
+        'Bucket': 'inputlogic-develop',
+        'Key': 'testing/test_7.png',
+        'ACL': 'private',
+        'ContentType': 'image/png'
+    })
 
 
 def signed_url(
