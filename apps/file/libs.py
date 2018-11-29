@@ -6,6 +6,23 @@ from botocore.client import Config
 from django.conf import settings
 
 
+def upload_to_s3(file, destination):
+    """
+    file - A file like object/buffer
+    destination - The path to use on S3, can be just filename or path (ex: some/path/image.jpg)
+
+    """
+    bucket = settings.AWS_STORAGE_BUCKET_NAME
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_DEFAULT_REGION,
+        config=Config(s3={'addressing_style': 'path'})
+    )
+    return s3.upload_fileobj(file, bucket, destination)
+
+
 def signed_url(
     file_name,
     file_ext=None,
@@ -46,7 +63,7 @@ def signed_url(
     '''
     file_type = file_type or mimetypes.guess_type(file_name)[0]
     file_ext = file_ext or file_name.split('.')[-1]
-    destination_name = '{0}/{1}.{2}'.format(directory, '{0}---{1}'.format(uuid4().hex, file_name.split('.')[0]), file_ext)
+    destination_name = '{0}/{1}.{2}'.format(directory, '{0}_{1}'.format(uuid4().hex, file_name.split('.')[0]), file_ext)
     s3 = boto3.client(
         's3',
         aws_access_key_id=key,
@@ -71,7 +88,7 @@ def signed_url(
 
     return {
         'data': presigned_post,
-        'url': 'https://{}.s3.amazonaws.com/{}'.format(
+        'url': 'https://{0}.s3.amazonaws.com/{1}'.format(
             bucket,
             destination_name
         ),

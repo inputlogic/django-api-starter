@@ -176,6 +176,13 @@ logging.config.dictConfig(LOGGING)
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
+FILE_IMAGE_SIZES = (
+    {'key': 'ty', 'dimensions': (50, 50)},
+    {'key': 'sm', 'dimensions': (150, 150)},
+    {'key': 'md', 'dimensions': (800, 800)},
+    {'key': 'lg', 'dimensions': (1500, 1500)},
+)
+
 
 # ==================================================================================================
 # 3RD PARTY SETTINGS
@@ -214,5 +221,6 @@ AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
 AWS_LOCATION = get('AWS_STORAGE_LOCATION')
+AWS_DEFAULT_REGION = get('AWS_DEFAULT_REGION')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False

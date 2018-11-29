@@ -13,8 +13,9 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
 
     # App routes
-    url(r'^', include('apps.user.urls')),
     url(r'^', include('apps.content.urls')),
+    url(r'^', include('apps.file.urls')),
+    url(r'^', include('apps.user.urls')),
     url(r'^', include('apps.workerexample.urls')),
 ]
 

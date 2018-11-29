@@ -18,12 +18,13 @@ class CreateSignedFileSerializer(serializers.Serializer):
     fileId = serializers.IntegerField(read_only=True)
 
     def create(self, validated_data):
-        permissions = 'public-read' if not validated_data.get('is_private', False) else 'bucket-owner-read'
+        is_private = validated_data.get('is_private', False)
+        permissions = 'public-read' if not is_private else 'bucket-owner-read'
         signed = signed_url(validated_data['file_name'], permissions=permissions)
         the_file = File.objects.create(
             link=signed['url'],
             user=self.context['request'].user,
-            is_private=validated_data['is_private'],
+            is_private=is_private,
             mime_type=signed['mime_type'],
         )
         return {
