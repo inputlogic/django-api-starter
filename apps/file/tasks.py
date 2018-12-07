@@ -15,7 +15,7 @@ def _get_destination(file, size):
     return path.replace(ext, '_{0}{1}'.format(size, ext))
 
 
-@task()
+# @task()
 def resize_images():
     """
     Get all images to be resized and push into their own tasks
@@ -26,7 +26,7 @@ def resize_images():
         resize_image(f.id)
 
 
-@task()
+# @task()
 def resize_image(file_id):
     """
     Resize individual image

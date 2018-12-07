@@ -15,7 +15,7 @@ class File(models.Model):
     '''
     IMAGE_MIME_TYPES = ('image/jpeg', 'image/png')
 
-    link = models.CharField(max_length=200, unique=True)
+    link = models.URLField(unique=True)
     user = models.ForeignKey(
         get_user_model(),
         on_delete=models.CASCADE,
