@@ -3,7 +3,6 @@ import mimetypes
 from uuid import uuid4
 
 import boto3
-from botocore.client import Config
 from django.conf import settings
 
 
@@ -16,7 +15,6 @@ def _client():
         aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
         aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
         region_name=settings.AWS_DEFAULT_REGION,
-        # config=Config(signature_version='s3v4')
     )
 
 
@@ -39,17 +37,24 @@ def _get_file_key(url):
     return '/'.join(url.split('/')[-2:])
 
 
-def upload_file(file, destination):
+def upload_file(file, destination, mime_type=None):
     """
     file - A file like object/buffer
     destination - The path to use on S3, can be just filename or path (ex: some/path/image.jpg)
 
     """
-    return _client().upload_fileobj(
+    print('upload---')
+    print(file)
+    print('to---')
+    print(destination)
+    resp = _client().upload_fileobj(
         file,
         settings.AWS_STORAGE_BUCKET_NAME,
-        destination
+        destination,
+        {'ContentType': mime_type},
     )
+    print(resp)
+    return resp
 
 
 def get_upload_url(file_name, acl='private'):

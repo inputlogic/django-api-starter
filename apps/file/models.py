@@ -29,7 +29,7 @@ class File(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return '{0} - {1}'.format(self.link, self.user.email)
+        return self.link.split('/')[-1]
 
     @property
     def owner(self):
@@ -45,4 +45,7 @@ class File(models.Model):
         Get all image File's that haven't been marked as resized.
 
         """
-        return cls.objects.filter(mime_type__in=File.IMAGE_MIME_TYPES, is_resized=False).all()
+        return cls.objects.filter(
+            mime_type__in=File.IMAGE_MIME_TYPES,
+            is_resized=False,
+            is_private=False).all()

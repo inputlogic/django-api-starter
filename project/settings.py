@@ -177,10 +177,10 @@ ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
 FILE_IMAGE_SIZES = (
-    {'key': 'ty', 'dimensions': (50, 50)},
-    {'key': 'sm', 'dimensions': (150, 150)},
-    {'key': 'md', 'dimensions': (800, 800)},
-    {'key': 'lg', 'dimensions': (1500, 1500)},
+    {'key': 'ty', 'width': 50},
+    {'key': 'sm', 'width': 150},
+    {'key': 'md', 'width': 800},
+    {'key': 'lg', 'width': 1500},
 )
 
 
