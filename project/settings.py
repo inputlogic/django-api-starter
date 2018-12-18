@@ -34,9 +34,6 @@ ALLOWED_HOSTS = get('ALLOWED_HOSTS')
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
-    'raven.contrib.django.raven_compat',
-    'jet',
-
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -51,8 +48,9 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'workers',
 
-    'apps.user',
     'apps.content',
+    'apps.file',
+    'apps.user',
 
     # !!! DELETE ME !!!
     'apps.workerexample',
@@ -177,10 +175,13 @@ logging.config.dictConfig(LOGGING)
 
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{web_url}/{path}'.format(
-    web_url=WEB_URL,
-    path='reset-password/{reset_token}/{user_id}'
+
+FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
+FILE_IMAGE_SIZES = (
+    {'key': 'ty', 'width': 50},
+    {'key': 'sm', 'width': 150},
+    {'key': 'md', 'width': 800},
+    {'key': 'lg', 'width': 1500},
 )
 
 
@@ -192,24 +193,20 @@ RESET_PASSWORD_URL = '{web_url}/{path}'.format(
 CORS_ORIGIN_ALLOW_ALL = True
 
 WORKERS_SLEEP = 1
-WORKERS_PURGE = 10
+WORKERS_PURGE = 1000
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'djangorestframework_camel_case.render.CamelCaseJSONRenderer',
-        'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'djangorestframework_camel_case.parser.CamelCaseJSONParser',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',  # For browseable API
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        # 'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-        # 'libs.permissions.IsOwnerOrReadOnly',
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 25,
@@ -221,28 +218,10 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-JET_DEFAULT_THEME = 'default'
-JET_SIDE_MENU_COMPACT = True
-JET_CHANGE_FORM_SIBLING_LINKS = False
-JET_SIDE_MENU_ITEMS = [
-    {'label': 'Manage', 'items': [
-        {'name': 'user.user'},
-        {'name': 'content.content'},
-        {'name': 'workers.task'}
-    ]}
-]
-
 AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
+AWS_LOCATION = get('AWS_STORAGE_LOCATION')
+AWS_DEFAULT_REGION = get('AWS_DEFAULT_REGION')
 AWS_DEFAULT_ACL = 'public-read'
-AWS_LOCATION = 'django-starter'
 AWS_QUERYSTRING_AUTH = False
-
-if ENV != DEV:
-    # Heroku metadata requires: `heroku labs:enable runtime-dyno-metadata -a <app>`
-    RAVEN_CONFIG = {
-        'dsn': get('SENTRY_DSN'),
-        'release': get('HEROKU_SLUG_COMMIT'),
-        'environment': ENV
-    }
