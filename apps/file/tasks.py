@@ -39,7 +39,7 @@ def _get_destination(file, size):
     return path.replace(ext, '_{0}{1}'.format(size, ext))
 
 
-@task()
+@task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
 def resize_images():
     """
     Get all images to be resized and push into their own tasks

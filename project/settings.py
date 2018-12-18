@@ -176,6 +176,7 @@ logging.config.dictConfig(LOGGING)
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
+FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
 FILE_IMAGE_SIZES = (
     {'key': 'ty', 'width': 50},
     {'key': 'sm', 'width': 150},
@@ -192,7 +193,7 @@ FILE_IMAGE_SIZES = (
 CORS_ORIGIN_ALLOW_ALL = True
 
 WORKERS_SLEEP = 1
-WORKERS_PURGE = 10
+WORKERS_PURGE = 1000
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (

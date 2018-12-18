@@ -43,17 +43,12 @@ def upload_file(file, destination, mime_type=None):
     destination - The path to use on S3, can be just filename or path (ex: some/path/image.jpg)
 
     """
-    print('upload---')
-    print(file)
-    print('to---')
-    print(destination)
     resp = _client().upload_fileobj(
         file,
         settings.AWS_STORAGE_BUCKET_NAME,
         destination,
         {'ContentType': mime_type},
     )
-    print(resp)
     return resp
 
 
