@@ -42,7 +42,8 @@ def send_template_base(template_id, to_email, to_name='', custom_tags={}, name='
                 'email': to_email,
                 'name': to_name
                 }],
-            'substitutions': custom_tags
+            'dynamic_template_data': custom_tags #for new version templates
+            #'substitutions': custom_tags #for legacy templates
         }],
         'template_id': template_id,
         'from': {
