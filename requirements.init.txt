@@ -11,8 +11,8 @@ django-storages
 django-workers
 djangorestframework
 djangorestframework-camel-case
+factory_boy
 gunicorn
-mixer
 pillow
 psycopg2-binary
 raven
