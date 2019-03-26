@@ -7,7 +7,7 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 class UserAdmin(BaseUserAdmin):
     list_display = ('email', 'is_active')
     fieldsets = (
-        (None, {'fields': ('email', 'company', 'is_active')}),
+        (None, {'fields': ('email', 'is_active')}),
         ('Password', {'fields': ('password',)}),
     )
     search_fields = ()
