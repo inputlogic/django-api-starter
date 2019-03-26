@@ -15,7 +15,6 @@ django-workers==0.1.2
 djangorestframework==3.9.1
 djangorestframework-camel-case==1.0.3
 docutils==0.14
-factory-boy==2.11.1
 Faker==0.9.1
 gunicorn==19.9.0
 idna==2.8
