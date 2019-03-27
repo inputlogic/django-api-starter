@@ -2,13 +2,13 @@
 
 ## Installation
 
-Clone repo
+Clone repo:
 ```
 git clone https://github.com/inputlogic/django-api-starter.git ___PROJNAME___
 cd __PROJNAME__
 ```
 
-Create and activate local python environment
+Create and activate local python environment:
 ```
 virtualenv env
 . ./env/bin/activate
@@ -36,31 +36,31 @@ Save local environment variables:
 mv env.template .env
 ```
 
-Create database
+Create database:
 ```
 createdb ___PROJNAME___
 ```
 
-Find and change project-specific placeholders
+Find and change project-specific placeholders:
 ```
 project/settings.py:97
 ```
 
-Delete workerexample app
+Delete workerexample app:
 ```
 rm -rf apps/workerexample
 project/settings.py:55
 project/urls.py:19
 ```
 
-Django setup
+Django setup:
 ```
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py collectstatic
 ```
 
-Create a fresh git repo for this project
+Create a fresh git repo for the new project:
 ```
 rm -rf .git
 git init
