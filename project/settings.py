@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'apps.socialmedia',
     'apps.support',
     'apps.user',
+    'apps.mail',
 
     # ___CHANGEME___
     # Example apps
@@ -232,8 +233,6 @@ FILE_IMAGE_SIZES = (
     {'key': 'lg', 'width': 1500},
 )
 
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 
 # Facebook Login
 FACEBOOK_GRAPH_VERSION = '3.1'
@@ -249,3 +248,26 @@ GOOGLE_CLIENT_SECRET = get('GOOGLE_CLIENT_SECRET')
 GOOGLE_SUCCESSFUL_LOGIN_URL = get('GOOGLE_SUCCESSFUL_LOGIN_URL')
 GOOGLE_PROJECT_ID = get('GOOGLE_PROJECT_ID')
 GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
+
+# MAIL
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+SEND_MAIL = get('SEND_MAIL') == 'True'
+SENDGRID_API_KEY = get('SENDGRID_API_KEY')
+SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+SENDGRID_FROM_EMAIL = ''
+SENDGRID_FROM_NAME = ''
+MAIL_PRODUCTION_URL = 'http://___CHANGEME___.herokuapp.com'
+
+MAIL_KEY_WELCOME = 'Welcome User'
+MAIL_KEY_PASSWORD = 'Reset Password'
+MAIL_REGISTRY = {
+    MAIL_KEY_WELCOME: {
+        'subject': 'Welcome to __APPNAME__',
+        'template': 'email/welcome_user.html',
+    },
+    MAIL_KEY_PASSWORD: {
+        'subject': '__APPNAME__ password reset',
+        'template': 'email/reset_password.html',
+    },
+}
