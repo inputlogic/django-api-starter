@@ -9,5 +9,6 @@ urlpatterns = [
     path('auth/login', views.UserCustomObtainAuthToken.as_view(), name='login'),
     path('auth/forgot-password', views.UserForgotPassword.as_view(), name='forgot-password'),
     path('auth/reset-password', views.UserResetPassword.as_view(), name='reset-password'),
+    # ___CHANGEME___ Example of proxy API call.
     path('proxy/users', views.ProxyUserList.as_view(), name='proxy-user-list'),
 ]
