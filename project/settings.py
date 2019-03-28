@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'apps.support',
     'apps.user',
 
-    # !!! DELETE ME !!!
+    # ___CHANGEME___
+    # Example apps
     'apps.workerexample',
 ]
 
@@ -98,7 +99,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django',
+            'NAME': 'django', # ___CHANGEME___
             'USER': 'postgres',
             'PASSWORD': 'postgres'
         },
