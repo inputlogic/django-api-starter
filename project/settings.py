@@ -186,6 +186,8 @@ FILE_IMAGE_SIZES = (
     {'key': 'lg', 'width': 1500},
 )
 
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 
 # ==================================================================================================
 # 3RD PARTY SETTINGS
