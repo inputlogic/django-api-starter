@@ -1,6 +1,8 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 
+from rest_framework import status
 from rest_framework.exceptions import ValidationError as DRFValidationError
+from rest_framework.response import Response
 from rest_framework.views import exception_handler as drf_exception_handler
 
 
@@ -24,3 +26,10 @@ def exception_handler(exc, context):
             exc = DRFValidationError(detail=exc.message)
 
     return drf_exception_handler(exc, context)
+
+
+def unknown_exception_handler(exception):
+    return Response(
+        {"error": str(exception)},
+        status=status.HTTP_500_INTERNAL_SERVER_ERROR
+    )

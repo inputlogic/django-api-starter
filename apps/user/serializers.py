@@ -68,9 +68,5 @@ class ResetPasswordSerializer(serializers.Serializer):
 
 
 class ProxyUserListSerialzier(serializers.Serializer):
-    name = serializers.CharField(read_only=True)
-    username = serializers.CharField(read_only=True)
-    email = serializers.CharField(read_only=True)
-
-    def create(self, request, *args, **kwargs):
-        return {"foo": "fee"}
+    company = serializers.CharField(required=True)
+    filter = serializers.CharField(required=True)

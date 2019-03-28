@@ -1,11 +1,13 @@
+import json
 import requests
 
 from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 from rest_framework_tracking.mixins import LoggingMixin
+from libs.exception_handler import unknown_exception_handler
 
 from .serializers import (
     UserSerializer,
@@ -83,22 +85,31 @@ class ProxyUserList(LoggingMixin, generics.GenericAPIView):
     serializer_class = ProxyUserListSerialzier
 
     def post(self, request, *args, **kwargs):
-        # This code is verbose on purpose for reference
-        method = 'GET'
-        path = 'https://jsonplaceholder.typicode.com/users'
-        api_key = '123456789'
-        auth_token = 'abcdefghi'
-        headers = {
-                'Content-Type': 'application/json',
-                'X-Auth-API-Key': api_key,
-                'authorization': 'Bearer ' + auth_token
-            }
-        body = {
-          "company_id": 12,
-          "department": "accounting"
-        }
+        serializer = self.get_serializer(data=request.data)
+        if not serializer.is_valid():
+            return Response({'error': serializer.errors}, status.HTTP_400_BAD_REQUEST)
 
-        request = requests.Request(method, path, headers=headers, json=body)
-        request = request.prepare()
-        response = requests.post(path, headers=headers, data=body)
-        return response
+        try:
+            '''
+            This code is verbose on purpose for reference. API key and auth token are included
+            for reference as well.
+            '''
+            path = 'https://jsonplaceholder.typicode.com/users'
+            api_key = '123456789'
+            auth_token = 'abcdefghi'
+            headers = {
+                    'Content-Type': 'application/json',
+                    'X-Auth-API-Key': api_key,
+                    'authorization': 'Bearer ' + auth_token
+                }
+            body = {
+              "company_id": 12,
+              "department": "accounting"
+            }
+
+            response = requests.get(path, headers=headers, data=body)
+            result = json.loads(response.content)
+        except Exception as e:
+            return unknown_exception_handler(e)
+
+        return Response({"result": result}, status.HTTP_200_OK)
