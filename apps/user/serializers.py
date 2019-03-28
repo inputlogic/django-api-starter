@@ -8,6 +8,7 @@ from . import emails
 
 class UserSerializer(serializers.ModelSerializer):
     is_admin = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = get_user_model()
         fields = ('id', 'email', 'password', 'is_admin')
@@ -64,3 +65,12 @@ class ResetPasswordSerializer(serializers.Serializer):
         user.set_password(password)
         user.save()
         return {}
+
+
+class ProxyUserListSerialzier(serializers.Serializer):
+    name = serializers.CharField(read_only=True)
+    username = serializers.CharField(read_only=True)
+    email = serializers.CharField(read_only=True)
+
+    def create(self, request, *args, **kwargs):
+        return {"foo": "fee"}

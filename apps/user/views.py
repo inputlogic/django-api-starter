@@ -1,3 +1,5 @@
+import requests
+
 from django.contrib.auth import get_user_model
 from rest_framework import generics, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
@@ -8,7 +10,8 @@ from rest_framework_tracking.mixins import LoggingMixin
 from .serializers import (
     UserSerializer,
     ForgotPasswordSerializer,
-    ResetPasswordSerializer
+    ResetPasswordSerializer,
+    ProxyUserListSerialzier
 )
 
 
@@ -73,3 +76,29 @@ class UserForgotPassword(generics.CreateAPIView):
 class UserResetPassword(generics.CreateAPIView):
     serializer_class = ResetPasswordSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class ProxyUserList(LoggingMixin, generics.GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = ProxyUserListSerialzier
+
+    def post(self, request, *args, **kwargs):
+        # This code is verbose on purpose for reference
+        method = 'GET'
+        path = 'https://jsonplaceholder.typicode.com/users'
+        api_key = '123456789'
+        auth_token = 'abcdefghi'
+        headers = {
+                'Content-Type': 'application/json',
+                'X-Auth-API-Key': api_key,
+                'authorization': 'Bearer ' + auth_token
+            }
+        body = {
+          "company_id": 12,
+          "department": "accounting"
+        }
+
+        request = requests.Request(method, path, headers=headers, json=body)
+        request = request.prepare()
+        response = requests.post(path, headers=headers, data=body)
+        return response
