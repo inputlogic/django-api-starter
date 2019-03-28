@@ -1,3 +1,5 @@
+# STABLE REQUIREMENTS
+# Use this if there are problems with `requirements.init.txt`
 arrow==0.13.1
 boto3==1.9.94
 botocore==1.12.94
