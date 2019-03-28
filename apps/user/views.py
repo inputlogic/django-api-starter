@@ -80,6 +80,13 @@ class UserResetPassword(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
 
+'''
+# ___CHANGEME___
+Example of proxy API call. This is an endpoint being called from within an endpoint. Common when
+integrating third party APIs.
+'''
+
+
 class ProxyUserList(LoggingMixin, generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ProxyUserListSerialzier
@@ -93,6 +100,12 @@ class ProxyUserList(LoggingMixin, generics.GenericAPIView):
             '''
             This code is verbose on purpose for reference. API key and auth token are included
             for reference as well.
+
+            api keys, URLs and auth tokens would not normally be stored here, but rather in an
+            environment variable specific to a staging or production server instancese.
+
+            The auth_token could be a permanent token, or there could be additional logic for
+            re generating expired tokens.
             '''
             path = 'https://jsonplaceholder.typicode.com/users'
             api_key = '123456789'
