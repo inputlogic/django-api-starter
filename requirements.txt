@@ -1,3 +1,5 @@
+# STABLE REQUIREMENTS
+# Use this if there are problems with `requirements.init.txt`
 arrow==0.13.1
 boto3==1.9.94
 botocore==1.12.94
@@ -14,6 +16,7 @@ django-storages==1.7.1
 django-workers==0.1.2
 djangorestframework==3.9.1
 djangorestframework-camel-case==1.0.3
+drf-tracking==1.5.0
 docutils==0.14
 factory-boy==2.11.1
 Faker==1.0.2

@@ -1,3 +1,6 @@
+# LATEST REQUIREMENTS
+# Install this requirements file to get the latest version of each dependency.
+# If there are compatibility problems, install from `requirements.txt` instead.
 arrow
 boto3
 dj-database-url
@@ -11,6 +14,7 @@ django-storages
 django-workers
 djangorestframework
 djangorestframework-camel-case
+drf-tracking
 factory_boy
 gunicorn
 pillow

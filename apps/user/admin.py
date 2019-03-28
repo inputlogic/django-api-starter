@@ -1,13 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from authtools.admin import UserAdmin
 
 
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(UserAdmin):
     list_display = ('email', 'is_active')
     fieldsets = (
-        (None, {'fields': ('email', 'company', 'is_active')}),
+        (None, {'fields': ('email', 'is_active')}),
         ('Password', {'fields': ('password',)}),
     )
     search_fields = ()

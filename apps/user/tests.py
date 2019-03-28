@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 
 from rest_framework import status
 from rest_framework.test import APITestCase
-from mixer.backend.django import mixer
 
 from . import emails
 
@@ -37,7 +36,9 @@ class UserTests(APITestCase):
 
     def test_user_can_reset_password(self):
         new_password = 'whatever'
-        user = mixer.blend(get_user_model())
+        user = get_user_model().objects.create_user(
+            email='user@example.com',
+            password='secret',)
         email_values = []
         emails.forgot_password = stub_forgot_password_email(email_values)
         response = self.client.post(

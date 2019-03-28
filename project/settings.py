@@ -46,10 +46,12 @@ INSTALLED_APPS = [
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
+    'rest_framework_tracking',
     'workers',
 
     'apps.content',
     'apps.file',
+    'apps.support',
     'apps.user',
 
     # !!! DELETE ME !!!
