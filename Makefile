@@ -18,13 +18,13 @@ setup:
 	python manage.py createsuperuser
 
 erik-home-server:
-	python manage.py runserver 192.168.1.90:8000
+		python manage.py runserver 192.168.1.90:8000
 
 tests:
 	python manage.py test apps
 
 coverage:
-		python manage.py test apps --with-coverage --cover-package=apps.user
+  python manage.py test apps --with-coverage --cover-package=apps.user
 
 localhost:
 	python manage.py runserver
