@@ -17,7 +17,7 @@ class ProxyTests(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Token ' + response.data['token'])
 
     def test_proxy(self):
-        self.user1 = get_user_model().objects.create_user(
+        get_user_model().objects.create_user(
             email='user1@example.com',
             password='secret1'
         )
