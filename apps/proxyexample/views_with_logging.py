@@ -11,8 +11,9 @@ from .serializers import (
 
 
 '''
-Example of proxy API call. This is an endpoint being called from within an endpoint. Common when
-integrating third party APIs.
+Example of proxy API call with logging. This is an endpoint being called from within an endpoint.
+This is useful when you need to monitor the data moving back and forth from your server to a third
+party API. In could me necessary as an audit trail.
 '''
 
 
