@@ -6,7 +6,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
 from .serializers import (
-    ProxyUserListSerialzier
+    ProxyUserListSerializer
 )
 
 '''
@@ -17,7 +17,7 @@ integrating third party APIs.
 
 class ProxyUserList(generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
-    serializer_class = ProxyUserListSerialzier
+    serializer_class = ProxyUserListSerializer
 
     def post(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
