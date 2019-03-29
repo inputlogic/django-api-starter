@@ -1,36 +1,13 @@
 import json
-import requests
 
 from libs.exception_handler import unknown_exception_handler
+from libs.proxy_logging import ProxyLoggingMixin
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
-from rest_framework_tracking.mixins import LoggingMixin
 
 from .serializers import (
     ProxyUserListSerializer
 )
-
-
-class ProxyLoggingMixin(LoggingMixin):
-    def finalize_proxy_response(self, request, prepared_request, response, *args, **kwargs):
-        self.log.update(
-            {
-                'remote_addr': self._get_ip_address(request),
-                'view': self._get_view_name(request),
-                'view_method': self._get_view_method(prepared_request),
-                'path': prepared_request.url,
-                'host': request.get_host(),
-                'method': prepared_request.method,
-                'query_params': self._clean_data(request.query_params.dict()),
-                'user': self._get_user(request),
-                'response_ms': self._get_response_ms(),
-                'response': self._clean_data(response.content.decode("utf-8")),
-                'status_code': response.status_code,
-                'data': prepared_request.body.decode("utf-8")
-            }
-        )
-        self.handle_log()
-        return response
 
 
 '''
@@ -60,7 +37,8 @@ class ProxyUserList(ProxyLoggingMixin, generics.GenericAPIView):
             re generating expired tokens.
             '''
             path = 'https://jsonplaceholder.typicode.com/users'
-            params = ('id', '100')
+            # path = 'http://www.mocky.io/v2/5c9e9556300000af21ee98ab'
+            params = {'sort': 'asc', 'limit': 100}
             api_key = '123456789'
             auth_token = 'abcdefghi'
             headers = {
@@ -72,9 +50,7 @@ class ProxyUserList(ProxyLoggingMixin, generics.GenericAPIView):
               "company_id": 12,
               "department": "accounting"
             }
-            prepared_request = requests.Request('get', path, params={'id':'123'}, headers=headers, json=body).prepare()
-            response = requests.get(path, headers=headers, data=body)
-            self.finalize_proxy_response(request, prepared_request, response, *args, **kwargs)
+            response = self.with_log(request, 'get', path, headers, body, params)
             result = json.loads(response.content.decode("utf-8"))
         except Exception as e:
             return unknown_exception_handler(e)
