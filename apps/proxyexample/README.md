@@ -2,7 +2,7 @@
 
 ## Who is this for?:
 
-> This is for applications that need to process data through third party APIs. There is the option
+> This is for applications that need to process data via third party APIs. There is the option
 > of manipulating data flowing to and from the third party API endpoints within our endpoint.
 >
 > For example, the Goose project has an endpoint that accepts requests for insurance policy
