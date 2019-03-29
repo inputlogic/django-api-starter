@@ -46,6 +46,12 @@ Find and change project-specific placeholders:
 project/settings.py:97
 ```
 
+Delete proxyexample app:
+```
+rm -rf apps/proxyexample
+project/urls.py:19
+```
+
 Delete workerexample app:
 ```
 rm -rf apps/workerexample

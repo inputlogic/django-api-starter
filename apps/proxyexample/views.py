@@ -10,7 +10,6 @@ from .serializers import (
 )
 
 '''
-# ___CHANGEME___
 Example of proxy API call. This is an endpoint being called from within an endpoint. Common when
 integrating third party APIs.
 '''
