@@ -8,6 +8,7 @@ from . import emails
 
 class UserSerializer(serializers.ModelSerializer):
     is_admin = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = get_user_model()
         fields = ('id', 'email', 'password', 'is_admin')

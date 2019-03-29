@@ -16,6 +16,7 @@ urlpatterns = [
     url(r'^', include('apps.content.urls')),
     url(r'^', include('apps.file.urls')),
     url(r'^', include('apps.user.urls')),
+    url(r'^', include('apps.proxyexample.urls')),
     url(r'^', include('apps.workerexample.urls')),
 ]
 
