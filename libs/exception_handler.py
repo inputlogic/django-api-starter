@@ -12,11 +12,10 @@ def exception_handler(exc, context):
     Must be set in settings:
     >>> REST_FRAMEWORK = {
     ...     # ...
-    ...     'EXCEPTION_HANDLER': 'mtp.apps.common.drf.exception_handler',
+    ...     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler',
     ...     # ...
     ... }
     For the parameters, see ``exception_handler``
-
     """
 
     if isinstance(exc, DjangoValidationError):
