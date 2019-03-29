@@ -172,25 +172,6 @@ logging.config.dictConfig(LOGGING)
 
 
 # ==================================================================================================
-# PROJECT SETTINGS
-# ==================================================================================================
-
-
-ADMIN_TITLE = 'Admin'
-ADMIN_HEADER = 'Admin'
-
-FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
-FILE_IMAGE_SIZES = (
-    {'key': 'ty', 'width': 50},
-    {'key': 'sm', 'width': 150},
-    {'key': 'md', 'width': 800},
-    {'key': 'lg', 'width': 1500},
-)
-
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
-
-# ==================================================================================================
 # 3RD PARTY SETTINGS
 # ==================================================================================================
 
@@ -230,3 +211,23 @@ AWS_LOCATION = get('AWS_STORAGE_LOCATION')
 AWS_DEFAULT_REGION = get('AWS_DEFAULT_REGION')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
+
+
+# ==================================================================================================
+# PROJECT SETTINGS
+# ==================================================================================================
+
+
+ADMIN_TITLE = 'Admin'
+ADMIN_HEADER = 'Admin'
+
+FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
+FILE_IMAGE_SIZES = (
+    {'key': 'ty', 'width': 50},
+    {'key': 'sm', 'width': 150},
+    {'key': 'md', 'width': 800},
+    {'key': 'lg', 'width': 1500},
+)
+
+WEB_URL = get('WEB_URL')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
