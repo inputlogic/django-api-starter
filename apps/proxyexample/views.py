@@ -49,7 +49,7 @@ class ProxyUserList(generics.GenericAPIView):
             }
 
             response = requests.get(path, headers=headers, data=body)
-            result = json.loads(response.content)
+            result = json.loads(response.content.decode("utf-8"))
         except Exception as e:
             return unknown_exception_handler(e)
 
