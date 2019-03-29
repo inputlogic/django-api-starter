@@ -37,7 +37,10 @@ class ProxyUserList(ProxyLoggingMixin, generics.GenericAPIView):
             re generating expired tokens.
             '''
             path = 'https://jsonplaceholder.typicode.com/users'
-            # path = 'http://www.mocky.io/v2/5c9e9556300000af21ee98ab'
+            '''
+            #error test
+            path = 'http://www.mocky.io/v2/5c9e9556300000af21ee98ab'
+            '''
             params = {'sort': 'asc', 'limit': 100}
             api_key = '123456789'
             auth_token = 'abcdefghi'

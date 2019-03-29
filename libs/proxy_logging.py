@@ -28,7 +28,8 @@ class ProxyLoggingMixin(LoggingMixin):
             method, path, params=params, headers=headers, json=body
         ).prepare()
 
-        response = requests.get(path, headers=headers, data=body)
+        response = requests.get(path, headers, data=body)
+
         self.log_proxy_response(parent_request, prepared_request, body, response)
         return response
 
