@@ -5,7 +5,7 @@
 Clone repo:
 ```
 git clone https://github.com/inputlogic/django-api-starter.git ___PROJNAME___
-cd __PROJNAME__
+cd ___PROJNAME___
 ```
 
 Create and activate local python environment:
@@ -22,9 +22,9 @@ pip freeze > requirements.txt
 rm requirements.init.txt
 ```
 
-A note on `requirements.init.txt` vs `requirement.txt`:
+A note on `requirements.init.txt` vs `requirements.txt`:
 
-> `requirement.init.txt` installs the latest versions of each package.
+> `requirements.init.txt` installs the latest versions of each package.
 >
 > If you have problems with the packages installed from `requirements.init.txt`,
 > try installing django-api-starter's `requirements.txt` instead. It contains
@@ -41,22 +41,16 @@ Create database:
 createdb ___PROJNAME___
 ```
 
-Find and change project-specific placeholders:
+Change database name in `project/settings.py` to match the one you just created:
 ```
-project/settings.py:97
-```
-
-Delete proxyexample app:
-```
-rm -rf apps/proxyexample
-project/urls.py:19
-```
-
-Delete workerexample app:
-```
-rm -rf apps/workerexample
-project/settings.py:55
-project/urls.py:19
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django', # ___CHANGEME___
+        'USER': 'postgres',
+        'PASSWORD': 'postgres'
+    },
+}
 ```
 
 Django setup:
@@ -72,3 +66,16 @@ rm -rf .git
 git init
 git commit -am '___PROJNAME___ initial commit from django-api-starter'
 ```
+
+## Project Configuration
+
+(Note that areas requiring configuration have been marked with `___CHANGEME___`,
+to make them easy to find.)
+
+Delete example apps:
+```
+rm -rf apps/workerexample
+rm -rf apps/proxyexample
+```
+
+Remove references to example apps from `project/settings.py` & `project/urls.py`
