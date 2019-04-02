@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'authtools',
     'corsheaders',
     'django_extensions',
+    'facebook',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
@@ -231,3 +232,9 @@ FILE_IMAGE_SIZES = (
 
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+
+# Facebook Login
+FACEBOOK_GRAPH_VERSION = '3.1'
+FACEBOOK_APP_ID = '1234'
+FACEBOOK_APP_CLIENT_TOKEN = 'd31838344876c261421d48d041b77ad0'
+FACEBOOK_SUCCESSFUL_LOGIN_URL = 'https://allgood.com'

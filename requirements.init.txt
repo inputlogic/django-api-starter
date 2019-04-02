@@ -15,6 +15,7 @@ django-workers
 djangorestframework
 djangorestframework-camel-case
 drf-tracking
+facebook-sdk
 factory_boy
 gunicorn
 pillow
