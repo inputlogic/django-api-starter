@@ -1,7 +1,7 @@
 import json
-import requests
 
 from libs.exception_handler import unknown_exception_handler
+from libs.proxy_logging import ProxyLoggingMixin
 from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 
@@ -11,12 +11,13 @@ from .serializers import (
 
 
 '''
-Example of proxy API call. This is an endpoint being called from within an endpoint. Common when
-integrating third party APIs.
+Example of proxy API call with logging. This is an endpoint being called from within an endpoint.
+This is useful when you need to monitor the data moving back and forth from your server to a third
+party API. In could me necessary as an audit trail.
 '''
 
 
-class ProxyUserList(generics.GenericAPIView):
+class ProxyUserList(ProxyLoggingMixin, generics.GenericAPIView):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = ProxyUserListSerializer
 
@@ -41,7 +42,7 @@ class ProxyUserList(generics.GenericAPIView):
             #error test
             path = 'http://www.mocky.io/v2/5c9e9556300000af21ee98ab'
             '''
-            params = {'sort': 'asc', 'limit': '100'}
+            params = {'sort': 'asc', 'limit': 100}
             api_key = '123456789'
             auth_token = 'abcdefghi'
             headers = {
@@ -53,7 +54,7 @@ class ProxyUserList(generics.GenericAPIView):
               "company_id": 12,
               "department": "accounting"
             }
-            response = requests.get(path, headers=headers, json=body, params=params)
+            response = self.with_log(request, 'get', path, headers, body, params)
             result = json.loads(response.content.decode("utf-8"))
         except Exception as e:
             return unknown_exception_handler(e)
