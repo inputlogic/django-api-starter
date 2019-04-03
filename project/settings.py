@@ -235,6 +235,8 @@ RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user
 
 # Facebook Login
 FACEBOOK_GRAPH_VERSION = '3.1'
-FACEBOOK_APP_ID = '154454685150925'
-FACEBOOK_APP_CLIENT_TOKEN = 'd31838344876c261421d48d041b77ad0'
-FACEBOOK_SUCCESSFUL_LOGIN_URL = 'https://allgood.com'
+FACEBOOK_APP_ID = '2291491961126343'
+FACEBOOK_APP_CLIENT_TOKEN = '509e0f9e77372e871d19f5252ac2594b'
+FACEBOOK_APP_SECRET = '76561ea03bef3b237edf82f4224adb17'
+# This must match the URL specified in the Facebook app login settings "Valid OAuth Redirect URIs"
+FACEBOOK_SUCCESSFUL_LOGIN_URL = 'https://front-end.com/process-login'
