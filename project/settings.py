@@ -100,7 +100,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django', # ___CHANGEME___
+            'NAME': 'django',  # ___CHANGEME___
             'USER': 'postgres',
             'PASSWORD': 'postgres'
         },
