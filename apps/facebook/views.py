@@ -120,6 +120,10 @@ def _facebookTokenForAccessToken(facebook_user_token):
                     identifier=identifier
                 )
             else:
+                '''
+                The user was found, but does not have a matching social media token. Return an
+                error indicating the user should login with the origin source.
+                '''
                 social_media = _get_social_media_for_user(user=user)
                 if(social_media is None):
                     result = {
