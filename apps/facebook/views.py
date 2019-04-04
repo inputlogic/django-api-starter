@@ -151,10 +151,8 @@ class CodeForAccessToken(ProxyLoggingMixin, generics.GenericAPIView):
             # if something went wrong, pass along the bad news
             if cffbt.status_code != status.HTTP_200_OK:
                 return cffbt
-
             result = cffbt.data['result']
-            facebook_user_token = result['access_token']
-
+            facebook_user_token = result['facebook_user_token']
             # have a facebook user token, exchange it for a Django access token
             return _facebookTokenForAccessToken(facebook_user_token)
         except Exception as e:

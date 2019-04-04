@@ -5,14 +5,14 @@ from . import views
 urlpatterns = [
     path('facebook/url', views.LoginURL.as_view(), name='facebook-login-url'),
     path(
-        'facebook/code/fb-token',
+        'facebook/authcode/fb-token',
         views.CodeForFacebookToken.as_view(),
-        name='facebook-code-for-facebook-token'
+        name='facebook-authcode-for-facebook-token'
     ),
     path(
-        'facebook/code/token',
+        'facebook/authcode/token',
         views.CodeForAccessToken.as_view(),
-        name='facebook-code-for-access-token'
+        name='facebook-authcode-for-access-token'
     ),
     path(
         'facebook/fb-token/token',
