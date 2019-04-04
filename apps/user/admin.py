@@ -26,12 +26,18 @@ class SocailMediaAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {'fields': ('user', 'source', 'identifier')}),
     )
+    readonly_fields = (
+        'user', 'source', 'identifier'
+    )
     search_fields = ('user', 'source', 'identifier')
     list_filter = ()
     ordering = ('user',)
     filter_horizontal = ()
     filter_vertical = ()
     actions = None
+
+    def has_add_permission(self, request, obj=None):
+        return False
 
 
 admin.site.register(get_user_model(), UserAdmin)
