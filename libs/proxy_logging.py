@@ -35,9 +35,7 @@ class ProxyLoggingMixin(LoggingMixin):
 
     def __trunc(self, str, max=200):
         max = max - 3  # allow for dots
-        print(len(str))
         if len(str) > max:
-            print('trunc it!')
             return str[:max] + '...'
         return str
 
