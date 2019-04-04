@@ -33,6 +33,12 @@ class ProxyLoggingMixin(LoggingMixin):
         self.log_proxy_response(parent_request, prepared_request, body, response)
         return response
 
+    def __trunc(self, str, max=200):
+        max = max - 3  # allow for dots
+        if len(str) > max:
+            return str[:max] + '...'
+        return str
+
     def log_proxy_response(self, request, prepared_request, body, response):
         import urllib.parse as urlparse
         parsed = urlparse.urlparse(prepared_request.url)
@@ -42,15 +48,15 @@ class ProxyLoggingMixin(LoggingMixin):
                 'remote_addr': self.__get_server_ip(),
                 'view': self._get_view_name(request),
                 'view_method': self._get_view_method(prepared_request),
-                'path': '(via proxy) ' + prepared_request.url,
+                'path': self.__trunc('(via proxy) ' + prepared_request.url),
                 'host': self.__get_server_hostname(),
                 'method': prepared_request.method,
-                'query_params': parsed.query,
+                'query_params': self.__trunc(parsed.query),
                 'user': self._get_user(request),
                 'response_ms': self._get_response_ms(),
-                'response': self._clean_data(response.content.decode("utf-8")),
+                'response': self.__trunc(self._clean_data(response.content.decode("utf-8"))),
                 'status_code': response.status_code,
-                'data': body
+                'data': self.__trunc(body)
             }
         )
 

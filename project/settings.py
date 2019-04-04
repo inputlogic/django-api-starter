@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'authtools',
     'corsheaders',
     'django_extensions',
+    'facebook',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
@@ -99,7 +100,7 @@ else:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django', # ___CHANGEME___
+            'NAME': 'django',  # ___CHANGEME___
             'USER': 'postgres',
             'PASSWORD': 'postgres'
         },
@@ -231,3 +232,11 @@ FILE_IMAGE_SIZES = (
 
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+
+# Facebook Login
+FACEBOOK_GRAPH_VERSION = '3.1'
+FACEBOOK_APP_ID = get('FACEBOOK_APP_ID')
+FACEBOOK_APP_CLIENT_TOKEN = get('FACEBOOK_APP_CLIENT_TOKEN')
+FACEBOOK_APP_SECRET = get('FACEBOOK_APP_SECRET')
+# This must match the URL specified in the Facebook app login settings "Valid OAuth Redirect URIs"
+FACEBOOK_SUCCESSFUL_LOGIN_URL = get('FACEBOOK_SUCCESSFUL_LOGIN_URL')
