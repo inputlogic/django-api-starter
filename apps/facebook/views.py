@@ -8,7 +8,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
 
-from apps.user.models import User
+from apps.user.models import User, SocialMedia
 
 from .serializers import (
     FacebookCodeExchangeSerializer,
@@ -69,9 +69,26 @@ class CodeForFacebookToken(ProxyLoggingMixin, generics.GenericAPIView):
                 return Response({"result": result}, response.status_code)
 
             access_token = result['access_token']
-            return Response({"result": {"access_token": access_token}}, status.HTTP_200_OK)
+            return Response({"result": {"facebook_user_token": access_token}}, status.HTTP_200_OK)
         except Exception as e:
             return unknown_exception_handler(e)
+
+
+def _get_social_media_for_user(user):
+    try:
+        social_media = SocialMedia.objects.get(user=user)
+        return social_media
+    except SocialMedia.DoesNotExist:
+        return None
+
+
+def _get_social_media_for_identifier(source, identifier):
+    try:
+        if(identifier):
+            social_media = SocialMedia.objects.get(source=source, identifier=identifier)
+            return social_media
+    except SocialMedia.DoesNotExist:
+        return None
 
 
 # Exchange the Facebook user token for a Django access token. Create the user if they don't exist.
@@ -85,13 +102,40 @@ def _facebookTokenForAccessToken(facebook_user_token):
         args = {'fields': 'id, name, email', }
         fb_user_result = graph.get_object('me', **args)
         email = fb_user_result['email']
+        identifier = fb_user_result['id']
+        social_media = _get_social_media_for_identifier(
+            source=SocialMedia.FACEBOOK,
+            identifier=identifier
+        )
 
-        # get or create the user
-        user, created = User.objects.get_or_create(email=email)
+        if(social_media is not None):
+            user = social_media.user
+        else:
+            # get or create the user
+            user, created = User.objects.get_or_create(email=email)
+            if created:
+                social_media = SocialMedia.objects.create(
+                    user=user,
+                    source=SocialMedia.FACEBOOK,
+                    identifier=identifier
+                )
+            else:
+                social_media = _get_social_media_for_user(user=user)
+                if(social_media is None):
+                    result = {
+                        "error": "Please login with username and password"
+                    }
+                else:
+                    result = {
+                        "error": "Please login with " +
+                        SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
+                    }
+                return Response(result, status.HTTP_400_BAD_REQUEST)
+
         token, created = Token.objects.get_or_create(user=user)
-        return {"token": token.key, "user_id": user.id}
+        return Response({"token": token.key, "user_id": user.id}, status.HTTP_200_OK)
     except Exception as e:
-        raise unknown_exception_handler(e)
+        raise e
 
 
 # Have a Facebook auth code, want a Django access token
@@ -112,9 +156,7 @@ class CodeForAccessToken(ProxyLoggingMixin, generics.GenericAPIView):
             facebook_user_token = result['access_token']
 
             # have a facebook user token, exchange it for a Django access token
-            result = _facebookTokenForAccessToken(facebook_user_token)
-
-            return Response(result, status.HTTP_200_OK)
+            return _facebookTokenForAccessToken(facebook_user_token)
         except Exception as e:
             return unknown_exception_handler(e)
 
@@ -132,7 +174,6 @@ class FacebookTokenForAccessToken(ProxyLoggingMixin, generics.GenericAPIView):
         try:
             # have a facebook user token, exchange it for a Django access token
             facebook_user_token = serializer.validated_data['facebook_user_token']
-            result = _facebookTokenForAccessToken(facebook_user_token)
-            return Response(result, status.HTTP_200_OK)
+            return _facebookTokenForAccessToken(facebook_user_token)
         except Exception as e:
             return unknown_exception_handler(e)
