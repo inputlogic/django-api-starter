@@ -15,6 +15,7 @@ urlpatterns = [
     # App routes
     url(r'^', include('apps.content.urls')),
     url(r'^', include('apps.file.urls')),
+    url(r'^', include('apps.socialmedia.urls')),
     url(r'^', include('apps.user.urls')),
 
     # ___CHANGEME___

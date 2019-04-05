@@ -11,7 +11,8 @@ from rest_framework.authtoken.models import Token
 
 import google_auth_oauthlib.flow
 
-from apps.user.models import User, SocialMedia
+from apps.socialmedia.models import SocialMedia
+from apps.user.models import User
 
 from .serializers import (
     CodeExchangeSerializer,
@@ -238,7 +239,7 @@ class GoogleLoginURL(ProxyLoggingMixin, generics.GenericAPIView):
 
 
 # Have a Google auth code, want a google user token
-class CodeForGoogleToken(ProxyLoggingMixin, generics.GenericAPIView):
+class AuthCodeForGoogleToken(ProxyLoggingMixin, generics.GenericAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = CodeExchangeSerializer
 
@@ -323,7 +324,7 @@ class GoogleAuthCodeForAccessToken(ProxyLoggingMixin, generics.GenericAPIView):
     def post(self, request, *args, **kwargs):
         try:
             # re-use the end point for obtaining the facebook user token
-            cfgt = CodeForGoogleToken.as_view()(self.request._request)
+            cfgt = AuthCodeForGoogleToken.as_view()(self.request._request)
 
             # if something went wrong, pass along the bad news
             if cfgt.status_code != status.HTTP_200_OK:
