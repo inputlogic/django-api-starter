@@ -16,6 +16,7 @@ djangorestframework
 djangorestframework-camel-case
 drf-tracking
 factory_boy
+google-auth-oauthlib
 gunicorn
 pillow
 psycopg2-binary
