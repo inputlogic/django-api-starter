@@ -251,7 +251,11 @@ class AuthCodeForGoogleToken(ProxyLoggingMixin, generics.GenericAPIView):
             flow = _googleFlow()
             # submit the auth code to Google for a Google user token
             code = serializer.validated_data['code']
-            flow.fetch_token(code=code)
+            print('111')
+            try:
+                flow.fetch_token(code=code)
+            except Exception as e: here
+                print(type(e))
             google_user_token = flow.credentials.__dict__['token']
 
             # access_token = result['access_token']
