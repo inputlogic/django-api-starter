@@ -7,7 +7,6 @@ def get(variable):
     """
     To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
     env vars to be present.
-
     """
     if variable not in os.environ:
         raise Exception('Required environment variable not set: {}'.format(variable))
@@ -52,6 +51,7 @@ INSTALLED_APPS = [
 
     'apps.content',
     'apps.file',
+    'apps.socialmedia',
     'apps.support',
     'apps.user',
 
@@ -240,3 +240,10 @@ FACEBOOK_APP_CLIENT_TOKEN = get('FACEBOOK_APP_CLIENT_TOKEN')
 FACEBOOK_APP_SECRET = get('FACEBOOK_APP_SECRET')
 # This must match the URL specified in the Facebook app login settings "Valid OAuth Redirect URIs"
 FACEBOOK_SUCCESSFUL_LOGIN_URL = get('FACEBOOK_SUCCESSFUL_LOGIN_URL')
+
+# Google Login
+GOOGLE_CLIENT_ID = get('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = get('GOOGLE_CLIENT_SECRET')
+GOOGLE_SUCCESSFUL_LOGIN_URL = get('GOOGLE_SUCCESSFUL_LOGIN_URL')
+GOOGLE_PROJECT_ID = get('GOOGLE_PROJECT_ID')
+GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')

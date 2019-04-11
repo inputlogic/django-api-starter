@@ -21,6 +21,7 @@ docutils==0.14
 facebook-sdk==3.1.0
 factory-boy==2.11.1
 Faker==1.0.2
+google-auth-oauthlib==0.3.0
 gunicorn==19.9.0
 idna==2.8
 jmespath==0.9.3
