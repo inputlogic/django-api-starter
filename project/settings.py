@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'authtools',
     'corsheaders',
     'django_extensions',
+    'facebook',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
