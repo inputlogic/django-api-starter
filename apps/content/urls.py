@@ -10,5 +10,5 @@ router = DefaultRouter()
 router.register('content', views.ContentViewSet, 'Content')
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('api/content/', include(router.urls))
 ]
