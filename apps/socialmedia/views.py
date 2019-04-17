@@ -254,6 +254,8 @@ class AuthCodeForGoogleToken(ProxyLoggingMixin, generics.GenericAPIView):
             try:
                 flow.fetch_token(code=code)
             except Exception as e:
+                print('booooooom')
+                print(e.__dict__)
                 return unknown_exception_handler(e)
             google_user_token = flow.credentials.__dict__['token']
 
