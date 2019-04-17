@@ -72,3 +72,25 @@ Login a user using a Facebook user token.
 Returns an access token in exchange for a Facebook user token. Creates the user if they don't exist.
 The user is created with the email address that is associated with the Facebook account for the
 Facebook user token.
+
+
+# Google Login
+
+## Who is this for?:
+
+This is for applications that use Google (gmail) as a login and account creation tool.
+
+Google docs: https://developers.google.com/api-client-library/python/auth/web-app
+
+There is a Googe application for testing login. This MUST be replaced with the client's
+Google application for production.
+
+Test Google App "Django Starter Login"
+https://console.developers.google.com/apis/library?project=django-starter-login&authuser=1&organizationId=726546110496
+
+Keys:
+https://console.developers.google.com/apis/credentials?authuser=1&organizationId=726546110496&project=django-starter-login
+
+Authorized domains: https://console.developers.google.com/apis/credentials/consent?project=django-logon&authuser=1&organizationId=726546110496
+
+To do - complete Google specific dataflow. It is nearly identical to the Facebook dataflow above.
