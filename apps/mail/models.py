@@ -18,7 +18,7 @@ log = logging.getLogger(__name__)
 class Mail(models.Model):
     PENDING = 'pending'
     SENT = 'sent'
-    DEMO = 'testing'
+    TEST = 'test mode'
     ERROR = 'error'
 
     user = models.ForeignKey(
@@ -30,6 +30,8 @@ class Mail(models.Model):
     subject = models.CharField(max_length=250, default='')
     name = models.CharField(max_length=250, verbose_name='type')
     status = models.CharField(max_length=10, default=PENDING)
+    api_response_code = models.IntegerField(null=True)
+    api_response_text = models.TextField(default='')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

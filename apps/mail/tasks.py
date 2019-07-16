@@ -21,7 +21,7 @@ def send_email(mail_id):
 
     if not settings.SEND_MAIL:
         log.info('SEND_MAIL is not True! {}'.format(mail))
-        mail.status = Mail.DEMO
+        mail.status = Mail.TEST
         mail.save()
         return
 
@@ -56,11 +56,13 @@ def send_email(mail_id):
     response = requests.post(
         settings.SENDGRID_URL, data=json.dumps(payload), headers=headers
     )
+    mail.api_response_code = response.status_code
+    mail.api_response_text = response.text
 
-    if response.status_code == 400:
+    if (response.status_code < 200) or (response.status_code > 299):
         mail.status = Mail.ERROR
         mail.save()
-        raise Exception(response.content)
+        raise Exception(response.text)
 
     mail.status = Mail.SENT
     mail.save()
