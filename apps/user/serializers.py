@@ -24,7 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = get_user_model()(**validated_data)
         user.set_password(password)
         user.save()
-        MailWelcomeUser.send(user)
+        MailWelcomeUser(user)
         return user
 
     def update(self, obj, validated_data):
@@ -45,7 +45,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
             return {}
 
         reset_token = default_token_generator.make_token(user)
-        MailResetPassword.send(user, reset_token=reset_token)
+        MailResetPassword(user, reset_token=reset_token)
 
         return {}
 
