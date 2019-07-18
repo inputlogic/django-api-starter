@@ -9,15 +9,15 @@ class MailResetPassword(MailBase):
     template = 'email/reset_password.html'
 
     @classmethod
-    def process(cls, user, data, request, **kwargs):
+    def process_context(cls, user, request, **kwargs):
         reset_token = kwargs['reset_token']
-        data = {
+        ctx = {
             'reset_url': settings.RESET_PASSWORD_URL.format(
                 reset_token=reset_token,
                 user_id=user.id
             ),
         }
-        return data
+        return ctx
 
 
 class MailWelcomeUser(MailBase):
@@ -26,8 +26,8 @@ class MailWelcomeUser(MailBase):
     template = 'email/welcome_user.html'
 
     @classmethod
-    def process(cls, user, data, request, **kwargs):
-        data = {
+    def process_context(cls, user, request, **kwargs):
+        ctx = {
             'email': user.email,
         }
-        return data
+        return ctx

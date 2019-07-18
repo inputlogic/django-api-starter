@@ -10,29 +10,33 @@ from .libs.serialize import serialize
 
 class MailBase:
     @classmethod
-    def process(cls, user, data=None, request=None, **kwargs):
-        return data
+    def process_context(cls, user, request=None, **kwargs):
+        return {
+            'user': user,
+            'request': request,
+            **kwargs
+        }
 
     @classmethod
-    def render_body(cls, data):
+    def render_body(cls, ctx):
         django_engine = engines['django']
         template = django_engine.get_template(cls.template)
-        return template.render(data)
+        return template.render(ctx)
 
     @classmethod
-    def render_subject(cls, data):
+    def render_subject(cls, ctx):
         django_engine = engines['django']
         template = django_engine.from_string(cls.subject)
-        return template.render(data)
+        return template.render(ctx)
 
-    def __new__(cls, user, data=None, request=None, **kwargs):
-        data = serialize(cls.process(user, data, request, **kwargs))
-        body = cls.render_body(data)
-        subject = cls.render_subject(data)
+    def __new__(cls, user, request=None, **kwargs):
+        ctx = serialize(cls.process_context(user, request, **kwargs))
+        body = cls.render_body(ctx)
+        subject = cls.render_subject(ctx)
         mail = Mail.objects.create(
             name=cls.name,
             user=user,
-            data=data,
+            data=ctx,
             body=body,
             subject=subject
         )

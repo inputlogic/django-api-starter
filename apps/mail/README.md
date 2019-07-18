@@ -14,7 +14,7 @@ Email interface with static templates and logging.
 
 `template` - Path to a django template file for the body of the email
 
-3. Add a `process(cls, user, data, request, **kwargs)` class method to process
+3. Add a `process_context(cls, user, request, **kwargs)` class method to process
 your data and return a context that will be fed to your templates.
 
 4. Create a django template for your email.
@@ -32,13 +32,13 @@ class MailNewWheelbarrows(MailBase):
     template = 'email/new_wheelbarrows.html
 
     @classmethod
-    def process(cls, user, data, request, **kwargs):
-        data = {
+    def process_context(cls, user, request, **kwargs):
+        ctx = {
           customer_name = user.name,
           city_name = kwargs['city_name'],
           wheelbarrows = kwargs['wheelbarrows'],
         }
-        return data
+        return ctx
 ```
 
 Create mail template:
