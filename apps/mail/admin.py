@@ -8,8 +8,16 @@ from .libs.pretty_json import pretty_json
 @admin.register(Mail)
 class MailAdmin(admin.ModelAdmin):
     list_display = ('subject', 'email', 'name', 'status', 'created_at')
-    fields = ('name', 'user', 'email_subject', 'email_body', 'email_data', 'status', 'api_response_code', 'api_response_text')
-    readonly_fields = fields
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'user', 'email_subject', 'email_body', 'status'),
+        }),
+        ('Technical', {
+            'fields': ('email_data', 'api_response_code', 'api_response_text'),
+            'classes': ('collapse',),
+        }),
+    )
+    readonly_fields = ('email_subject', 'email_body', 'email_data')
 
     def email_subject(self, obj):
         return format_html('{0}', obj.subject)
