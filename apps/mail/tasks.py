@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 @task()
 def send_email(mail_id):
     """
-    Do not call this task directly. Instead use the `Mail.send` static method.
+    Do not call this task directly. Instead use a subclass of MailBase.
     """
     from apps.mail.models import Mail
 

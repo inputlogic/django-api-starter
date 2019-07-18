@@ -1,11 +1,13 @@
 from django.contrib import messages
 from django.template import engines
 from django.utils.html import format_html
+from django.utils.text import get_valid_filename
 from django.urls import reverse
 
 from . import tasks
 from .models import Mail
 from .libs.serialize import serialize
+from .libs.camel_space_to_spaces import camel_space_to_spaces
 
 
 class MailBase:
@@ -18,15 +20,45 @@ class MailBase:
         }
 
     @classmethod
+    def get_name(cls):
+        try:
+            return cls.name
+        except AttributeError:
+            name = cls.__name__
+            if name.startswith('Mail'):
+                name = name[4:]
+            return name
+
+    @classmethod
+    def get_subject(cls, user=None, request=None, **kwargs):
+        try:
+            return cls.subject
+        except AttributeError:
+            name = cls.get_name()
+            subject = camel_space_to_spaces(name).capitalize()
+            return subject
+
+    @classmethod
+    def get_template(cls, user=None, request=None, **kwargs):
+        try:
+            return cls.template
+        except AttributeError:
+            name = cls.get_name()
+            path = 'email/{name}.html'.format(
+                name=get_valid_filename(camel_space_to_spaces(name))
+            )
+            return path
+
+    @classmethod
     def render_body(cls, ctx):
         django_engine = engines['django']
-        template = django_engine.get_template(cls.template)
+        template = django_engine.get_template(cls.get_template())
         return template.render(ctx)
 
     @classmethod
     def render_subject(cls, ctx):
         django_engine = engines['django']
-        template = django_engine.from_string(cls.subject)
+        template = django_engine.from_string(cls.get_subject())
         return template.render(ctx)
 
     def __new__(cls, user, request=None, **kwargs):
@@ -34,7 +66,7 @@ class MailBase:
         body = cls.render_body(ctx)
         subject = cls.render_subject(ctx)
         mail = Mail.objects.create(
-            name=cls.name,
+            name=cls.get_name(),
             user=user,
             data=ctx,
             body=body,
