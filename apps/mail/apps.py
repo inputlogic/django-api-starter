@@ -1,6 +1,8 @@
-from django.apps import AppConfig
-from django.conf import settings
-from django.core.checks import register, Warning
+from importlib import import_module
+import inspect
+
+from django.apps import AppConfig, apps as django_apps
+from django.core.checks import register, Error
 from django.template.loader import get_template
 from django.template.exceptions import TemplateDoesNotExist
 
@@ -11,37 +13,53 @@ class MailConfig(AppConfig):
     def ready(self):
 
         @register
-        def template_check(app_configs, **kwargs):
+        def mailbase_check(app_configs, **kwargs):
+            from .base import MailBase
             errors = []
-            for mail_key in settings.MAIL_REGISTRY:
-                try:
-                    subject = settings.MAIL_REGISTRY[mail_key]['subject']
-                except KeyError:
-                    errors.append(
-                        Warning(
-                            "No subject field in settings.MAIL_REGISTRY['{}']".format(mail_key),
-                            obj=settings,
-                        )
-                    )
 
+            for app_config in django_apps.get_app_configs():
                 try:
-                    template = settings.MAIL_REGISTRY[mail_key]['template']
-                except KeyError:
-                    errors.append(
-                        Warning(
-                            "No template field in settings.MAIL_REGISTRY['{}']".format(mail_key),
-                            obj=settings,
-                        )
-                    )
-                else:
-                    try:
-                        get_template(template)
-                    except TemplateDoesNotExist:
-                        errors.append(
-                            Warning(
-                                'Mail template "{}" not found'.format(template),
-                                obj=settings,
-                            )
-                        )
+                    mail_module = import_module('{}.mail'.format(app_config.name))
+                    for name, obj in inspect.getmembers(mail_module):
+                        if inspect.isclass(obj) and obj != MailBase:
+                            try:
+                                obj.name
+                            except AttributeError:
+                                errors.append(
+                                    Error(
+                                        'MailBase.name not defined',
+                                        obj=obj,
+                                    )
+                                )
+                            try:
+                                obj.subject
+                            except AttributeError:
+                                errors.append(
+                                    Error(
+                                        'MailBase.subject not defined',
+                                        obj=obj,
+                                    )
+                                )
+                            try:
+                                obj.template
+                            except AttributeError:
+                                errors.append(
+                                    Error(
+                                        'MailBase.template not defined',
+                                        obj=obj,
+                                    )
+                                )
+                            else:
+                                try:
+                                    get_template(obj.template)
+                                except TemplateDoesNotExist:
+                                    errors.append(
+                                        Error(
+                                            'Mail template "{}" not found'.format(obj.template),
+                                            obj=obj,
+                                        )
+                                    )
+                except ModuleNotFoundError:
+                    pass
 
             return errors

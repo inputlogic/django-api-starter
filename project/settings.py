@@ -258,16 +258,3 @@ SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
 SENDGRID_FROM_EMAIL = ''
 SENDGRID_FROM_NAME = ''
 MAIL_PRODUCTION_URL = 'http://___CHANGEME___.herokuapp.com'
-
-MAIL_KEY_WELCOME = 'Welcome User'
-MAIL_KEY_PASSWORD = 'Reset Password'
-MAIL_REGISTRY = {
-    MAIL_KEY_WELCOME: {
-        'subject': 'Welcome to __APPNAME__',
-        'template': 'email/welcome_user.html',
-    },
-    MAIL_KEY_PASSWORD: {
-        'subject': '__APPNAME__ password reset',
-        'template': 'email/reset_password.html',
-    },
-}
