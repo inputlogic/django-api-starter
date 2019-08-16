@@ -1,6 +1,7 @@
 import logging
 import json
 
+from rest_framework.exceptions import ParseError
 from django.conf import settings
 import requests
 
@@ -28,7 +29,10 @@ def send_template_base(template_id, to_email, to_name='', custom_tags={}, name='
     to pass in dynamic variables used in the template.
     """
     if not settings.SEND_EVENTS:
-        print('simulate send email template: {0} to {1} with tags {2}'.format(name or template_id, to_email, custom_tags))
+        print('simulate send email template: {0} to {1} with tags {2}'.format(
+            name or template_id,
+            to_email, custom_tags
+        ))
         return custom_tags
 
     headers = {
@@ -42,8 +46,8 @@ def send_template_base(template_id, to_email, to_name='', custom_tags={}, name='
                 'email': to_email,
                 'name': to_name
                 }],
-            'dynamic_template_data': custom_tags #for new version templates
-            #'substitutions': custom_tags #for legacy templates
+            'dynamic_template_data': custom_tags  # for new version templates
+            # 'substitutions': custom_tags #for legacy templates
         }],
         'template_id': template_id,
         'from': {
