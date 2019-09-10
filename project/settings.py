@@ -222,6 +222,7 @@ AWS_QUERYSTRING_AUTH = False
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
+# Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
 FILE_IMAGE_SIZES = (
     {'key': 'ty', 'width': 50},
