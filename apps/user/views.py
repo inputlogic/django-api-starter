@@ -36,7 +36,7 @@ class UserList(LoggingMixin, generics.ListAPIView):
     # logging_methods = ['GET','POST']
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAdminUser,)
 
     '''
     optional mask sensitive data. By default drf-tracking is hiding the
