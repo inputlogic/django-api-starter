@@ -35,11 +35,11 @@ def send_email(mail_id):
             'to': [{
                 'email': mail.user.email,
                 'name': mail.user.email,
-                # ___CHANGEME___ if users have first and last names
-#                'name': '{} {}'.format(
-#                    mail.user.first_name,
-#                    mail.user.last_name
-#                ).strip()
+                #  ___CHANGEME___ if users have first and last names
+                # 'name': '{} {}'.format(
+                #     mail.user.first_name,
+                #     mail.user.last_name
+                # ).strip()
             }]
         }],
         'from': {

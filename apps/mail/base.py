@@ -72,9 +72,9 @@ class MailBase:
             body=body,
             subject=subject
         )
-        tasks.send_email(mail.id) # Sets a background task to send the email
+        tasks.send_email(mail.id)  # Sets a background task to send the email
 
-        if (request != None):
+        if request is not None:
             mail_url = reverse(
                 'admin:%s_%s_change' % ('mail', 'mail'),
                 args=[mail.id],

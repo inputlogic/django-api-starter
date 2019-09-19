@@ -27,7 +27,9 @@ class MailConfig(AppConfig):
                             except TemplateDoesNotExist:
                                 errors.append(
                                     Warning(
-                                        'Mail template not found at "{}"'.format(obj.get_template()),
+                                        'Mail template not found at "{}"'.format(
+                                            obj.get_template()
+                                        ),
                                         obj=obj,
                                     )
                                 )
