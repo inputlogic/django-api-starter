@@ -16,7 +16,7 @@ class name, minus 'Mail' if present at the front.
 attribute of the class.
 
 `template` - Path to a django template file for the body of the email. Defaults to
-`email/name_attribute.html', where `name_attribute.html` is the snake_case version
+`email/name_attribute.html`, where `name_attribute.html` is the snake_case version
 of the `name` attribute, plus `.html`.
 
 If you need these attributes to be dynamic, you can override the class methods
@@ -46,9 +46,9 @@ class MailNewWheelbarrows(MailBase):
     @classmethod
     def process_context(cls, user, request, **kwargs):
         ctx = {
-          customer_name = user.name,
-          city_name = kwargs['city_name'],
-          wheelbarrows = kwargs['wheelbarrows'],
+          'customer_name': user.name,
+          'city_name': kwargs['city_name'],
+          'wheelbarrows': kwargs['wheelbarrows'],
         }
         return ctx
 ```
@@ -74,7 +74,7 @@ Send mail:
 `apps/barrowtrader/admin.py`
 ```python
 ...
-if new_wheelbarrows != None:
+if new_wheelbarrows is not None:
     MailNewWheelbarrows(user, city_name=city.name, wheelbarrows=new_wheelbarrows)
 ...
 ```
