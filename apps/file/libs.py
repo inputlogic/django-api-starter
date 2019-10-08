@@ -77,3 +77,30 @@ def get_signed_url(method, params):
     if method not in ('put', 'get'):
         raise Exception('invalid signed url method, must be "put" or "get"')
     return _client().generate_presigned_url(method + '_object', params)
+
+
+def get_public_url(file_name):
+    # Only works for files uploaded with ACL: public-read (upload_public_file)
+    return "https://s3.{0}.amazonaws.com/{1}/{2}".format(
+        settings.AWS_S3_REGION_NAME,
+        settings.AWS_STORAGE_BUCKET_NAME,
+        file_name
+    )
+
+
+def upload_public_file(source_file_path, file_name):
+    """
+    This method uploads a file for direct public access
+    source_file_path - A path to the file to upload
+    file_name - The identifier (key) for S3
+    """
+    mime_type = mimetypes.guess_type(file_name)[0]
+
+    _client().upload_file(
+        source_file_path,
+        settings.AWS_STORAGE_BUCKET_NAME,
+        file_name,
+        ExtraArgs={'ACL': 'public-read', 'ContentType': mime_type}
+    )
+
+    return get_public_url(file_name)
