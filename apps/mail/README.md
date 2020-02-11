@@ -31,8 +31,13 @@ request) will be converted into a dict and passed to your templates as context.
 
 4. Create a django template for your email.
 
-5. Call `.send(user, request, **kwargs)` on your subclass to create a new mail
-message and a task to send it.
+5. Call `.send(user, request, admin_feedback, **kwargs)` on your subclass to
+create a new mail message and a task to send it to the email associated with
+`user`.
+
+If you are generating emails inside the Django admin, you can pass in the `request`
+object and set `admin_feedback=True` to generate a notification that the mail
+has been created and is awaiting delivery.
 
 ## Example
 

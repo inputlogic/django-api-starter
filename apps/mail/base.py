@@ -62,7 +62,7 @@ class MailBase:
         return template.render(ctx)
 
     @classmethod
-    def send(cls, user, request=None, **kwargs):
+    def send(cls, user, request=None, admin_feedback=False, **kwargs):
         ctx = serialize(cls.process_context(user, request, **kwargs))
         body = cls.render_body(ctx)
         subject = cls.render_subject(ctx)
@@ -75,13 +75,13 @@ class MailBase:
         )
         tasks.send_email(mail.id)  # Sets a background task to send the email
 
-        if request is not None:
+        if admin_feedback and request is not None:
             mail_url = reverse(
                 'admin:%s_%s_change' % ('mail', 'mail'),
                 args=[mail.id],
             )
             msg = format_html(
-                'The mail message "<a href ="{}">{}</a>" was generated successfully.',
+                'The mail message "<a href ="{}">{}</a>" was generated and is awaiting delivery.',
                 mail_url,
                 mail,
             )
