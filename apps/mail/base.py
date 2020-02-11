@@ -61,7 +61,8 @@ class MailBase:
         template = django_engine.from_string(cls.get_subject())
         return template.render(ctx)
 
-    def __new__(cls, user, request=None, **kwargs):
+    @classmethod
+    def send(cls, user, request=None, **kwargs):
         ctx = serialize(cls.process_context(user, request, **kwargs))
         body = cls.render_body(ctx)
         subject = cls.render_subject(ctx)

@@ -31,7 +31,8 @@ request) will be converted into a dict and passed to your templates as context.
 
 4. Create a django template for your email.
 
-5. Call your subclass to create a new mail message and a task to send it.
+5. Call `.send(user, request, **kwargs)` on your subclass to create a new mail
+message and a task to send it.
 
 ## Example
 
@@ -75,7 +76,7 @@ Send mail:
 ```python
 ...
 if new_wheelbarrows is not None:
-    MailNewWheelbarrows(user, city_name=city.name, wheelbarrows=new_wheelbarrows)
+    MailNewWheelbarrows.send(user, city_name=city.name, wheelbarrows=new_wheelbarrows)
 ...
 ```
 
