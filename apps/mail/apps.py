@@ -21,7 +21,7 @@ class MailConfig(AppConfig):
                 try:
                     mail_module = import_module('{}.mail'.format(app_config.name))
                     for name, obj in inspect.getmembers(mail_module):
-                        if inspect.isclass(obj) and obj != MailBase:
+                        if inspect.isclass(obj) and obj is not MailBase and issubclass(obj, MailBase):
                             try:
                                 get_template(obj.get_template())
                             except TemplateDoesNotExist:
