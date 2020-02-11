@@ -12,7 +12,7 @@ from .libs.camel_space_to_spaces import camel_space_to_spaces
 
 class MailBase:
     @classmethod
-    def process_args(cls, user, request=None, **kwargs):
+    def process_args(cls, user, request=None, *args, **kwargs):
         return {
             'user': user,
             'request': request,
@@ -30,7 +30,7 @@ class MailBase:
             return name
 
     @classmethod
-    def get_subject(cls, user=None, request=None, **kwargs):
+    def get_subject(cls):
         try:
             return cls.subject
         except AttributeError:
@@ -39,7 +39,7 @@ class MailBase:
             return subject
 
     @classmethod
-    def get_template(cls, user=None, request=None, **kwargs):
+    def get_template(cls):
         try:
             return cls.template
         except AttributeError:
@@ -62,8 +62,8 @@ class MailBase:
         return template.render(ctx)
 
     @classmethod
-    def send(cls, user, request=None, admin_feedback=False, **kwargs):
-        ctx = serialize(cls.process_args(user, request, **kwargs))
+    def send(cls, user, request=None, admin_feedback=False, *args, **kwargs):
+        ctx = serialize(cls.process_args(user, request, *args, **kwargs))
         body = cls.render_body(ctx)
         subject = cls.render_subject(ctx)
         mail = Mail.objects.create(

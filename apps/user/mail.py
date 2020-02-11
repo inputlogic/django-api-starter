@@ -9,8 +9,7 @@ class MailResetPassword(MailBase):
     template = 'email/reset_password.html'
 
     @classmethod
-    def process_args(cls, user, request, **kwargs):
-        reset_token = kwargs['reset_token']
+    def process_args(cls, user, request, reset_token):
         ctx = {
             'reset_url': settings.RESET_PASSWORD_URL.format(
                 reset_token=reset_token,
@@ -26,7 +25,7 @@ class MailWelcomeUser(MailBase):
     template = 'email/welcome_user.html'
 
     @classmethod
-    def process_args(cls, user, request, **kwargs):
+    def process_args(cls, user, request):
         ctx = {
             'email': user.email,
         }

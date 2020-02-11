@@ -23,7 +23,7 @@ Email interface with static templates and logging.
    `get_name()`, `get_subject()`, and `get_template()` instead -- for instance, to
    get a user-editable template from a custom model.
 
-3. Optionally add a `process_args(cls, user, request, **kwargs)` class method
+3. Optionally add a `process_args(cls, user, request, *args, **kwargs)` class method
    to process your data and return a context that will be fed to your templates.
 
    By default, all keyword arguments passed to your subclass (including user and
