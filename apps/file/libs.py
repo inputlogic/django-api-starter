@@ -59,7 +59,7 @@ def get_upload_url(file_name, acl='private'):
         'url': get_signed_url('put', {
             'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
             'Key': _create_file_key(file_name),
-            'ContentType': mimetypes.guess_type(file_name)[0],
+            'ContentType': content_type,
             'ACL': acl,
         }),
         'content_type': content_type
