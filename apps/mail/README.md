@@ -23,7 +23,7 @@ If you need these attributes to be dynamic, you can override the class methods
 `get_name()`, `get_subject()`, and `get_template()` instead -- for instance, to
 get a user-editable template from a custom model.
 
-3. Optionally add a `process_context(cls, user, request, **kwargs)` class method
+3. Optionally add a `process_args(cls, user, request, **kwargs)` class method
 to process your data and return a context that will be fed to your templates.
 
 By default, all keyword arguments passed to your subclass (including user and
@@ -50,7 +50,7 @@ class MailNewWheelbarrows(MailBase):
     template = 'email/new_wheelbarrows.html
 
     @classmethod
-    def process_context(cls, user, request, **kwargs):
+    def process_args(cls, user, request, **kwargs):
         ctx = {
           'customer_name': user.name,
           'city_name': kwargs['city_name'],

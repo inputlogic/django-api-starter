@@ -12,7 +12,7 @@ from .libs.camel_space_to_spaces import camel_space_to_spaces
 
 class MailBase:
     @classmethod
-    def process_context(cls, user, request=None, **kwargs):
+    def process_args(cls, user, request=None, **kwargs):
         return {
             'user': user,
             'request': request,
@@ -63,7 +63,7 @@ class MailBase:
 
     @classmethod
     def send(cls, user, request=None, admin_feedback=False, **kwargs):
-        ctx = serialize(cls.process_context(user, request, **kwargs))
+        ctx = serialize(cls.process_args(user, request, **kwargs))
         body = cls.render_body(ctx)
         subject = cls.render_subject(ctx)
         mail = Mail.objects.create(
