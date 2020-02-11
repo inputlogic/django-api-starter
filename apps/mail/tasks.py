@@ -30,16 +30,17 @@ def send_email(mail_id):
         'content-type': 'application/json'
     }
 
+    to_email = getattr(mail.user, mail.user.get_email_field_name())
+    try:
+        to_name = u.get_full_name()
+    except:
+        to_name = to_email
+
     payload = {
         'personalizations': [{
             'to': [{
-                'email': mail.user.email,
-                'name': mail.user.email,
-                #  ___CHANGEME___ if users have first and last names
-                # 'name': '{} {}'.format(
-                #     mail.user.first_name,
-                #     mail.user.last_name
-                # ).strip()
+                'email': to_email,
+                'name': to_name,
             }]
         }],
         'from': {
