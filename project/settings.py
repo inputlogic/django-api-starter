@@ -251,11 +251,12 @@ GOOGLE_PROJECT_ID = get('GOOGLE_PROJECT_ID')
 GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
 
 # MAIL
+SEND_MAIL = get('SEND_MAIL') == 'True'
+
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
-SEND_MAIL = get('SEND_MAIL') == 'True'
+
 SENDGRID_API_KEY = get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
 SENDGRID_FROM_EMAIL = ''
 SENDGRID_FROM_NAME = ''
-MAIL_PRODUCTION_URL = 'http://___CHANGEME___.herokuapp.com'
