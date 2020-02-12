@@ -37,6 +37,17 @@ def _get_file_key(url):
     return '/'.join(url.split('/')[-2:])
 
 
+def _generate_public_url(file_name):
+    """
+    Generates the expected URL of a file uploaded with ACL: public-read
+    """
+    return "https://{0}.s3-{1}.amazonaws.com/{2}".format(
+        settings.AWS_STORAGE_BUCKET_NAME,
+        settings.AWS_DEFAULT_REGION,
+        file_name
+    )
+
+
 def upload_file(file, destination, mime_type=None):
     """
     file - A file like object/buffer
@@ -79,28 +90,21 @@ def get_signed_url(method, params):
     return _client().generate_presigned_url(method + '_object', params)
 
 
-def get_public_url(file_name):
-    # Only works for files uploaded with ACL: public-read (upload_public_file)
-    return "https://s3.{0}.amazonaws.com/{1}/{2}".format(
-        settings.AWS_S3_REGION_NAME,
-        settings.AWS_STORAGE_BUCKET_NAME,
-        file_name
-    )
-
-
-def upload_public_file(source_file_path, file_name):
+def upload_public_file(file, file_name, mime_type=None):
     """
     This method uploads a file for direct public access
-    source_file_path - A path to the file to upload
+
+    file - A file like object/buffer
     file_name - The identifier (key) for S3
     """
-    mime_type = mimetypes.guess_type(file_name)[0]
+    if mime_type is None:
+        mime_type = mimetypes.guess_type(file_name)[0]
 
-    _client().upload_file(
-        source_file_path,
+    _client().upload_fileobj(
+        file,
         settings.AWS_STORAGE_BUCKET_NAME,
         file_name,
         ExtraArgs={'ACL': 'public-read', 'ContentType': mime_type}
     )
 
-    return get_public_url(file_name)
+    return _generate_public_url(file_name)
