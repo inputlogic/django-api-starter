@@ -11,17 +11,12 @@ from .serializers import (
 )
 
 
-class Me(generics.RetrieveUpdateDestroyAPIView):
+class Me(generics.RetrieveUpdateAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
     def get_object(self):
         return self.request.user
-
-    def perform_destroy(self, instance):
-        instance.is_deleted = True
-        instance.save()
-        return
 
 
 class UserCreate(generics.CreateAPIView):
