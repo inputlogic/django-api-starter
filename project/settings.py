@@ -50,7 +50,7 @@ INSTALLED_APPS = [
 
     'apps.file',
     'apps.socialmedia',
-    'apps.support',
+    'apps.logging',
     'apps.user',
 
     # ___CHANGEME___

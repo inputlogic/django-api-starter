@@ -3,7 +3,6 @@ from rest_framework import generics, permissions
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from rest_framework_tracking.mixins import LoggingMixin
 
 from .serializers import (
     UserSerializer,
@@ -31,31 +30,10 @@ class UserCreate(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
 
-class UserList(LoggingMixin, generics.ListAPIView):
-    # optionally specify what methods to log
-    # logging_methods = ['GET','POST']
+class UserList(generics.ListAPIView):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAdminUser,)
-
-    '''
-    optional mask sensitive data. By default drf-tracking is hiding the
-    values of the fields {'api', 'token', 'key', 'secret', 'password', 'signature'}.
-    '''
-    sensitive_fields = {'password'}
-
-    # Optional set conditions for when logging should occur
-    '''
-    def should_log(self, request, response):
-        return response.status_code >= 400
-    '''
-
-    # Optional custom handler logic
-    '''
-    def handle_log(self):
-        #Save only very slow requests. Requests that took more than a second.
-        if self.log['response_ms'] > 1000:
-    '''
 
 
 class UserCustomObtainAuthToken(ObtainAuthToken):
