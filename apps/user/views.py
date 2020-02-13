@@ -25,9 +25,13 @@ class Me(generics.RetrieveUpdateDestroyAPIView):
 
 
 class UserCreate(generics.CreateAPIView):
-    queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
     permission_classes = (permissions.AllowAny,)
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        token = Token.objects.create(user_id=response.data['id'])
+        return Response({'token': token.key, 'userId': token.user_id})
 
 
 class UserList(generics.ListAPIView):
