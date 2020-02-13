@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.contrib.auth.forms import UserChangeForm
 from django.contrib import admin
 from authtools.admin import UserAdmin
 
@@ -16,6 +17,7 @@ class UserAdmin(UserAdmin):
     filter_horizontal = ()
     filter_vertical = ()
     actions = None
+    form = UserChangeForm
 
 
 admin.site.register(get_user_model(), UserAdmin)

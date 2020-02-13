@@ -9,8 +9,9 @@ cd ___PROJNAME___
 ```
 
 Create and activate local python environment:
+
 ```
-virtualenv env
+python -m venv env
 . ./env/bin/activate
 ```
 

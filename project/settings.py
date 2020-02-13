@@ -49,7 +49,6 @@ INSTALLED_APPS = [
     'rest_framework_tracking',
     'workers',
 
-    'apps.content',
     'apps.file',
     'apps.socialmedia',
     'apps.support',
