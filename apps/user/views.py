@@ -31,7 +31,7 @@ class UserList(generics.ListAPIView):
     permission_classes = (permissions.IsAdminUser,)
 
 
-class UserCustomObtainAuthToken(ObtainAuthToken):
+class UserLogin(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
