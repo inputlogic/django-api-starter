@@ -23,7 +23,7 @@ urlpatterns = [
     # Routes for example apps
     url(r'^', include('apps.proxyexample.urls')),
     url(r'^', include('apps.workerexample.urls')),
-    url(r'^', include('apps.logs.endpoint-example')),
+    url(r'^', include('apps.logging.endpoint-example')),
 
     # Browsable API
     url(r'^api/$', api_root, name='index'),
