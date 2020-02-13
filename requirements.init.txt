@@ -5,7 +5,6 @@ arrow
 boto3
 dj-database-url
 django
-django-authtools
 django-cors-headers
 django-dotenv
 django-extensions

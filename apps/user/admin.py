@@ -1,24 +1,37 @@
-from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
-from django.contrib.auth.forms import UserChangeForm
 from django.contrib import admin
-from authtools.admin import UserAdmin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
+
+User = get_user_model()
+USERNAME_FIELD = User.USERNAME_FIELD
+REQUIRED_FIELDS = (USERNAME_FIELD,) + tuple(User.REQUIRED_FIELDS)
 
 
-class UserAdmin(UserAdmin):
+@admin.register(User)
+class UserAdmin(DjangoUserAdmin):
     list_display = ('email', 'is_active')
     fieldsets = (
-        (None, {'fields': ('email', 'is_active')}),
-        ('Password', {'fields': ('password',)}),
+        (None, {'fields': REQUIRED_FIELDS + (
+            'is_active',
+            'is_staff',
+            'is_superuser',
+            'date_joined',
+            'last_login',
+        )}),
+        ('Password', {'fields': (
+            'password',
+        )}),
     )
-    search_fields = ()
+    add_fieldsets = (
+        (None, {'fields': REQUIRED_FIELDS + (
+            'password1',
+            'password2',
+        )}),
+    )
+    readonly_fields = (
+        'date_joined',
+        'last_login'
+    )
+    search_fields = (USERNAME_FIELD,)
+    ordering = (USERNAME_FIELD,)
     list_filter = ()
-    ordering = ('email',)
-    filter_horizontal = ()
-    filter_vertical = ()
-    actions = None
-    form = UserChangeForm
-
-
-admin.site.register(get_user_model(), UserAdmin)
-admin.site.unregister(Group)
