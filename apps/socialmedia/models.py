@@ -1,6 +1,6 @@
 from django.db import models
 
-from apps.user.models import User
+from project import settings
 
 
 class SocialMedia(models.Model):
@@ -12,7 +12,7 @@ class SocialMedia(models.Model):
     )
 
     user = models.ForeignKey(
-        User, db_index=True, related_name='social_media', on_delete=models.CASCADE, null=False,
+        settings.AUTH_USER_MODEL, db_index=True, related_name='social_media', on_delete=models.CASCADE, null=False,
         blank=False
     )
     source = models.IntegerField(choices=SOCIAL_MEDIA_SOURCES, db_index=True, default=FACEBOOK)

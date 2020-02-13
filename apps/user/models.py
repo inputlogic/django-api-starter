@@ -1,4 +1,4 @@
-from authtools.models import AbstractEmailUser
+from .base import AbstractEmailUser
 
 
 class User(AbstractEmailUser):
