@@ -32,6 +32,7 @@ jobs:
         AWS_LOCATION: "test"
         AWS_DEFAULT_REGION: "test"
         AWS_QUERYSTRING_AUTH: False
+        SEND_MAIL: False
         FACEBOOK_APP_ID: "test"
         FACEBOOK_APP_CLIENT_TOKEN: "test"
         FACEBOOK_APP_SECRET: "test"
