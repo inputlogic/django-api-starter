@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
+from rest_framework.authtoken.models import Token
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.response import Response
-from rest_framework.authtoken.models import Token
 
 from .serializers import (
     UserSerializer,
@@ -31,7 +31,10 @@ class UserCreate(generics.CreateAPIView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         token = Token.objects.create(user_id=response.data['id'])
-        return Response({'token': token.key, 'userId': token.user_id})
+        return Response(
+            {'token': token.key, 'userId': token.user_id},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class UserList(generics.ListAPIView):
