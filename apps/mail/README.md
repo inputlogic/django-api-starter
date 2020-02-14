@@ -34,7 +34,7 @@ Subclass `MailBase` and define the properties you want to customize.
 class MailNewWheelbarrows(MailBase):
     name = 'New Wheelbarrows'
     subject = 'BarrowTrader | New wheelbarrow recommendations in the {{ city_name }} area!'
-    template = 'email/new_wheelbarrows.html
+    template = 'email/new_wheelbarrows.html'
 
     @classmethod
     def process_args(cls, user, request, *args, **kwargs):

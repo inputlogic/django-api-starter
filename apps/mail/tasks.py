@@ -32,7 +32,7 @@ def send_email(mail_id):
 
     to_email = getattr(mail.user, mail.user.get_email_field_name())
     try:
-        to_name = u.get_full_name()
+        to_name = mail.user.get_full_name()
     except:
         to_name = to_email
 
