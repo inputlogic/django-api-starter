@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 
 from .serializers import (
     UserSerializer,
+    CustomAuthTokenSerializer,
     ForgotPasswordSerializer,
     ResetPasswordSerializer
 )
@@ -37,6 +38,8 @@ class UserList(generics.ListAPIView):
 
 
 class UserCustomObtainAuthToken(ObtainAuthToken):
+    serializer_class = CustomAuthTokenSerializer
+
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         token = Token.objects.get(key=response.data['token'])
