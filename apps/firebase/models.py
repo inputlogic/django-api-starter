@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .tasks import update_salesforce_device_id
-
 
 class Firebase(models.Model):
     user = models.ForeignKey(
