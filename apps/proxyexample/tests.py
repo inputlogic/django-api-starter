@@ -6,11 +6,11 @@ from rest_framework.test import APITestCase
 
 
 class ProxyTests(APITestCase):
-    def set_token(self, username, password):
+    def set_token(self, email, password):
         url = reverse('login')
         response = self.client.post(
             url,
-            data={'username': username, 'password': password},
+            data={'email': email, 'password': password},
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)

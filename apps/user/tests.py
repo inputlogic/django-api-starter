@@ -22,15 +22,28 @@ class UserTests(APITestCase):
         data = {'email': 'test@example.org', 'password': 'yayhooray'}
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertIn('token', response.data)
+        self.assertIn('userId', response.data)
         self.assertEqual(get_user_model().objects.count(), 1)
         self.assertEqual(get_user_model().objects.get().email, 'test@example.org')
+
+    def test_login_user(self):
+        user = get_user_model().objects.create_user(
+            email='user@example.com',
+            password='secret',)
+        url = reverse('login')
+        data = {'email': 'user@example.com', 'password': 'secret'}
+        response = self.client.post(url, data, format='json')
+        self.assertIn('token', response.data)
+        self.assertIn('userId', response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
 
     def test_get_profile(self):
         user = get_user_model().objects.create_user(
             email='user@example.com',
             password='secret',)
         self.client.force_authenticate(user=user)
-
         response = self.client.get(reverse('me'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
