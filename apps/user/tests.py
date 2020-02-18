@@ -4,11 +4,11 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from . import emails
+from . import mail
 
 
 def stub_forgot_password_email(calls):
-    def forgot_password_email(reset_token, user):
+    def forgot_password_email(user, reset_token):
         calls.append((reset_token, user.id))
     return forgot_password_email
 
@@ -53,9 +53,9 @@ class UserTests(APITestCase):
             email='user@example.com',
             password='secret',)
         email_values = []
-        emails.forgot_password = stub_forgot_password_email(email_values)
+        mail.MailResetPassword.send = stub_forgot_password_email(email_values)
         response = self.client.post(
-                reverse('forgot-password'), data={'email': user.email}, format='json')
+            reverse('forgot-password'), data={'email': user.email}, format='json')
         self.assertEqual(len(email_values), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         (token, user_id) = email_values[0]

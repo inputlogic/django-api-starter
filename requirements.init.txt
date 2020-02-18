@@ -20,5 +20,6 @@ google-auth-oauthlib
 gunicorn
 pillow
 psycopg2-binary
+Pygments
 raven
 requests
