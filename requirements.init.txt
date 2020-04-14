@@ -13,7 +13,7 @@ django-storages
 django-workers
 djangorestframework
 djangorestframework-camel-case
-drf-tracking
+drf-api-tracking
 facebook-sdk
 factory_boy
 google-auth-oauthlib
