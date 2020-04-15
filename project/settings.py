@@ -36,23 +36,26 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
     'django.contrib.messages',
+    'django.contrib.sessions',
     'django.contrib.staticfiles',
 
     'corsheaders',
     'django_extensions',
+    'djrichtextfield',
     'facebook',
+    'mptt', # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
     'workers',
 
+    'apps.cms',
     'apps.file',
-    'apps.socialmedia',
     'apps.logging',
-    'apps.user',
     'apps.mail',
+    'apps.socialmedia',
+    'apps.user',
 
     # ___CHANGEME___
     # Example apps
@@ -205,6 +208,33 @@ REST_FRAMEWORK = {
         'rest_framework.filters.SearchFilter',
     ),
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
+}
+
+DJRICHTEXTFIELD_CONFIG = {
+    'js': ['//cdn.quilljs.com/1.3.6/quill.js'],
+    'css': {
+        'all': ['//cdn.quilljs.com/1.3.6/quill.snow.css']
+    },
+    'init_template': 'editor/init_quill.js',
+    'settings': {
+        'modules': {
+            'toolbar': [
+                [{ 'header': [1, 2, 3, False] }],
+                ['bold', 'italic', 'underline'],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                ['image', 'blockquote', 'code-block'],
+                [{ 'align': [] }],
+                ['clean']
+            ],
+            'history': {
+                'delay': 2000,
+                'maxStack': 500,
+                'userOnly': True
+            }
+        },
+        'placeholder': 'Compose an epic...',
+        'theme': 'snow'
+    }
 }
 
 AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
