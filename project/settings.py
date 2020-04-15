@@ -213,7 +213,10 @@ REST_FRAMEWORK = {
 DJRICHTEXTFIELD_CONFIG = {
     'js': ['//cdn.quilljs.com/1.3.6/quill.js'],
     'css': {
-        'all': ['//cdn.quilljs.com/1.3.6/quill.snow.css']
+        'all': [
+            '//cdn.quilljs.com/1.3.6/quill.snow.css',
+            'css/admin.css',
+        ]
     },
     'init_template': 'editor/init_quill.js',
     'settings': {
