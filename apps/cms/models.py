@@ -1,8 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
 
-from adminsortable.models import SortableMixin
-from adminsortable.fields import SortableForeignKey
 from djrichtextfield.models import RichTextField
 from mptt.models import MPTTModel, TreeForeignKey
 
@@ -47,16 +45,12 @@ class Page(SlugBase, MPTTModel):
         order_insertion_by = ('title',)
 
 
-class Section(SortableMixin):
-    page = SortableForeignKey('cms.Page', on_delete=models.CASCADE)
+class Section(models.Model):
+    page = models.ForeignKey('cms.Page', on_delete=models.CASCADE)
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='section_images')
     body = RichTextField(null=True)
-    sort_order = models.PositiveIntegerField(
-        default=0,
-        editable=False,
-        db_index=True,
-    )
+    sort_order = models.PositiveIntegerField(default=0, blank=False, null=False)
 
     class Meta:
         ordering = ['sort_order']
