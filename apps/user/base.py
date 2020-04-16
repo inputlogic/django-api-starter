@@ -21,6 +21,9 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
+    def normalize_email(self, email):
+        return email.lower()
+
 
 class AbstractEmailUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), max_length=255, unique=True)
