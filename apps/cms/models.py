@@ -1,22 +1,24 @@
 from django.db import models
 from django.utils.text import slugify
 
+from adminsortable.models import SortableMixin
+from adminsortable.fields import SortableForeignKey
 from djrichtextfield.models import RichTextField
 from mptt.models import MPTTModel, TreeForeignKey
 
 
 class SlugBase(models.Model):
-    name = models.CharField(max_length=255)
+    title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=140, unique=True)
 
     class Meta:
         abstract = True
 
     def __str__(self):
-        return self.name
+        return self.title
 
     def _get_unique_slug(self):
-        slug = slugify(self.name)
+        slug = slugify(self.title)
         unique_slug = slug
         num = 1
         while Page.objects.filter(slug=unique_slug).exists():
@@ -42,8 +44,19 @@ class Page(SlugBase, MPTTModel):
     body = RichTextField(null=True)
 
     class MPTTMeta:
-        order_insertion_by = ('name',)
+        order_insertion_by = ('title',)
 
 
+class Section(SortableMixin):
+    page = SortableForeignKey('cms.Page', on_delete=models.CASCADE)
+    title = models.CharField(max_length=50)
+    image = models.ImageField(upload_to='section_images')
+    body = RichTextField(null=True)
+    sort_order = models.PositiveIntegerField(
+        default=0,
+        editable=False,
+        db_index=True,
+    )
 
-
+    class Meta:
+        ordering = ['sort_order']

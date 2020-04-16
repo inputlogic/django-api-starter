@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    'adminsortable',
     'corsheaders',
     'django_extensions',
     'djrichtextfield',

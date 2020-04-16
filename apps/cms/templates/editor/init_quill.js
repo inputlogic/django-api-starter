@@ -1,6 +1,7 @@
 window.QUILLS = window.QUILLS || {};
 
 if (!QUILLS[id]) {
+  console.log('init Quill', { id, $e });
   // Hide the textarea element
   $e.hide();
 
