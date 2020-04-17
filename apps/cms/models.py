@@ -38,6 +38,11 @@ class Tag(SlugBase):
 
 
 class Page(SlugBase, MPTTModel):
+    LAYOUT_CHOICES = (
+        ('simple', 'Simple'),
+        ('sectioned', 'Sectioned'),
+    )
+
     parent = TreeForeignKey(
         'self',
         null=True,
@@ -46,7 +51,10 @@ class Page(SlugBase, MPTTModel):
         db_index=True,
         on_delete=models.CASCADE
     )
-    body = RichTextField(null=True)
+    sub_title = models.CharField(max_length=255)
+    layout = models.CharField(choices=LAYOUT_CHOICES, default='simple', max_length=30)
+    body = RichTextField(null=True, blank=True)
+    sidebar = RichTextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -68,20 +76,26 @@ class Section(models.Model):
 # Posts
 
 
-class Post(SlugBase):
-    body = RichTextField(null=True)
+class AbstractContentType(SlugBase):
     tags = models.ManyToManyField('cms.Tag', related_name='tags')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        abstract = True
 
-class Work(Post):
+
+class Work(AbstractContentType):
     """
     Example 'Custom Post Type'
     """
     headline = models.CharField(max_length=255, null=True, blank=True)
     intro_image = models.ImageField(upload_to='intro_images')
     intro_body = RichTextField(null=True)
+
+    class Meta:
+        verbose_name = 'Work'
+        verbose_name_plural = 'Work'
 
 
 class Slide(models.Model):

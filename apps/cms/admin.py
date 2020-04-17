@@ -1,9 +1,11 @@
 from django.contrib import admin
+from django.db import models
 
 from adminsortable2.admin import SortableInlineAdminMixin
 from mptt.admin import DraggableMPTTAdmin
 
 from .models import Tag, Page, Section, Work, Slide
+from .widgets import AdminImageWidget
 
 
 @admin.register(Tag)
@@ -18,6 +20,7 @@ class TagAdmin(admin.ModelAdmin):
 class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Section
     extra = 0
+    classes = ['layout_sectioned',]
 
 
 @admin.register(Page)
@@ -26,11 +29,26 @@ class PageAdmin(DraggableMPTTAdmin):
     list_display_links = ('indented_title',)
     readonly_fields = ('slug',)
     inlines = (SectionInline,)
+    fieldsets = (
+        (None, {
+            'fields': (('title', 'slug'), 'sub_title', 'layout',)
+        }),
+        ('Content', {
+            'classes': ('layout_simple',),
+            'fields': ('sidebar', 'body',),
+        }),
+    )
+
+    class Media:
+        js = ('jQuery.js', 'cms/js/page.js',)
 
 
 class SlideInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Slide
     extra = 0
+    formfield_overrides = {
+        models.ImageField: {'widget': AdminImageWidget},
+    }
 
 
 @admin.register(Work)
@@ -44,7 +62,10 @@ class WorkAdmin(admin.ModelAdmin):
         (None, {
             'fields': (('title', 'slug'), 'headline', 'tags')
         }),
-        ('Content', {
-            'fields': ('intro_image', 'intro_body', 'body',),
+        ('Intro', {
+            'fields': (('intro_image', 'intro_body',),),
         }),
     )
+    formfield_overrides = {
+        models.ImageField: {'widget': AdminImageWidget},
+    }

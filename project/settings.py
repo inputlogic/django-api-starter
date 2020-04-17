@@ -130,6 +130,9 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
@@ -216,7 +219,7 @@ DJRICHTEXTFIELD_CONFIG = {
     'css': {
         'all': [
             '//cdn.quilljs.com/1.3.6/quill.snow.css',
-            'css/admin.css',
+            'cms/css/admin.css',
         ]
     },
     'init_template': 'editor/init_quill.js',
