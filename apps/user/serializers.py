@@ -21,10 +21,7 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.is_staff
 
     def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = get_user_model()(**validated_data)
-        user.set_password(password)
-        user.save()
+        user = get_user_model().objects.create_user(**validated_data)
         MailWelcomeUser.send(user)
         return user
 
@@ -52,8 +49,11 @@ class CustomAuthTokenSerializer(serializers.Serializer):
         password = attrs.get('password')
 
         if email and password:
-            user = authenticate(request=self.context.get('request'),
-                                username=email, password=password)
+            user = authenticate(
+                request=self.context.get('request'),
+                username=email.lower(),
+                password=password
+            )
 
             # The authenticate call simply returns None for is_active=False
             # users. (Assuming the default ModelBackend authentication
@@ -73,7 +73,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
     email = serializers.EmailField(write_only=True)
 
     def create(self, validated_data):
-        email = validated_data['email']
+        email = validated_data['email'].lower()
         try:
             user = get_user_model().objects.get(email=email)
         except get_user_model().DoesNotExist:
