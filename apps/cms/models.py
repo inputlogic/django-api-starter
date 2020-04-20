@@ -5,6 +5,27 @@ from djrichtextfield.models import RichTextField
 from mptt.models import MPTTModel, TreeForeignKey
 
 
+class AbstractMetadata(models.Model):
+    OG_TYPES = (
+        ('video.other', 'Video'),
+        ('video.movie', 'Movie'),
+        ('video.tv_show', 'TV Show'),
+        ('article', 'Article'),
+        ('book', 'Book'),
+        ('profile', 'Profile'),
+        ('website', 'Website'),
+    )
+
+    meta_title = models.CharField('<meta> title', max_length=80, blank=True, null=True)
+    meta_description = models.CharField('<meta> description', max_length=160, blank=True, null=True)
+    og_title = models.CharField(' og:title', max_length=80, blank=True, null=True)
+    og_type = models.CharField(' og:type', choices=OG_TYPES, default='website', max_length=30)
+    og_description = models.CharField(' og:description', max_length=200, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
 class SlugBase(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=140, unique=True)
@@ -37,7 +58,7 @@ class Tag(SlugBase):
 # Pages
 
 
-class Page(SlugBase, MPTTModel):
+class Page(SlugBase, AbstractMetadata, MPTTModel):
     LAYOUT_CHOICES = (
         ('simple', 'Simple'),
         ('sectioned', 'Sectioned'),

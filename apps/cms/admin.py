@@ -33,6 +33,16 @@ class PageAdmin(DraggableMPTTAdmin):
         (None, {
             'fields': (('title', 'slug'), 'sub_title', 'layout',)
         }),
+        ('Metadata', {
+            'classes': ('collapse', 'open'),
+            'fields': (
+                'meta_title',
+                'meta_description',
+                'og_title',
+                'og_description',
+                'og_type',
+            ),
+        }),
         ('Content', {
             'classes': ('layout_simple',),
             'fields': ('sidebar', 'body',),
