@@ -1,7 +1,9 @@
 from rest_framework import generics, permissions
 
-from .models import Work, Page
-from .serializers import WorkSerializer, PageSerializer
+from .models.work import Work
+from .models.page import Page
+from .serializers.work import WorkSerializer
+from .serializers.page import PageSerializer
 
 
 class WorkDetail(generics.RetrieveAPIView):

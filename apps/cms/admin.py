@@ -4,7 +4,9 @@ from django.db import models
 from adminsortable2.admin import SortableInlineAdminMixin
 from mptt.admin import DraggableMPTTAdmin
 
-from .models import Tag, Page, Section, Work, Slide
+from .models.page import Page, Section
+from .models.work import Work, Slide
+from .models.tag import Tag
 from .widgets import AdminImageWidget
 
 
