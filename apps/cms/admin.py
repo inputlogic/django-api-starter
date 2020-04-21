@@ -12,7 +12,7 @@ from .widgets import AdminImageWidget
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('title',)
+    list_display = ('title', 'slug',)
     actions = None
     list_per_page = 25
     fields = ('title',)

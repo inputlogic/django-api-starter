@@ -33,18 +33,19 @@ class SlugBase(models.Model):
     def __str__(self):
         return self.title
 
-    def _get_unique_slug(self):
-        slug = slugify(self.title)
+    @classmethod
+    def _get_unique_slug(cls, title):
+        slug = slugify(title)
         unique_slug = slug
         num = 1
-        while Page.objects.filter(slug=unique_slug).exists():
+        while cls.objects.filter(slug=unique_slug).exists():
             unique_slug = '{}-{}'.format(slug, num)
             num += 1
         return unique_slug
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = self._get_unique_slug()
+            self.slug = self._get_unique_slug(self.title)
         super().save(*args, **kwargs)
 
 
