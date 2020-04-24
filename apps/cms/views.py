@@ -1,20 +1,20 @@
 from rest_framework import generics, permissions
 
-from .models.work import Work
+from .models.post import Post
 from .models.page import Page
-from .serializers.work import WorkSerializer
+from .serializers.post import PostSerializer
 from .serializers.page import PageSerializer
 
 
-class WorkDetail(generics.RetrieveAPIView):
-    queryset = Work.objects.all()
-    serializer_class = WorkSerializer
+class PostDetail(generics.RetrieveAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     permission_classes = (permissions.AllowAny,)
 
 
-class WorkList(generics.ListAPIView):
-    queryset = Work.objects.all()
-    serializer_class = WorkSerializer
+class PostList(generics.ListAPIView):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     permission_classes = (permissions.AllowAny,)
 
 

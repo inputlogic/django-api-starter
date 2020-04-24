@@ -5,7 +5,7 @@ from adminsortable2.admin import SortableInlineAdminMixin
 from mptt.admin import DraggableMPTTAdmin
 
 from .models.page import Page, Section
-from .models.work import Work, Slide
+from .models.post import Post
 from .models.tag import Tag
 from .widgets import AdminImageWidget
 
@@ -55,28 +55,23 @@ class PageAdmin(DraggableMPTTAdmin):
         js = ('jQuery.js', 'cms/js/page.js',)
 
 
-class SlideInline(SortableInlineAdminMixin, admin.TabularInline):
-    model = Slide
-    extra = 0
-    formfield_overrides = {
-        models.ImageField: {'widget': AdminImageWidget},
-    }
-
-
-@admin.register(Work)
-class WorkAdmin(admin.ModelAdmin):
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug',)
     list_display_links = ('title',)
     readonly_fields = ('slug',)
     autocomplete_fields = ('tags',)
-    inlines = (SlideInline,)
     fieldsets = (
         (None, {
-            'fields': (('title', 'slug'), 'headline', 'tags')
+            'fields': (('title', 'slug'), 'tags', 'published',)
         }),
-        ('Intro', {
-            'fields': (('intro_image', 'intro_body',),),
+        ('Feature', {
+            'classes': ('collapse',),
+            'fields': (('feature_image', 'feature_color',),),
         }),
+        ('Content', {
+            'fields': ('body',)
+        })
     )
     formfield_overrides = {
         models.ImageField: {'widget': AdminImageWidget},
