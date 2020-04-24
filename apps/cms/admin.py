@@ -63,7 +63,7 @@ class PostAdmin(admin.ModelAdmin):
     autocomplete_fields = ('tags',)
     fieldsets = (
         (None, {
-            'fields': (('title', 'slug'), 'tags', 'published',)
+            'fields': (('title', 'slug'), 'tags', 'published_on', 'published',)
         }),
         ('Feature', {
             'classes': ('collapse',),

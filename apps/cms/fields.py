@@ -8,7 +8,7 @@ class ColorField(models.CharField):
     description = "A hex color value"
 
     def __init__(self, *args, **kwargs):
-        kwargs['max_length'] = 6
+        kwargs['max_length'] = 7 
         super().__init__(*args, **kwargs)
 
     def formfield(self, **kwargs):

@@ -1,3 +1,5 @@
+from datetime import datetime   
+
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
@@ -20,6 +22,7 @@ class Post(AbstractContentType):
      - updated_at
     """
     published = models.BooleanField(default=False)
+    published_on = models.DateTimeField(default=datetime.now, blank=True)
     feature_image = models.ImageField(upload_to='feature_images', blank=True, null=True)
-    feature_color = ColorField(_('Feature Color'), default='ffffff', null=True, blank=True)
+    feature_color = ColorField(_('Feature Color'), default='#ffffff', null=True, blank=True)
     body = RichTextField(null=True, blank=True)
