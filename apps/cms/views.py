@@ -1,5 +1,7 @@
 from datetime import datetime
 
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+
 from rest_framework import generics, permissions
 
 from .models.post import Post
@@ -21,6 +23,7 @@ class PostList(generics.ListAPIView):
     serializer_class = PostSerializer
     permission_classes = (permissions.AllowAny,)
     filter_class = PostFilters
+    search_fields = ['title', 'body']
 
     def get_queryset(self):
         """
@@ -39,3 +42,4 @@ class PageList(generics.ListAPIView):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
     permission_classes = (permissions.AllowAny,)
+    search_fields = ['title', 'sub_title', 'body']
