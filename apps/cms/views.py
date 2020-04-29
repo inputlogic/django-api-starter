@@ -7,6 +7,8 @@ from .models.page import Page
 from .serializers.post import PostSerializer
 from .serializers.page import PageSerializer
 
+from .filters import PostFilters
+
 
 class PostDetail(generics.RetrieveAPIView):
     queryset = Post.objects.all()
@@ -18,6 +20,7 @@ class PostList(generics.ListAPIView):
     queryset = Post.objects.filter(published=True)
     serializer_class = PostSerializer
     permission_classes = (permissions.AllowAny,)
+    filter_class = PostFilters
 
     def get_queryset(self):
         """

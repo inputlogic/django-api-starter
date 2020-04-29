@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'adminsortable2',
     'corsheaders',
     'django_extensions',
+    'django_filters',
     'djrichtextfield',
     'facebook',
     'mptt', # Needed for 'apps.cms'
