@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from rest_framework import generics, permissions
 
 from .models.post import Post
@@ -13,9 +15,15 @@ class PostDetail(generics.RetrieveAPIView):
 
 
 class PostList(generics.ListAPIView):
-    queryset = Post.objects.all()
+    queryset = Post.objects.filter(published=True)
     serializer_class = PostSerializer
     permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        """
+        Don't return Posts scheduled to be published in the future.
+        """
+        return self.queryset.filter(published_on__lte=datetime.today())
 
 
 class PageDetail(generics.RetrieveAPIView):
@@ -28,4 +36,3 @@ class PageList(generics.ListAPIView):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
     permission_classes = (permissions.AllowAny,)
-

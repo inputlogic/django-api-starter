@@ -14,9 +14,10 @@ class PostSerializer(serializers.ModelSerializer):
             'title',
             'slug',
             'published',
+            'published_on',
             'feature_image',
             'feature_color',
+            'body',
             'tags',
-            'created_at',
             'updated_at',
         )
