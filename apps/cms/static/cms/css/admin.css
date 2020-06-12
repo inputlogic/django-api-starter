@@ -1,0 +1,19 @@
+.ql-container.ql-snow {
+  min-width: 700px;
+  max-width: 1200px;
+  min-height: 400px;
+}
+
+/* Django admin fixes */
+
+.ql-container h1,
+.ql-container h2,
+.ql-container h3,
+.ql-container caption {
+  background: transparent;
+  color: rgb(51, 51, 51);
+}
+
+form .aligned .ql-container ul {
+  margin-left: 0;
+}

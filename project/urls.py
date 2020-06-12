@@ -13,8 +13,10 @@ admin.site.site_header = settings.ADMIN_HEADER
 urlpatterns = [
     # Admin
     url(r'^admin/', admin.site.urls),
+    url(r'^djrichtextfield/', include('djrichtextfield.urls')),
 
     # App routes
+    url(r'^', include('apps.cms.urls')),
     url(r'^', include('apps.file.urls')),
     url(r'^', include('apps.socialmedia.urls')),
     url(r'^', include('apps.user.urls')),
@@ -32,3 +34,4 @@ urlpatterns = [
 
 if settings.ENV == settings.DEV:
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
