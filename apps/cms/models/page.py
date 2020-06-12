@@ -36,7 +36,7 @@ class Section(models.Model):
     title = models.CharField(max_length=50)
     image = models.ImageField(upload_to='section_images')
     body = RichTextField(null=True)
-    sort_order = models.PositiveIntegerField(default=0, blank=False, null=False)
+    sort_order = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = ['sort_order']

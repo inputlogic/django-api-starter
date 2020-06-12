@@ -13,11 +13,11 @@ class AbstractMetadata(models.Model):
         ('website', 'Website'),
     )
 
-    meta_title = models.CharField('<meta> title', max_length=80, blank=True, null=True)
-    meta_description = models.CharField('<meta> description', max_length=160, blank=True, null=True)
-    og_title = models.CharField(' og:title', max_length=80, blank=True, null=True)
-    og_type = models.CharField(' og:type', choices=OG_TYPES, default='website', max_length=30)
-    og_description = models.CharField(' og:description', max_length=200, blank=True, null=True)
+    meta_title = models.CharField('<meta> title', max_length=80, blank=True)
+    meta_description = models.CharField('<meta> description', max_length=160, blank=True)
+    og_title = models.CharField('og:title', max_length=80, blank=True)
+    og_type = models.CharField('og:type', choices=OG_TYPES, default='website', max_length=30)
+    og_description = models.CharField('og:description', max_length=200, blank=True)
 
     class Meta:
         abstract = True
