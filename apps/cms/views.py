@@ -22,6 +22,10 @@ class PostDetail(generics.RetrieveAPIView):
     permission_classes = (permissions.AllowAny,)
 
 
+class PostBySlug(PostDetail):
+    lookup_field = 'slug'
+
+
 class PostList(generics.ListAPIView):
     queryset = Post.objects.filter(published=True)
     serializer_class = PostSerializer
