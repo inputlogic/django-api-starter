@@ -1,10 +1,10 @@
 from django.urls import reverse
 from django.contrib.auth import get_user_model
-
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 from . import mail
+from .factories import UserFactory
 
 
 def stub_forgot_password_email(calls):
@@ -110,3 +110,20 @@ class UserTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.get(reverse('me'), format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class ExistingUserTests(APITestCase):
+    def setUp(self):
+        self.user = UserFactory(email='test@example.org')
+
+    def test_register_user(self):
+        url = reverse('signup')
+        data = {'email': 'test@example.org', 'password': 'yayhooray'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_register_user_icase(self):
+        url = reverse('signup')
+        data = {'email': 'TeSt@exaMple.org', 'password': 'yayhooray'}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)

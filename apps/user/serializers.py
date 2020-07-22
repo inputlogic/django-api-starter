@@ -20,6 +20,12 @@ class UserSerializer(serializers.ModelSerializer):
     def get_is_admin(self, obj):
         return obj.is_staff
 
+    def validate_email(self, value):
+        norm_email = value.lower()
+        if get_user_model().objects.filter(email=norm_email).exists():
+            raise serializers.ValidationError("user with this email address already exists.")
+        return norm_email
+
     def create(self, validated_data):
         user = get_user_model().objects.create_user(**validated_data)
         MailWelcomeUser.send(user)
