@@ -1,110 +1,72 @@
-import logging
-import mimetypes
-from uuid import uuid4
-
-import boto3
 from django.conf import settings
 
+from uuid import uuid4
+import boto3
 
-log = logging.getLogger(__name__)
 
+def signed_url(
+    file_name=None,
+    content_type='image/jpeg',
+    directory=settings.AWS_LOCATION,
+    bucket=settings.AWS_STORAGE_BUCKET_NAME,
+    key=settings.AWS_ACCESS_KEY_ID,
+    secret=settings.AWS_SECRET_ACCESS_KEY,
+    expires_in=3000,
+    permissions='public-read'
+):
+    '''Get a signed url for posting a file to s3.
 
-def _client():
-    return boto3.client(
+    Defaults to use settings values:
+        AWS_LOCATION
+        AWS_STORAGE_BUCKET_NAME
+        AWS_ACCESS_KEY_ID
+        AWS_SECRET_ACCESS_KEY
+
+    Returns a dict:
+        result = {
+            'data': dict
+            'url': string
+        }
+
+    To upload a file:
+        - send a post request to result['data']['url']
+        - include the following form data:
+            - 'file': the file from the file html input
+            - each key/value in result['data']['fields']
+
+    Once uploaded, the file will be at result['url']
+
+    reference:
+        https://devcenter.heroku.com/articles/s3-upload-python
+    '''
+    file_ext = content_type.split('/')[1]
+    file_name = uuid4().hex if file_name is None else file_name
+    if file_name.endswith(file_ext):
+        ext_len = len(file_ext) + 1
+        file_name = file_name[:-ext_len]
+
+    destination_name = '{0}/{1}.{2}'.format(directory, file_name, file_ext)
+    s3 = boto3.client(
         's3',
-        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
-        region_name=settings.AWS_DEFAULT_REGION,
+        aws_access_key_id=key,
+        aws_secret_access_key=secret
     )
 
-
-def _create_file_key(filename):
-    """
-    Create a key name for upload to s3. This ensures all files uploaded have unique paths
-
-    """
-    return '{0}/{1}_{2}'.format(settings.AWS_LOCATION, uuid4().hex, filename)
-
-
-def _get_file_key(url):
-    """
-    Gets the file key from a File objects url. Based on the pattern used in `_create_file_key`
-    method
-
-    Ex: http://aws.amazon.com/dir/abc123_file.jpg => dir/abc123_file.jpg
-
-    """
-    return '/'.join(url.split('/')[-2:])
-
-
-def _generate_public_url(file_name):
-    """
-    Generates the expected URL of a file uploaded with ACL: public-read
-    """
-    return "https://{0}.s3-{1}.amazonaws.com/{2}".format(
-        settings.AWS_STORAGE_BUCKET_NAME,
-        settings.AWS_DEFAULT_REGION,
-        file_name
+    presigned_post = s3.generate_presigned_post(
+        Bucket=bucket,
+        Key=destination_name,
+        Fields={'acl': permissions, 'Content-Type': content_type},
+        Conditions=[
+            {'acl': permissions},
+            {'Content-Type': content_type}
+        ],
+        ExpiresIn=expires_in
     )
 
-
-def upload_file(file, destination, mime_type=None):
-    """
-    file - A file like object/buffer
-    destination - The path to use on S3, can be just filename or path (ex: some/path/image.jpg)
-
-    """
-    resp = _client().upload_fileobj(
-        file,
-        settings.AWS_STORAGE_BUCKET_NAME,
-        destination,
-        {'ContentType': mime_type},
-    )
-    return resp
-
-
-def get_upload_url(file_name, acl='private'):
-    content_type = mimetypes.guess_type(file_name)[0]
-    log.info('acl ' + acl)
     return {
-        'url': get_signed_url('put', {
-            'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-            'Key': _create_file_key(file_name),
-            'ContentType': content_type,
-            'ACL': acl,
-        }),
-        'content_type': content_type
+        'data': presigned_post,
+        'url': 'https://{}.s3.amazonaws.com/{}'.format(
+            bucket,
+            destination_name
+        )
     }
-
-
-def get_read_url(file, expires=3600):
-    return get_signed_url('get', {
-        'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-        'Key': _get_file_key(file.link),
-    })
-
-
-def get_signed_url(method, params):
-    if method not in ('put', 'get'):
-        raise Exception('invalid signed url method, must be "put" or "get"')
-    return _client().generate_presigned_url(method + '_object', params)
-
-
-def upload_public_file(file, file_name, mime_type=None):
-    """
-    This method uploads a file for direct public access
-
-    file - A file like object/buffer
-    file_name - The identifier (key) for S3
-    """
-    if mime_type is None:
-        mime_type = mimetypes.guess_type(file_name)[0]
-
-    _client().upload_fileobj(
-        file,
-        settings.AWS_STORAGE_BUCKET_NAME,
-        file_name,
-        ExtraArgs={'ACL': 'public-read', 'ContentType': mime_type}
-    )
-
-    return _generate_public_url(file_name)
