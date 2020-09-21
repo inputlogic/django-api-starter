@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 @task()
 def send_notification(registration_id, data):
     from firebase_admin import messaging
+    from .libs import firebase_instance
 
     # See documentation on defining a message payload.
     # https://firebase.google.com/docs/reference/admin/python/firebase_admin.messaging#message
