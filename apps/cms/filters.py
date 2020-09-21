@@ -11,8 +11,8 @@ class PostFilters(filters.FilterSet):
     published_after = filters.IsoDateTimeFilter(field_name="published_on", lookup_expr="gte")
     published_before = filters.IsoDateTimeFilter(field_name="published_on", lookup_expr="lte")
     tagged = NumberInFilter(field_name='tags__id', lookup_expr='in')
+    tag = filters.CharFilter(field_name='tags__slug')
 
     class Meta:
         model = Post
-        fields = ('published_after', 'published_before', 'tagged')
-
+        fields = ('published_after', 'published_before', 'tagged', 'tag',)
