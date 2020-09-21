@@ -1,7 +1,8 @@
-from django.conf import settings
-
+import mimetypes
 from uuid import uuid4
+
 import boto3
+from django.conf import settings
 
 
 def delete_from_s3(
@@ -53,7 +54,8 @@ def signed_url(
     reference:
         https://devcenter.heroku.com/articles/s3-upload-python
     '''
-    file_ext = content_type.split('/')[1]
+    content_type = content_type or mimetypes.guess_type(file_name)[0]
+    file_ext = file_name.split('.')[-1]
     file_name = uuid4().hex if file_name is None else file_name
     if file_name.endswith(file_ext):
         ext_len = len(file_ext) + 1
