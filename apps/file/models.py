@@ -1,5 +1,8 @@
+from urllib.parse import urlparse
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from .libs import delete_from_s3
 
 
 class File(models.Model):
@@ -38,6 +41,18 @@ class File(models.Model):
     @property
     def is_image(self):
         return self.mime_type in File.IMAGE_MIME_TYPES
+
+    @property
+    def s3_object_key(self):
+        path = urlparse(self.link).path
+        if path[0] == '/':
+            path = path[1:]
+        return path
+
+    def delete(self, *args, **kwargs):
+        if self.link:
+            delete_from_s3(self.s3_object_key)
+        super().delete(*args, **kwargs)
 
     @classmethod
     def images_to_resize(cls):

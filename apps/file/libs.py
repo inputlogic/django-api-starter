@@ -4,6 +4,20 @@ from uuid import uuid4
 import boto3
 
 
+def delete_from_s3(
+    object_key,
+    bucket=settings.AWS_STORAGE_BUCKET_NAME,
+    key=settings.AWS_ACCESS_KEY_ID,
+    secret=settings.AWS_SECRET_ACCESS_KEY,
+):
+    s3 = boto3.client(
+        's3',
+        aws_access_key_id=key,
+        aws_secret_access_key=secret
+    )
+    return s3.delete_object(Bucket=bucket, Key=object_key)
+
+
 def signed_url(
     file_name=None,
     content_type='image/jpeg',
