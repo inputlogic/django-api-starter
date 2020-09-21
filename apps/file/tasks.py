@@ -1,8 +1,10 @@
 import io
+import mimetypes
 
-from django.conf import settings
-from PIL import Image
 import requests
+from PIL import Image as PImage
+from django.conf import settings
+from django.core.files.storage import default_storage
 from workers import task
 
 from .libs import upload_file, get_read_url
@@ -12,7 +14,6 @@ from .models import File
 def _get_size(image, width):
     """
     Determines the new image width/height based on given image dimensions and a new width
-
     """
     width_percent = width / float(image.size[0])
     height = float(image.size[1]) * width_percent
@@ -22,7 +23,6 @@ def _get_size(image, width):
 def _mime_to_format(mime_type):
     """
     This is specific to PIL to ensure we use the right format name
-
     """
     if mime_type in ('image/jpeg', 'image/jpg'):
         return 'JPEG'
@@ -33,45 +33,48 @@ def _mime_to_format(mime_type):
     raise Exception('unsupported image mime type: {0}'.format(mime_type))
 
 
-def _get_destination(file, size):
-    path = '/'.join(file.link.split('/')[-2:])
-    ext = '.' + path.split('.')[-1]
-    return path.replace(ext, '_{0}{1}'.format(size, ext))
+def _get_name(file_obj, size):
+    name = file_obj.s3_object_key.replace(settings.AWS_STORAGE_BUCKET_NAME, '')
+    if name[0] == '/':
+        name = name[1:]
+    parts = name.split('.')
+    ext = parts[-1]
+    name = parts[0]
+    return '{}_{}.{}'.format(name, size, ext)
 
 
 # @task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
 def resize_images():
     """
     Get all images to be resized and push into their own tasks
-
     """
-    images = File.images_to_resize()
-    for f in images:
-        resize_image(f.id)
+    images = File.objects.filter(
+        mime_type__in=File.IMAGE_MIME_TYPES,
+        is_resized=False,
+        is_private=False
+    ).all()
+    [resize_image(img.id) for img in images]
 
 
 @task()
 def resize_image(file_id):
-    """
-    Resize individual image
-
-    """
-    file = File.objects.get(pk=file_id)
-    file_url = get_read_url(file)
-    res = requests.get(file_url, stream=True)
-
-    if res.status_code >= 300:
-        raise Exception('{0}: {1}'.format(res.status_code, res.content))
-
-    orig = Image.open(res.raw)
+    file_obj = File.objects.get(pk=file_id)
+    orig = PImage.open(file_obj.link)
 
     for size in settings.FILE_IMAGE_SIZES:
-        im = orig.copy()
-        im.thumbnail(_get_size(im, size['width']), Image.ANTIALIAS)
-        buffer = io.BytesIO()
-        im.save(buffer, format=_mime_to_format(file.mime_type))
-        buffer.seek(0)
-        upload_file(buffer, _get_destination(file, size['key']), mime_type=file.mime_type)
+        mem = io.BytesIO()
+        img = orig.copy()
+
+        img.thumbnail(_get_size(img, size['width']), PImage.ANTIALIAS)
+        img.save(mem,
+                 format=_mime_to_format(file_obj.mime_type),
+                 quality=size.get('quality', 95))
+
+        mem.seek(0)
+        default_storage.save(_get_name(file_obj, size['key']), mem)
+
+        mem.close()
+        img.close()
 
     file.verified = True
     file.is_resized = True

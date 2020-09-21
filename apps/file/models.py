@@ -53,14 +53,3 @@ class File(models.Model):
         if self.link:
             delete_from_s3(self.s3_object_key)
         super().delete(*args, **kwargs)
-
-    @classmethod
-    def images_to_resize(cls):
-        """
-        Get all image File's that haven't been marked as resized.
-
-        """
-        return cls.objects.filter(
-            mime_type__in=File.IMAGE_MIME_TYPES,
-            is_resized=False,
-            is_private=False).all()
