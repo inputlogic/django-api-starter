@@ -17,4 +17,3 @@ class Firebase(models.Model):
 
     def __str__(self):
         return '{0} - {1}'.format(self.user.email, self.registration_id)
-

@@ -9,4 +9,4 @@ class PostFactory(factory.django.DjangoModelFactory):
         model = Post
 
     title = factory.Sequence(lambda n: 'Post {}'.format(n))
-    slug = factory.LazyAttribute(lambda post: slugify(post.title)) 
+    slug = factory.LazyAttribute(lambda post: slugify(post.title))

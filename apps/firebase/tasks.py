@@ -11,6 +11,8 @@ def send_notification(registration_id, data):
     from firebase_admin import messaging
     from .libs import firebase_instance
 
+    log.info(firebase_instance)
+
     # See documentation on defining a message payload.
     # https://firebase.google.com/docs/reference/admin/python/firebase_admin.messaging#message
     message = messaging.Message(
@@ -26,4 +28,3 @@ def send_notification(registration_id, data):
     except messaging.ApiCallError as e:
         log.error('send_notification failed! {} - {}'.format(e.code, e.message))
         log.exception(e)
-

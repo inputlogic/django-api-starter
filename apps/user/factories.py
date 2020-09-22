@@ -1,5 +1,4 @@
 import factory
-from django.utils.text import slugify
 
 from .models import User
 

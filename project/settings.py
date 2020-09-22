@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django_filters',
     'djrichtextfield',
     'facebook',
-    'mptt', # Needed for 'apps.cms'
+    'mptt',  # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
@@ -137,8 +137,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+if ENV == DEV:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 LOGGING_CONFIG = None
 LOGGING = {
@@ -226,11 +227,11 @@ DJRICHTEXTFIELD_CONFIG = {
     'settings': {
         'modules': {
             'toolbar': [
-                [{ 'header': [1, 2, 3, False] }],
+                [{'header': [1, 2, 3, False]}],
                 ['bold', 'italic', 'underline'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
                 ['image', 'blockquote', 'code-block'],
-                [{ 'align': [] }],
+                [{'align': []}],
                 ['clean']
             ],
             'history': {

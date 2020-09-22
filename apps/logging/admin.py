@@ -6,6 +6,8 @@ from .models import APIRequestLog
 
 
 admin.site.unregister(BaseAPIRequestLog)
+
+
 @admin.register(APIRequestLog)
 class APIRequestLogAdmin(BaseAPIRequestLogAdmin):
     '''

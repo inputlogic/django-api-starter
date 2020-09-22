@@ -18,6 +18,6 @@ class MetadataBaseSerializer(serializers.ModelSerializer):
 
     def get_meta_description(self, obj):
         return obj.meta_description or obj.og_description or ''
-    
+
     def get_og_description(self, obj):
         return obj.og_description or obj.meta_description or ''

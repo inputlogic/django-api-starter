@@ -22,7 +22,7 @@ class TagAdmin(admin.ModelAdmin):
 class SectionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Section
     extra = 0
-    classes = ['layout_sectioned',]
+    classes = ('layout_sectioned',)
 
 
 @admin.register(Page)
