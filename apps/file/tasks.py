@@ -1,14 +1,17 @@
 import io
+import logging
 import mimetypes
 
 import requests
 from PIL import Image as PImage
 from django.conf import settings
-from django.core.files.storage import default_storage
 from workers import task
 
-from .libs import upload_file, get_read_url
+from .libs import upload_file, create_read_url
 from .models import File
+
+
+log = logging.getLogger(__name__)
 
 
 def _get_size(image, width):
@@ -20,27 +23,29 @@ def _get_size(image, width):
     return (width, height)
 
 
-def _mime_to_format(mime_type):
+def _get_format(file_obj):
     """
     This is specific to PIL to ensure we use the right format name
     """
-    if mime_type in ('image/jpeg', 'image/jpg'):
+    if file_obj.mime_type:
+        file_mime = file_obj.mime_type
+    else:
+        file_mime, encoding = mimetypes.guess_type(file_obj.s3_object_key)
+
+    if file_mime in ('image/jpeg', 'image/jpg'):
         return 'JPEG'
 
-    if mime_type == 'image/png':
+    if file_mime == 'image/png':
         return 'PNG'
 
-    raise Exception('unsupported image mime type: {0}'.format(mime_type))
+    raise Exception('unsupported image mime type: {0}'.format(file_mime))
 
 
-def _get_name(file_obj, size):
-    name = file_obj.s3_object_key.replace(settings.AWS_STORAGE_BUCKET_NAME, '')
-    if name[0] == '/':
-        name = name[1:]
-    parts = name.split('.')
-    ext = parts[-1]
-    name = parts[0]
-    return '{}_{}.{}'.format(name, size, ext)
+def _get_read_url(file, expires=3600):
+    return get_signed_url('get', {
+        'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+        'Key': _get_file_key(file.link),
+    })
 
 
 # @task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
@@ -56,10 +61,17 @@ def resize_images():
     [resize_image(img.id) for img in images]
 
 
-@task()
+# @task()
 def resize_image(file_id):
     file_obj = File.objects.get(pk=file_id)
-    orig = PImage.open(file_obj.link)
+    file_url = create_read_url(file_obj.s3_object_key)
+    res = requests.get(file_url, stream=True)
+
+    if res.status_code >= 300:
+        raise Exception('{0}: {1}'.format(res.status_code, res.content))
+
+    orig = PImage.open(res.raw)
+    acl = 'private' if file_obj.is_private else 'public-read'
 
     for size in settings.FILE_IMAGE_SIZES:
         mem = io.BytesIO()
@@ -67,15 +79,15 @@ def resize_image(file_id):
 
         img.thumbnail(_get_size(img, size['width']), PImage.ANTIALIAS)
         img.save(mem,
-                 format=_mime_to_format(file_obj.mime_type),
+                 format=_get_format(file_obj),
                  quality=size.get('quality', 95))
 
         mem.seek(0)
-        default_storage.save(_get_name(file_obj, size['key']), mem)
+        upload_file(file_obj.get_variant(size['key']), mem, acl=acl)
 
         mem.close()
         img.close()
 
-    file.verified = True
-    file.is_resized = True
-    file.save()
+    file_obj.verified = True
+    file_obj.is_resized = True
+    file_obj.save()

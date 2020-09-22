@@ -1,3 +1,5 @@
+import mimetypes
+
 from rest_framework import serializers
 
 from .models import File
@@ -27,9 +29,12 @@ class CreateSignedFileSerializer(serializers.Serializer):
             content_type=validated_data.get('content_type', None)
         )
 
+        mime_type, encoding = mimetypes.guess_type(signed['url'])
+
         file_instance = File.objects.create(
             link=signed['url'],
-            user=self.context['request'].user
+            user=self.context['request'].user,
+            mime_type=mime_type or ''
         )
 
         return {

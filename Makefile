@@ -12,6 +12,9 @@ setup:
 erik-home-server:
 	python manage.py runserver 192.168.1.90:8000
 
+lint:
+	python -m flake8 --ignore E501,E722,F821 apps/ project/ libs/
+
 tests:
 	python manage.py test apps
 

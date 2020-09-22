@@ -1,8 +1,10 @@
 from urllib.parse import urlparse
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
 
-from .libs import delete_from_s3
+from .libs import create_read_url, delete_from_s3
 
 
 class File(models.Model):
@@ -48,6 +50,25 @@ class File(models.Model):
         if path[0] == '/':
             path = path[1:]
         return path
+
+    @property
+    def thumb(self):
+        return create_read_url(self.get_variant('th'))
+
+    @property
+    def medium(self):
+        return create_read_url(self.get_variant('md'))
+
+    def get_variant(self, size=None):
+        name = self.s3_object_key.replace(settings.AWS_STORAGE_BUCKET_NAME, '')
+        if name[0] == '/':
+            name = name[1:]
+        parts = name.split('.')
+        ext = parts[-1]
+        name = parts[0]
+        if size is None:
+            return '{}.{}'.format(name, ext)
+        return '{}_{}.{}'.format(name, size, ext)
 
     def delete(self, *args, **kwargs):
         if self.link:

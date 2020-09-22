@@ -1,22 +1,65 @@
+import logging
 import mimetypes
 from uuid import uuid4
 
 import boto3
+from botocore.exceptions import ClientError
 from django.conf import settings
 
 
-def delete_from_s3(
-    object_key,
-    bucket=settings.AWS_STORAGE_BUCKET_NAME,
+log = logging.getLogger(__name__)
+
+
+def _client(
+    service='s3',
     key=settings.AWS_ACCESS_KEY_ID,
     secret=settings.AWS_SECRET_ACCESS_KEY,
 ):
-    s3 = boto3.client(
-        's3',
+    return boto3.client(
+        service,
         aws_access_key_id=key,
         aws_secret_access_key=secret
     )
-    return s3.delete_object(Bucket=bucket, Key=object_key)
+
+
+def upload_file(
+    key,
+    file_data,
+    acl='public-read',
+    bucket=settings.AWS_STORAGE_BUCKET_NAME,
+    mime_type=None
+):
+    if mime_type is None:
+        mime_type = mimetypes.guess_type(file_name)[0]
+
+    _client().upload_fileobj(
+        file_data,
+        bucket,
+        key,
+        ExtraArgs={'ACL': acl, 'ContentType': mime_type}
+    )
+
+
+def delete_from_s3(key, bucket=settings.AWS_STORAGE_BUCKET_NAME):
+    return _client('s3').delete_object(Bucket=bucket, Key=key)
+
+
+def create_read_url(key, bucket=settings.AWS_STORAGE_BUCKET_NAME, expires_in=3600):
+    s3 = _client('s3')
+    try:
+        url = s3.generate_presigned_url(
+            'get_object',
+            Params={
+                'Bucket': bucket,
+                'Key': key
+            },
+            ExpiresIn=expires_in
+        )
+    except ClientError as e:
+        logging.exception(e)
+        return None
+
+    return url
 
 
 def signed_url(
