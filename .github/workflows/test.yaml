@@ -46,10 +46,18 @@ jobs:
         GOOGLE_REDIRECT_URI: "test"
     steps:
     - uses: actions/checkout@v2
-    - name: test
+
+    - name: Django test
       run: |
         export DATABASE_URL=postgres://postgres:@postgres:5432/django
         apt-get update -qy
         apt-get install -y python3-dev python3-pip
         pip3 install -r requirements.txt
         python3 manage.py test apps
+
+    - name: Run linters
+      uses: samuelmeuli/lint-action@v1 
+      with:
+        github_token: ${{ secrets.github_token }}
+        flake8: true
+        flake8_args: "--ignore E501,E722,F821,W504 apps/ project/ libs/"
