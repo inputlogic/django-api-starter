@@ -45,7 +45,7 @@ class UserTests(APITestCase):
         )
 
     def test_login_user(self):
-        user = get_user_model().objects.create_user(
+        get_user_model().objects.create_user(
             email='user@example.com',
             password='secret',)
         url = reverse('login')
@@ -58,7 +58,7 @@ class UserTests(APITestCase):
     def test_login_user_icase(self):
         create_email = 'USER@example.com'
         login_email = 'user@EXAMPLE.com'
-        user = get_user_model().objects.create_user(
+        get_user_model().objects.create_user(
             email=create_email,
             password='secret',)
         url = reverse('login')
@@ -92,8 +92,7 @@ class UserTests(APITestCase):
     def test_user_can_request_password_icase(self):
         create_email = 'USER@example.com'
         reset_email = 'user@EXAMPLE.com'
-        new_password = 'whatever'
-        user = get_user_model().objects.create_user(
+        get_user_model().objects.create_user(
             email=create_email,
             password='secret',)
         email_values = []

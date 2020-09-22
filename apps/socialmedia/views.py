@@ -134,14 +134,13 @@ def _facebookTokenForAccessToken(facebook_user_token):
                 error indicating the user should login with the origin source.
                 '''
                 social_media = _get_social_media_for_user(user=user)
-                if(social_media is None):
+                if social_media is None:
                     result = {
                         "error": "Please login with username and password"
                     }
                 else:
                     result = {
-                        "error": "Please login with " +
-                        SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
+                        "error": "Please login with " + SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
                     }
                 return Response(result, status.HTTP_400_BAD_REQUEST)
 
@@ -302,14 +301,13 @@ def _googleTokenForAccessToken(google_user_token):
                 # The user was found, but does not have a matching social media token. Return an
                 # error indicating the user should login with the origin source.
                 social_media = _get_social_media_for_user(user=user)
-                if(social_media is None):
+                if social_media is None:
                     result = {
                         "error": "Please login with username and password"
                     }
                 else:
                     result = {
-                        "error": "Please login with " +
-                        SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
+                        "error": "Please login with " + SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
                     }
                 return Response(result, status.HTTP_400_BAD_REQUEST)
 

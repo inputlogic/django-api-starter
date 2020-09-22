@@ -16,7 +16,7 @@ class LoggedUserList(LoggingMixin, generics.ListAPIView):
     permission_classes = (permissions.IsAdminUser,)
 
     # LoggingMixin options:
-    logging_methods = ['GET','POST']
+    logging_methods = ['GET', 'POST']
     sensitive_fields = {'password'}
 
     def should_log(self, request, response):

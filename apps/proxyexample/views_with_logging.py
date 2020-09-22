@@ -46,13 +46,13 @@ class ProxyUserList(ProxyLoggingMixin, generics.GenericAPIView):
             api_key = '123456789'
             auth_token = 'abcdefghi'
             headers = {
-                    'Content-Type': 'application/json',
-                    'X-Auth-API-Key': api_key,
-                    'authorization': 'Bearer ' + auth_token
-                }
+                'Content-Type': 'application/json',
+                'X-Auth-API-Key': api_key,
+                'authorization': 'Bearer ' + auth_token
+            }
             body = {
-              "company_id": 12,
-              "department": "accounting"
+                "company_id": 12,
+                "department": "accounting"
             }
             response = self.with_log(request, 'get', path, headers, body, params)
             result = json.loads(response.content.decode("utf-8"))

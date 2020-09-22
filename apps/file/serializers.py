@@ -1,29 +1,44 @@
+import mimetypes
+
 from rest_framework import serializers
 
 from .models import File
-from .libs import get_upload_url
+from .libs import signed_url
 
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
-        fields = ('link', 'id')
+        fields = ('link', 'id', 'created_at',)
 
 
 class CreateSignedFileSerializer(serializers.Serializer):
     file_name = serializers.CharField(write_only=True)
     acl = serializers.CharField(write_only=True, required=False)
-    file_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    content_type = serializers.CharField(write_only=True, required=False)
+
+    file_id = serializers.IntegerField(read_only=True)
     url = serializers.URLField(read_only=True)
-    content_type = serializers.CharField(read_only=True)
+    s3_data = serializers.JSONField(read_only=True)
 
     def create(self, validated_data):
-        data = get_upload_url(**validated_data)
-        newfile = File.objects.create(
-            user=self.context['request'].user,
-            link=data['url'].split('?')[0],  # Only insert actual path, not the signature params
-            is_private=validated_data.get('acl') == 'private',
-            mime_type=data['content_type']
+        file_name = validated_data['file_name'].replace(' ', '_')
+
+        signed = signed_url(
+            file_name=file_name,
+            content_type=validated_data.get('content_type', None)
         )
-        data['file_id'] = newfile.id
-        return data
+
+        mime_type, encoding = mimetypes.guess_type(signed['url'])
+
+        file_instance = File.objects.create(
+            link=signed['url'],
+            user=self.context['request'].user,
+            mime_type=mime_type or ''
+        )
+
+        return {
+            's3_data': signed['data'],
+            'url': signed['url'],
+            'file_id': file_instance.id
+        }

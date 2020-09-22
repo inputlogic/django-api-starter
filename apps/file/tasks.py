@@ -1,78 +1,93 @@
 import io
+import logging
+import mimetypes
 
-from django.conf import settings
-from PIL import Image
 import requests
+from PIL import Image as PImage
+from django.conf import settings
 from workers import task
 
-from .libs import upload_file, get_read_url
+from .libs import upload_file, create_read_url
 from .models import File
+
+
+log = logging.getLogger(__name__)
 
 
 def _get_size(image, width):
     """
     Determines the new image width/height based on given image dimensions and a new width
-
     """
     width_percent = width / float(image.size[0])
     height = float(image.size[1]) * width_percent
     return (width, height)
 
 
-def _mime_to_format(mime_type):
+def _get_format(file_obj):
     """
     This is specific to PIL to ensure we use the right format name
-
     """
-    if mime_type in ('image/jpeg', 'image/jpg'):
+    if file_obj.mime_type:
+        file_mime = file_obj.mime_type
+    else:
+        file_mime, encoding = mimetypes.guess_type(file_obj.s3_object_key)
+
+    if file_mime in ('image/jpeg', 'image/jpg'):
         return 'JPEG'
 
-    if mime_type == 'image/png':
+    if file_mime == 'image/png':
         return 'PNG'
 
-    raise Exception('unsupported image mime type: {0}'.format(mime_type))
+    raise Exception('unsupported image mime type: {0}'.format(file_mime))
 
 
-def _get_destination(file, size):
-    path = '/'.join(file.link.split('/')[-2:])
-    ext = '.' + path.split('.')[-1]
-    return path.replace(ext, '_{0}{1}'.format(size, ext))
+def _get_read_url(file, expires=3600):
+    return get_signed_url('get', {
+        'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
+        'Key': _get_file_key(file.link),
+    })
 
 
 # @task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
 def resize_images():
     """
     Get all images to be resized and push into their own tasks
-
     """
-    images = File.images_to_resize()
-    for f in images:
-        resize_image(f.id)
+    images = File.objects.filter(
+        mime_type__in=File.IMAGE_MIME_TYPES,
+        is_resized=False,
+        is_private=False
+    ).all()
+    [resize_image(img.id) for img in images]
 
 
 @task()
 def resize_image(file_id):
-    """
-    Resize individual image
-
-    """
-    file = File.objects.get(pk=file_id)
-    file_url = get_read_url(file)
+    file_obj = File.objects.get(pk=file_id)
+    file_url = create_read_url(file_obj.s3_object_key)
     res = requests.get(file_url, stream=True)
 
     if res.status_code >= 300:
         raise Exception('{0}: {1}'.format(res.status_code, res.content))
 
-    orig = Image.open(res.raw)
+    orig = PImage.open(res.raw)
+    acl = 'private' if file_obj.is_private else 'public-read'
 
     for size in settings.FILE_IMAGE_SIZES:
-        im = orig.copy()
-        im.thumbnail(_get_size(im, size['width']), Image.ANTIALIAS)
-        buffer = io.BytesIO()
-        im.save(buffer, format=_mime_to_format(file.mime_type))
-        buffer.seek(0)
-        upload_file(buffer, _get_destination(file, size['key']), mime_type=file.mime_type)
+        mem = io.BytesIO()
+        img = orig.copy()
 
-    file.verified = True
-    file.is_resized = True
-    file.save()
+        img.thumbnail(_get_size(img, size['width']), PImage.ANTIALIAS)
+        img.save(mem,
+                 format=_get_format(file_obj),
+                 quality=size.get('quality', 95))
+
+        mem.seek(0)
+        upload_file(file_obj.get_variant(size['key']), mem, acl=acl)
+
+        mem.close()
+        img.close()
+
+    file_obj.verified = True
+    file_obj.is_resized = True
+    file_obj.save()

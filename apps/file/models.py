@@ -1,5 +1,10 @@
+from urllib.parse import urlparse
+
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from .libs import create_read_url, delete_from_s3
 
 
 class File(models.Model):
@@ -39,13 +44,33 @@ class File(models.Model):
     def is_image(self):
         return self.mime_type in File.IMAGE_MIME_TYPES
 
-    @classmethod
-    def images_to_resize(cls):
-        """
-        Get all image File's that haven't been marked as resized.
+    @property
+    def s3_object_key(self):
+        path = urlparse(self.link).path
+        if path[0] == '/':
+            path = path[1:]
+        return path
 
-        """
-        return cls.objects.filter(
-            mime_type__in=File.IMAGE_MIME_TYPES,
-            is_resized=False,
-            is_private=False).all()
+    @property
+    def thumb(self):
+        return create_read_url(self.get_variant('th'))
+
+    @property
+    def medium(self):
+        return create_read_url(self.get_variant('md'))
+
+    def get_variant(self, size=None):
+        name = self.s3_object_key.replace(settings.AWS_STORAGE_BUCKET_NAME, '')
+        if name[0] == '/':
+            name = name[1:]
+        parts = name.split('.')
+        ext = parts[-1]
+        name = parts[0]
+        if size is None:
+            return '{}.{}'.format(name, ext)
+        return '{}_{}.{}'.format(name, size, ext)
+
+    def delete(self, *args, **kwargs):
+        if self.link:
+            delete_from_s3(self.s3_object_key)
+        super().delete(*args, **kwargs)

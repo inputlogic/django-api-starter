@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django_filters',
     'djrichtextfield',
     'facebook',
-    'mptt', # Needed for 'apps.cms'
+    'mptt',  # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
@@ -137,7 +137,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-if ENV != DEV:
+if ENV == DEV:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -199,8 +199,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # Only needed for DRF browsable API. Unfortunately, it can interfere with mobile app API requests.
-        # 'rest_framework.authentication.SessionAuthentication',
+        # SessionAuthentication may interfere with mobile API requests. If you are experiencing ssues, try commenting out the following line.
+        'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
@@ -227,11 +227,11 @@ DJRICHTEXTFIELD_CONFIG = {
     'settings': {
         'modules': {
             'toolbar': [
-                [{ 'header': [1, 2, 3, False] }],
+                [{'header': [1, 2, 3, False]}],
                 ['bold', 'italic', 'underline'],
-                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{'list': 'ordered'}, {'list': 'bullet'}],
                 ['image', 'blockquote', 'code-block'],
-                [{ 'align': [] }],
+                [{'align': []}],
                 ['clean']
             ],
             'history': {
@@ -265,10 +265,8 @@ ADMIN_HEADER = 'Admin'
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
 FILE_IMAGE_SIZES = (
-    {'key': 'ty', 'width': 50},
-    {'key': 'sm', 'width': 150},
+    {'key': 'th', 'width': 350, 'quality': 90},
     {'key': 'md', 'width': 800},
-    {'key': 'lg', 'width': 1500},
 )
 
 
