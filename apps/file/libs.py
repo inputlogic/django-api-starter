@@ -30,7 +30,7 @@ def upload_file(
     mime_type=None
 ):
     if mime_type is None:
-        mime_type = mimetypes.guess_type(file_name)[0]
+        mime_type = mimetypes.guess_type(key)[0]
 
     _client().upload_fileobj(
         file_data,
