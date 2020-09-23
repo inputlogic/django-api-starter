@@ -40,28 +40,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
-    'adminsortable2',
     'corsheaders',
     'django_extensions',
     'django_filters',
-    'djrichtextfield',
-    'facebook',
-    'mptt', # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
     'workers',
 
-    'apps.cms',
     'apps.file',
-    'apps.logging',
     'apps.mail',
-    'apps.socialmedia',
     'apps.user',
 
     # ___CHANGEME___
-    # Example apps
-    'apps.workerexample',
+    # Optional apps
+
+    # CMS
+    # 'adminsortable2',
+    # 'djrichtextfield',
+    # 'mptt',
+    # 'apps.cms',
+
+    # Social Auth (Facebook Login)
+    # 'facebook',
+    # 'apps.socialmedia',
 ]
 
 MIDDLEWARE = [
@@ -298,10 +300,10 @@ DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
 EMAIL_HOST = get('SMTP_SERVER')
 EMAIL_HOST_USER = get('SMTP_LOGIN')
 EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD')
-EMAIL_PORT = get('SMTP_PORT')
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
 EMAIL_USE_TLS = True
 
-SENDGRID_API_KEY = get('SENDGRID_API_KEY')
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
 SENDGRID_FROM_EMAIL = ''
 SENDGRID_FROM_NAME = ''
