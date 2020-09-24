@@ -41,13 +41,6 @@ def _get_format(file_obj):
     raise Exception('unsupported image mime type: {0}'.format(file_mime))
 
 
-def _get_read_url(file, expires=3600):
-    return get_signed_url('get', {
-        'Bucket': settings.AWS_STORAGE_BUCKET_NAME,
-        'Key': _get_file_key(file.link),
-    })
-
-
 # @task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
 def resize_images():
     """

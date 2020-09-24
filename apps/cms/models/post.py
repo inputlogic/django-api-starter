@@ -21,6 +21,8 @@ class Post(AbstractContentType):
     """
     published = models.BooleanField(default=False)
     published_on = models.DateTimeField(default=timezone.now)
-    feature_image = models.ImageField(upload_to='feature_images', blank=True, null=True)
+    feature_image = models.ImageField(
+        upload_to='feature_images', blank=True, null=False, default=''
+    )
     feature_color = ColorField(_('Feature Color'), default='#000000', blank=True)
     body = RichTextField(blank=True)

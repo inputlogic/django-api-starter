@@ -14,8 +14,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SocialMedia',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('source', models.IntegerField(choices=[(0, 'Facebook'), (1, 'Google')], db_index=True, default=0)),
+                (
+                    'id',
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name='ID'
+                    )
+                ),
+                (
+                    'source',
+                    models.IntegerField(
+                        choices=[(0, 'Facebook'), (1, 'Google')],
+                        db_index=True,
+                        default=0
+                    )
+                ),
                 ('identifier', models.CharField(db_index=True, max_length=255)),
             ],
             options={

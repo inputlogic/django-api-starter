@@ -12,11 +12,18 @@ class SocialMedia(models.Model):
     )
 
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, db_index=True, related_name='social_media', on_delete=models.CASCADE, null=False,
+        settings.AUTH_USER_MODEL,
+        db_index=True,
+        related_name='social_media',
+        on_delete=models.CASCADE,
+        null=False,
         blank=False
     )
     source = models.IntegerField(choices=SOCIAL_MEDIA_SOURCES, db_index=True, default=FACEBOOK)
     identifier = models.CharField(max_length=255, db_index=True)
+
+    def __str__(self):
+        return self.identifier
 
     class Meta:
         verbose_name = 'Social Media'

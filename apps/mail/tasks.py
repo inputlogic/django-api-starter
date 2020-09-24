@@ -33,7 +33,7 @@ def send_email(mail_id):
     to_email = getattr(mail.user, mail.user.get_email_field_name())
     try:
         to_name = mail.user.get_full_name()
-    except:
+    except Exception:
         to_name = to_email
 
     payload = {

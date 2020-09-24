@@ -16,6 +16,7 @@ djangorestframework-camel-case
 drf-api-tracking
 facebook-sdk
 factory_boy
+flake8-django
 google-auth-oauthlib
 gunicorn
 pillow

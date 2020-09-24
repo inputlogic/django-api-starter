@@ -24,7 +24,8 @@ class MailAdmin(admin.ModelAdmin):
 
     def email_body(self, obj):
         return format_html(
-            '<iframe srcdoc="{0}" style="width: 100%; height: 800px; border: 1px solid #f0f0f0" ></iframe>',
+            """<iframe srcdoc="{0}" style="width: 100%; height: 800px; border: 1px solid #f0f0f0" >
+            </iframe>""",
             obj.body
         )
 

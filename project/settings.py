@@ -151,7 +151,10 @@ LOGGING = {
     },
     'formatters': {
         'custom': {
-            'format': '%(levelname)s %(message)s (in %(module)s.%(funcName)s:%(lineno)s by %(name)s)',
+            'format': (
+                '%(levelname)s %(message)s ' +
+                '(in %(module)s.%(funcName)s:%(lineno)s by %(name)s)'
+            ),
             'datefmt': '%Y-%m-%dT%H:%M:%S',
         },
     },
@@ -199,7 +202,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # SessionAuthentication may interfere with mobile API requests. If you are experiencing ssues, try commenting out the following line.
+        '''
+        SessionAuthentication may interfere with mobile API requests.
+        If you are experiencing ssues, try commenting out the following line.
+        '''
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (

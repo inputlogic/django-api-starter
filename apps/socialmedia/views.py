@@ -140,7 +140,8 @@ def _facebookTokenForAccessToken(facebook_user_token):
                     }
                 else:
                     result = {
-                        "error": "Please login with " + SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
+                        "error": "Please login with " +
+                        SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
                     }
                 return Response(result, status.HTTP_400_BAD_REQUEST)
 
@@ -307,7 +308,8 @@ def _googleTokenForAccessToken(google_user_token):
                     }
                 else:
                     result = {
-                        "error": "Please login with " + SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
+                        "error": "Please login with " +
+                        SocialMedia.SOCIAL_MEDIA_SOURCES[social_media.source][1]
                     }
                 return Response(result, status.HTTP_400_BAD_REQUEST)
 
