@@ -259,7 +259,8 @@ ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
 # Files
-LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'False') == 'True'
+# Default to local uploads
+LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
 if not LOCAL_FILE_UPLOADS:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'

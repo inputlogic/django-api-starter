@@ -1,3 +1,6 @@
+from unittest import skipIf
+
+from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
 from rest_framework.test import APITestCase
@@ -18,6 +21,7 @@ class FileTests(APITestCase):
         self.assertTrue(response.data['is_verified'])
         self.assertIn('url', response.data)
 
+    @skipIf(settings.LOCAL_FILE_UPLOADS, 'Only works if S3 is configured.')
     def test_signed_file(self):
         url = reverse('create-signed-file',)
         response = self.client.post(url, {'file_name': "file.jpg"}, format='json')
