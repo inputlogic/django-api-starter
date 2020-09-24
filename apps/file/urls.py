@@ -1,9 +1,10 @@
-from django.conf.urls import url
+from django.urls import path
 
 from . import views
 
 
 urlpatterns = [
-    url(r'^files$', views.CreateSignedFile.as_view(), name='file-signed-url'),
-    url(r'^files/(?P<pk>[0-9]+)/?$', views.FileDetail.as_view(), name='file-detail')
+    path('create-signed-file', views.CreateSignedFile.as_view(), name='create-signed-file'),
+    path('files', views.UploadFile.as_view(), name='upload-file'),
+    path('files/<int:pk>', views.FileDetail.as_view(), name='file-detail'),
 ]
