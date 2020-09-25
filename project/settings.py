@@ -290,11 +290,19 @@ GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
 
 # MAIL
 SEND_MAIL = get('SEND_MAIL') == 'True'
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'smtp')  # 'smtp' or 'sendgrid'
 
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
+DEFAULT_FROM_NAME = '___CHANGEME___'
 
-SENDGRID_API_KEY = get('SENDGRID_API_KEY')
+if EMAIL_BACKEND == 'smtp':
+    EMAIL_HOST = get('SMTP_SERVER')
+    EMAIL_HOST_USER = get('SMTP_LOGIN')
+    EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD')
+    EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
+    EMAIL_USE_TLS = True
+
+SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
-SENDGRID_FROM_EMAIL = ''
-SENDGRID_FROM_NAME = ''
