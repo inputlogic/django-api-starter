@@ -41,30 +41,9 @@
   }
 
   function uploadImage (file) {
-    return new Promise(function (resolve, reject) {
-      var resp;
-      getSignedFile(file)
-        .then(function (res) {
-          resp = res;
-          console.log('uploadFile', resp);
-          return uploadFile(file, resp.s3Data);
-        })
-        .then(function () {
-          resolve(resp);
-        })
-        .catch(function (err) {
-          console.error(err);
-          reject(err);
-        });
-    });
-  }
+    var formData = new window.FormData();
+    formData.append('upload', file);
 
-  function getSignedFile (file) {
-    const data = {
-      acl: 'public-read',
-      fileName: file.name,
-      contentType: file.type
-    };
     return new Promise(function (resolve, reject) {
       window.fetch('/files', {
         method: 'POST',
@@ -72,30 +51,22 @@
         headers: {
           "X-CSRFToken": getCookie("csrftoken"),
           "X-Requested-With": "XMLHttpRequest",
-          "Accept": "application/json",
-          "Content-Type": "application/json"
+          "Accept": "application/json"
         },
-        body: JSON.stringify(data)
+        body: formData
       })
-        .then(function (res) {
-          return res.json();
-        })
-        .then(function (data) {
-          resolve(data);
+        .then(function (resp) {
+          if (!resp.ok) {
+            reject(resp.statusText);
+          } else {
+            resp.json().then(resolve);
+          }
         })
         .catch(function (err) {
-          console.error('getSignedFile', err);
-        });
-    }); 
-  }
-
-  function uploadFile (file, s3Data) {
-    var formData = new window.FormData();
-    for (var key in s3Data.fields) {
-      formData.append(key, s3Data.fields[key]);
-    }
-    formData.append('file', file);
-    return window.fetch(s3Data.url, {method: 'POST', body: formData});
+          console.error(err);
+          reject(err);
+        })
+    });
   }
 
   function getCookie (name) {

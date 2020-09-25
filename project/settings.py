@@ -137,10 +137,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-if ENV == DEV:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
 LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
@@ -261,6 +257,13 @@ AWS_QUERYSTRING_AUTH = False
 
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
+
+# Files
+# Default to local uploads
+LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
+if not LOCAL_FILE_UPLOADS:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
