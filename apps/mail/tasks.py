@@ -1,10 +1,12 @@
 import logging
 import json
 import requests
+from smtplib import SMTPException
 
 from django.conf import settings
-
+from django.core.mail import send_mail as dj_send_mail
 from workers import task
+
 
 
 log = logging.getLogger(__name__)
@@ -15,6 +17,8 @@ def _sendgrid_send(mail):
     Uses SendGrid API to send email.
     Do not call this function directly.
     """
+    from app.mail.models import Mail
+
     headers = {
         'authorization': 'Bearer {0}'.format(settings.SENDGRID_API_KEY),
         'content-type': 'application/json'
@@ -66,6 +70,8 @@ def _smtp_send(mail):
     Uses SMTP settings to send an email.
     Do not call this function directly.
     """
+    from app.mail.models import Mail
+
     to_email = getattr(mail.user, mail.user.get_email_field_name())
 
     try:
@@ -92,7 +98,7 @@ def send_email(mail_id):
     """
     Do not call this task directly. Instead use a subclass of MailBase.
     """
-    from apps.mail.models import Mail
+    from app.mail.models import Mail
 
     mail = Mail.objects.get(pk=mail_id)
 
@@ -102,8 +108,8 @@ def send_email(mail_id):
         mail.save()
         return
 
-    # If you want add more backends, handle them here.
-    if settings.EMAIL_BACKEND == 'sendgrid':
+    # If you want add more providers, handle them here.
+    if settings.EMAIL_PROVIDER == 'sendgrid':
         return _sendgrid_send(mail)
     else:
         return _smtp_send(mail)

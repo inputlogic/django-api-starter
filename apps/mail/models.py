@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.postgres.fields import JSONField
 from django.db import models
+from django.template import engines
 
 from .tasks import send_email
 
@@ -51,6 +52,9 @@ class Template(models.Model):
             .first()
         )
 
+    def __str__(self):
+        return '<Template: {0}>'.format(self.name)
+
     @staticmethod
     def _render(input, data):
         django_engine = engines['django']
@@ -95,22 +99,28 @@ class Mail(models.Model):
 
     class Meta:
         verbose_name = 'mail'
-        verbose_name_plural = 'outbox'
+        verbose_name_plural = ' Outbox'  # leading space, orders it first in admin
 
     @property
     def email(self):
         return self.user.email
 
     @staticmethod
-    def send(template_name, user, **kwargs):
-        template = Template.objects.get(name=template_name)
+    def send(name, user, **kwargs):
+        if not kwargs.get('app_name'):
+            kwargs['app_name'] = settings.APP_NAME
+
+        if not kwargs.get('email'):
+            kwargs['email'] = user.email
+
+        template = Template.objects.get(name__iexact=name)
         layout = template.layout.body if template.layout else '{body}'
 
         subject = template.render_subject(kwargs)
         body = Layout.render(layout, template.render_body(kwargs))
 
         mail = Mail.objects.create(
-            name=self.name,
+            name=name,
             template=template,
             user=user,
             data=kwargs,

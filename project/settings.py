@@ -255,6 +255,7 @@ AWS_QUERYSTRING_AUTH = False
 # ==================================================================================================
 
 
+APP_NAME = '___CHANGEME___'
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
@@ -290,14 +291,14 @@ GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
 
 # MAIL
 SEND_MAIL = get('SEND_MAIL') == 'True'
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'smtp')  # 'smtp' or 'sendgrid'
+EMAIL_PROVIDER = os.environ.get('EMAIL_PROVIDER', 'smtp')  # 'smtp' or 'sendgrid'
 
 WEB_URL = get('WEB_URL')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
 DEFAULT_FROM_NAME = '___CHANGEME___'
 
-if EMAIL_BACKEND == 'smtp':
+if EMAIL_PROVIDER == 'smtp':
     EMAIL_HOST = get('SMTP_SERVER')
     EMAIL_HOST_USER = get('SMTP_LOGIN')
     EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD')
