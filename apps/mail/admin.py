@@ -68,7 +68,7 @@ class MailAdmin(admin.ModelAdmin):
         )
 
     def email_data(self, obj):
-        return pretty_json(obj.data)
+        return make_pretty_json(obj.data)
 
     def has_add_permission(self, request):
         return False

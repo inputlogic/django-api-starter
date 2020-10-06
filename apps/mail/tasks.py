@@ -17,7 +17,7 @@ def _sendgrid_send(mail):
     Uses SendGrid API to send email.
     Do not call this function directly.
     """
-    from app.mail.models import Mail
+    from apps.mail.models import Mail
 
     headers = {
         'authorization': 'Bearer {0}'.format(settings.SENDGRID_API_KEY),
@@ -70,7 +70,7 @@ def _smtp_send(mail):
     Uses SMTP settings to send an email.
     Do not call this function directly.
     """
-    from app.mail.models import Mail
+    from apps.mail.models import Mail
 
     to_email = getattr(mail.user, mail.user.get_email_field_name())
 
@@ -98,7 +98,7 @@ def send_email(mail_id):
     """
     Do not call this task directly. Instead use a subclass of MailBase.
     """
-    from app.mail.models import Mail
+    from apps.mail.models import Mail
 
     mail = Mail.objects.get(pk=mail_id)
 
