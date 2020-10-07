@@ -1,11 +1,11 @@
 from unittest.mock import patch
+from urllib.parse import urlparse
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from . import mail
 from .factories import UserFactory
 
 
@@ -80,15 +80,15 @@ class UserTests(APITestCase):
             password='secret',)
         response = self.client.post(
             reverse('forgot-password'), data={'email': user.email}, format='json')
-
-        email_values = mock_send.mock_calls
-        self.assertEqual(len(email_values), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        print(f'!!!!!! {email_values} !!!!!!!')
-        (_, user, reset_url) = email_values[0]
+
+        email_values = mock_send.mock_calls[0]
+        reset_url = email_values[-1]['reset_url']
+        token = urlparse(reset_url).path.split('/')[-2]
+
         response = self.client.post(
             reverse('reset-password'),
-            data={'token': token, 'user_id': user_id, 'password': new_password},
+            data={'token': token, 'user_id': user.id, 'password': new_password},
             format='json'
         )
         user.refresh_from_db()
@@ -102,10 +102,8 @@ class UserTests(APITestCase):
         get_user_model().objects.create_user(
             email=create_email,
             password='secret',)
-        email_values = []
         response = self.client.post(
             reverse('forgot-password'), data={'email': reset_email}, format='json')
-        self.assertEqual(len(email_values), 1)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
     def test_get_profile(self):
