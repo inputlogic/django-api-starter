@@ -1,32 +1,15 @@
 from django.conf import settings
 
-from ..mail.base import MailBase
+from apps.mail.models import Mail
 
 
-class MailResetPassword(MailBase):
-    name = 'Reset Password'
-    subject = '__APPNAME__ password reset'
-    template = 'email/reset_password.html'
-
-    @classmethod
-    def process_args(cls, user, request, reset_token):
-        ctx = {
-            'reset_url': settings.RESET_PASSWORD_URL.format(
-                reset_token=reset_token,
-                user_id=user.id
-            ),
-        }
-        return ctx
+def send_reset_password_email(user, reset_token):
+    reset_url = settings.RESET_PASSWORD_URL.format(
+        reset_token=reset_token,
+        user_id=user.id
+    )
+    Mail.send('ResetPassword', user, reset_url=reset_url)
 
 
-class MailWelcomeUser(MailBase):
-    name = 'Welcome User'
-    subject = 'Welcome to __APPNAME__'
-    template = 'email/welcome_user.html'
-
-    @classmethod
-    def process_args(cls, user, request):
-        ctx = {
-            'email': user.email,
-        }
-        return ctx
+def send_welcome_email(user):
+    Mail.send('WelcomeUser', user)

@@ -8,7 +8,6 @@ from django.core.mail import send_mail as dj_send_mail
 from workers import task
 
 
-
 log = logging.getLogger(__name__)
 
 

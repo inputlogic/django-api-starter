@@ -21,21 +21,21 @@ class TemplateAdmin(admin.ModelAdmin):
         data = obj.last_email_sent.data if obj.last_email_sent else obj.data_example
         layout = obj.layout.html if obj.layout else '{body}'
         return mark_safe(
-                '''
-                    <div>
-                        <br />
-                        <h3>Subject</h3>
-                        <br />
-                        {0}
-                        <br /><br />
-                        <h3>Body</h3>
-                        <br />
-                        {1}
-                    </div>
-                '''.format(
-                    obj.render(obj.subject, data),
-                    layout.format(body=obj.render(obj.body, data))
-                    )
+            '''
+                <div>
+                    <br />
+                    <h3>Subject</h3>
+                    <br />
+                    {0}
+                    <br /><br />
+                    <h3>Body</h3>
+                    <br />
+                    {1}
+                </div>
+            '''.format(
+                obj.render(obj.subject, data),
+                layout.format(body=obj.render(obj.body, data))
+            )
         )
 
 

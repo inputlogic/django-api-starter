@@ -120,7 +120,7 @@ class Mail(models.Model):
         body = Layout.render(layout, template.render_body(kwargs))
 
         mail = Mail.objects.create(
-            name=name,
+            name=template.name,
             template=template,
             user=user,
             data=kwargs,
