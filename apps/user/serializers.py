@@ -4,7 +4,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ParseError
 
-from .mail import MailResetPassword, MailWelcomeUser
+from .mail import send_welcome_email, send_reset_password_email
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -28,7 +28,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(**validated_data)
-        MailWelcomeUser.send(user)
+        send_welcome_email(user)
         return user
 
     def update(self, obj, validated_data):
@@ -86,7 +86,7 @@ class ForgotPasswordSerializer(serializers.Serializer):
             return {}
 
         reset_token = default_token_generator.make_token(user)
-        MailResetPassword.send(user, reset_token=reset_token)
+        send_reset_password_email(user, reset_token=reset_token)
 
         return {}
 
