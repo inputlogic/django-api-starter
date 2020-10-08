@@ -23,6 +23,7 @@ DEV = 'dev'
 STAGING = 'staging'
 PRODUCTION = 'production'
 TESTING = 'test' in sys.argv
+SHELL = 'shell' in sys.argv
 ENV = get('DJANGO_ENV')
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
@@ -173,6 +174,10 @@ LOGGING = {
     }
 }
 logging.config.dictConfig(LOGGING)
+
+# If we're in shell, disable async so models aren't a fucking pain to query
+if SHELL:
+    os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 
 # ==================================================================================================
