@@ -175,7 +175,7 @@ LOGGING = {
 }
 logging.config.dictConfig(LOGGING)
 
-# If we're in shell, disable async so models aren't a fucking pain to query
+# If we're in shell, disable async so working with models is less painful
 if SHELL:
     os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
