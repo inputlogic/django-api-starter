@@ -6,10 +6,6 @@ from django.contrib.postgres.fields import JSONField
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-from rest_framework.authtoken.models import Token
-
-from libs.instagram import InstagramError
-from .instagram import InstagramInfo
 
 
 log = logging.getLogger(__name__)
@@ -57,7 +53,7 @@ class SocialAuth(models.Model):
             # If signing up a new user, we need an email address
             if not email:
                 raise ValidationError(
-                    "We couldn't get the email associated with that facebook account.")
+                    f"We couldn't get the email associated with that {provider} account.")
             
             user, user_created = get_user_model().objects.get_or_create(email=email)
             social_auth, _ = SocialAuth.objects.update_or_create(
