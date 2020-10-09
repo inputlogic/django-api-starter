@@ -1,106 +1,25 @@
 # Django Mail
 
-Email interface with static templates and logging.
-
-## Example
-
-### Create mail template:
-
-This is a standard Django template. The variables come from the dict returned by
-`process_args()`.
-
-`apps/barrowtrader/templates/email/new_wheelbarrows.html`
-```html
-{% extends 'email/email_base.html' %}
-
-{% block content %}
-  <p>
-    Hey {{ customer_name }}, check out these cool wheelbarrows to rent!
-  </p>
-  <ul>
-    {% for barrow in wheelbarrows %}
-      <li>{{ barrow.name }} - {{ barrow.description }}</li>
-    {% endfor %}
-  </ul>
-{% endblock %}
-```
-
-### Create mail interface:
-
-Subclass `MailBase` and define the properties you want to customize.
-
-`apps/barrowtrader/mail.py`
-```python
-class MailNewWheelbarrows(MailBase):
-    name = 'New Wheelbarrows'
-    subject = 'BarrowTrader | New wheelbarrow recommendations in the {{ city_name }} area!'
-    template = 'email/new_wheelbarrows.html'
-
-    @classmethod
-    def process_args(cls, user, request, *args, **kwargs):
-        ctx = {
-          'customer_name': user.name,
-          'city_name': kwargs['city_name'],
-          'wheelbarrows': kwargs['wheelbarrows'],
-        }
-        return ctx
-```
-
-Note that in this example, the `template` attribute is actually redundant!
-
-Because the `name` is 'New Wheelbarrows', the class will automatically look for a
-template at the path 'email/new_wheelbarrows.html'. Doesn't hurt to be specific,
-though.
-
-### Send mail:
-
-Call `send()` on your class.
-
-`apps/barrowtrader/admin.py`
-```python
-...
-if new_wheelbarrows is not None:
-    MailNewWheelbarrows.send(user, city_name=city.name, wheelbarrows=new_wheelbarrows)
-...
-```
-
-See also `apps/user/mail.py` and `apps/user/templates/email/` for a working example of
-project and template layout.
+Django app to manage email templates and sending via the admin interface.
 
 ## Usage Details
 
-1. Define your mail interface in `mail.py` by subclassing `MailBase`.
+1. Define your mail templates via the Django Admin.
+2. We recommend adding a `mails.py` file for each app, to wrap your `Mail.send` calls in functions.
+3. Use those functions wherever you wish to trigger those emails.
 
-2. Create a Django template for your email.
+## Example
 
-3. **[Optional]** Add a `process_args(cls, user, request, *args, **kwargs)` class
-   method to process your data and return a context dict that will be fed to your
-   templates.
+We ship [fixtures for two default emails](https://github.com/inputlogic/django-api-starter/blob/master/mail-templates.json) to be used by the `user` app. Once you have a template defined, you can trigger sending a mail using that template via the `Mail.send` static method:
 
-   By default, `user`, `request`, and the contents of `**kwargs` will be passed
-   directly from `send()` to your templates as a dict.
+```python
+Mail.send('WelcomeUser', user)
+```
 
-4. **[Optional]** Define `name`, `subject`, and `template` attributes on your mail
-   interface.
+[Example `mails.py`](https://github.com/inputlogic/django-api-starter/blob/master/apps/user/mail.py) for the user app.
 
-   **`name`**: Description of the type of mail message. Defaults to the interface's
-   class name (minus 'Mail' if present at the front).
+## Improving Template Management
 
-   **`subject`**: Django *template string* for the subject line. Defaults to the `name`
-   attribute of the class.
+For now you are limited to the [fixtures](https://docs.djangoproject.com/en/3.1/howto/initial-data/) feature of Django to move templates from local development to staging or production servers.
 
-   **`template`**: Path to a Django *template file* for the body of the email. Defaults to
-   `email/name_attribute.html`, where `name_attribute.html` is the snake_case version
-   of the `name` attribute, plus `.html`.
-
-   If you need these attributes to be dynamic, you can override the class methods
-   `get_name()`, `get_subject()`, and `get_template()` instead -- for instance, to
-   get a user-editable template from a custom model.
-
-5. Call `.send(user, request, admin_feedback, *args, **kwargs)` on your subclass to
-   create a new mail message and a task to send it to the email associated with
-   `user`.
-
-   If you are generating emails inside the Django admin, you can pass in the `request`
-   object and set `admin_feedback=True` to generate a notification that the mail
-   has been created and is awaiting delivery.
+We have an [open issue](https://github.com/inputlogic/django-api-starter/issues/91) to discuss tools and potential new features to improve this processs.
