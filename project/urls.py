@@ -16,16 +16,13 @@ urlpatterns = [
     url(r'^djrichtextfield/', include('djrichtextfield.urls')),
 
     # App routes
-    url(r'^', include('apps.cms.urls')),
     url(r'^', include('apps.file.urls')),
-    url(r'^', include('apps.socialmedia.urls')),
     url(r'^', include('apps.user.urls')),
 
     # ___CHANGEME___
-    # Routes for example apps
-    url(r'^', include('apps.proxyexample.urls')),
-    url(r'^', include('apps.workerexample.urls')),
-    url(r'^', include('apps.logging.endpoint-example')),
+    # Routes for optional apps
+    # url(r'^', include('apps.cms.urls')),
+    # url(r'^', include('apps.socialmedia.urls')),
 
     # Browsable API
     url(r'^api/$', api_root, name='index'),

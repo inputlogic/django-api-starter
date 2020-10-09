@@ -40,28 +40,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
-    'adminsortable2',
     'corsheaders',
     'django_extensions',
     'django_filters',
-    'djrichtextfield',
-    'facebook',
-    'mptt',  # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
     'workers',
 
-    'apps.cms',
     'apps.file',
-    'apps.logging',
     'apps.mail',
-    'apps.socialmedia',
     'apps.user',
 
     # ___CHANGEME___
-    # Example apps
-    'apps.workerexample',
+    # Optional apps
+
+    # CMS
+    # 'adminsortable2',
+    # 'djrichtextfield',
+    # 'mptt',
+    # 'apps.cms',
+
+    # Social Auth (Facebook Login)
+    # 'facebook',
+    # 'apps.socialmedia',
 ]
 
 MIDDLEWARE = [
