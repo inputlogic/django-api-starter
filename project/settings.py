@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'apps.mail',
     'apps.socialmedia',
     'apps.user',
+    'apps.webhook',
 
     # ___CHANGEME___
     # Example apps
@@ -307,3 +308,6 @@ if EMAIL_PROVIDER == 'smtp':
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+
+# Webhooks
+WEBHOOKS_NOTIFY_URL = os.environ.get('WEBHOOKS_NOTIFY_URL')
