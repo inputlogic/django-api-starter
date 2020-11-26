@@ -1,1 +1,1 @@
-from .broker import task
+from .broker import task  # noqa: F401

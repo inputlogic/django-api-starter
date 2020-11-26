@@ -1,5 +1,4 @@
 import json
-from inspect import isfunction
 from functools import wraps
 
 from django.utils import timezone
@@ -17,7 +16,7 @@ def task(schedule=None):
         @wraps(f)
         def wrapper(*args, **kwargs):
             from .models import Task
-            task = Task.objects.create(
+            Task.objects.create(
                 handler=path,
                 args=json.dumps(args),
                 kwargs=json.dumps(kwargs),

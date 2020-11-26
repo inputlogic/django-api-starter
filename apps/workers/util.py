@@ -24,7 +24,7 @@ def autodiscover():
             imp.find_module('tasks', app_path)
         except ImportError:
             continue
-        except Exception as e:
+        except Exception:
             log.error('failed to autodiscover {0}: does it have an __init__.py file?'.format(app))
             continue
 

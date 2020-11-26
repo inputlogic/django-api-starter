@@ -11,8 +11,8 @@ from django.utils import timezone
 import django
 django.setup()
 
-from .models import Task
-from .settings import SLEEP, KEEP
+from .models import Task  # noqa: E402
+from .settings import SLEEP, KEEP  # noqa: E402
 
 
 log = logging.getLogger(__name__)
