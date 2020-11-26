@@ -54,7 +54,7 @@ def resize_images():
     [resize_image(img.id) for img in images]
 
 
-#  @task()
+@task()
 def resize_image(file_id):
     file_obj = File.objects.get(pk=file_id)
     file_url = create_read_url(file_obj.s3_object_key)
