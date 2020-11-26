@@ -15,12 +15,13 @@ def task(schedule=None):
 
         @wraps(f)
         def wrapper(*args, **kwargs):
+            run_at = kwargs.pop('_schedule', timezone.now())
             from .models import Task
             Task.objects.create(
                 handler=path,
                 args=json.dumps(args),
                 kwargs=json.dumps(kwargs),
-                run_at=timezone.now()
+                run_at=run_at,
             )
         return wrapper
     return handler
