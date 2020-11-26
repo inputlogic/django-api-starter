@@ -5,4 +5,4 @@ from django.conf import settings
 SLEEP = getattr(settings, 'WORKERS_SLEEP', 5)
 
 # How many logs to keep in admin
-PURGE = getattr(settings, 'WORKERS_PURGE', 1000)
+KEEP = getattr(settings, 'WORKERS_KEEP', 100)

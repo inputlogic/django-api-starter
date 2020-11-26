@@ -1,4 +1,3 @@
-import os
 import json
 import logging
 import signal
@@ -13,7 +12,7 @@ import django
 django.setup()
 
 from .models import Task
-from .settings import SLEEP, PURGE
+from .settings import SLEEP, KEEP
 
 
 log = logging.getLogger(__name__)
@@ -31,7 +30,7 @@ def process_task(task_id):
     args = json.loads(task.args)
     kwargs = json.loads(task.kwargs)
 
-    log.debug('[{0}] running task id {1}: {2}'.format(os.getpid(), task.id, task.handler))
+    log.debug(f'running task({task.id}): {task.handler}')
 
     try:
         fn.__wrapped__(*args, **kwargs)
@@ -48,19 +47,13 @@ def process_task(task_id):
         Task.create_scheduled_task(task.handler, task.schedule)
 
 
-#  def purge_tasks():
-#      # EX: if PURGE is 1000, we will keep the latest 1000 completed tasks
-#      keep = (
-#          Task.objects
-#          .filter(status=Task.COMPLETED)
-#          .order_by('-completed_at')
-#          .order_by('-run_at')[:PURGE]
-#      )
-#
-#      if keep:
-#          # If there are more than PURGE (ex. 1000) completed tasks, delete
-#          # any that are not in keep
-#          Task.objects.exclude(pk__in=keep).filter(status=Task.COMPLETED).delete()
+def purge_tasks():
+    """
+    Removes completed tasks greater than settings.KEEP.
+
+    """
+    tasks = Task.objects.exclude(completed_at=None).all()
+    Task.objects.filter(id__in=tasks).exclude(id__in=tasks[:KEEP]).delete()
 
 
 def run_forever():
@@ -81,6 +74,7 @@ def run_forever():
                     task.save()
                     pool.apply_async(process_task, args=(task.id,))
                 else:
+                    purge_tasks()  # If we have a sec, cleanup old tasks
                     time.sleep(SLEEP)
     except (KeyboardInterrupt, SystemExit):
         log.debug('workers stopped, waiting for lingering tasks...')
