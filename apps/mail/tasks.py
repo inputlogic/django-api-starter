@@ -5,7 +5,6 @@ from smtplib import SMTPException
 
 from django.conf import settings
 from django.core.mail import send_mail as dj_send_mail
-from workers import task
 
 
 log = logging.getLogger(__name__)
@@ -92,7 +91,6 @@ def _smtp_send(mail):
     return sent
 
 
-@task()
 def send_email(mail_id):
     """
     Do not call this task directly. Instead use a subclass of MailBase.

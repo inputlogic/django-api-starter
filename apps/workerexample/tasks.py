@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from workers import task
+from apps.workers import task
 
 
 @task()

@@ -50,7 +50,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
-    'workers',
 
     'apps.cms',
     'apps.file',
@@ -58,6 +57,7 @@ INSTALLED_APPS = [
     'apps.mail',
     'apps.socialmedia',
     'apps.user',
+    'apps.workers',
 
     # ___CHANGEME___
     # Example apps
