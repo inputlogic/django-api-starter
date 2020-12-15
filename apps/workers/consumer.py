@@ -46,6 +46,8 @@ def process_task(task_id):
     if task.schedule:
         Task.create_scheduled_task(task.handler, task.schedule)
 
+    return task_id
+
 
 def purge_tasks():
     """
@@ -59,7 +61,7 @@ def purge_tasks():
 def run_forever():
     try:
         with get_context("spawn").Pool(initializer=init_pool, maxtasksperchild=1) as pool:
-            #  pool = Pool(initializer=init_pool)
+            running = []
             while True:
                 with transaction.atomic():
                     task = (
@@ -73,11 +75,20 @@ def run_forever():
                     if task:
                         task.status = Task.RUNNING
                         task.save()
-                        pool.apply_async(process_task, args=(task.id,))
+                        running.append(task.id)
+                        pool.apply_async(
+                            process_task,
+                            args=(task.id,),
+                            callback=lambda task_id: running.remove(task_id)
+                        )
                     else:
                         purge_tasks()  # If we have a sec, cleanup old tasks
                         time.sleep(SLEEP)
+                    log.debug(f'running tasks: {running}')
     except (KeyboardInterrupt, SystemExit):
         log.debug('workers stopped, waiting for lingering tasks...')
         pool.close()
         pool.join()
+    finally:
+        res = Task.objects.filter(id__in=running).update(status=Task.INCOMPLETE, error='Worker shutdown prematurely.')
+        log.debug(f'incomplete tasks: {res}')

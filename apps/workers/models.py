@@ -13,12 +13,14 @@ class Task(models.Model):
     RUNNING = 'running'
     COMPLETED = 'completed'
     FAILED = 'failed'
+    INCOMPLETE = 'incomplete'
 
     STATUS_CHOICES = (
         (WAITING, 'Waiting'),
         (RUNNING, 'Running'),
         (COMPLETED, 'Completed'),
-        (FAILED, 'Failed')
+        (FAILED, 'Failed'),
+        (INCOMPLETE, 'Incomplete')
     )
 
     handler = models.CharField(max_length=255, db_index=True)
@@ -39,7 +41,7 @@ class Task(models.Model):
 
     @staticmethod
     def create_scheduled_task(handler, schedule):
-        if Task.objects.filter(handler=handler, schedule=schedule, completed_at=None).exists():
+        if Task.objects.filter(handler=handler, schedule=schedule, status=Task.WAITING).exists():
             return
 
         scheduled_time = timezone.now() + timedelta(seconds=schedule)
