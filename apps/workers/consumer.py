@@ -3,7 +3,7 @@ import logging
 import signal
 import time
 import importlib
-from multiprocessing import Pool
+from multiprocessing import Pool, get_context
 
 from django.db import transaction
 from django.utils import timezone
@@ -58,24 +58,25 @@ def purge_tasks():
 
 def run_forever():
     try:
-        pool = Pool(initializer=init_pool)
-        while True:
-            with transaction.atomic():
-                task = (
-                    Task.objects
-                    .select_for_update()
-                    .filter(run_at__lte=timezone.now())
-                    .filter(status=Task.WAITING)
-                    .first()
-                )
+        with get_context("spawn").Pool(initializer=init_pool, maxtasksperchild=1) as pool:
+            #  pool = Pool(initializer=init_pool)
+            while True:
+                with transaction.atomic():
+                    task = (
+                        Task.objects
+                        .select_for_update()
+                        .filter(run_at__lte=timezone.now())
+                        .filter(status=Task.WAITING)
+                        .first()
+                    )
 
-                if task:
-                    task.status = Task.RUNNING
-                    task.save()
-                    pool.apply_async(process_task, args=(task.id,))
-                else:
-                    purge_tasks()  # If we have a sec, cleanup old tasks
-                    time.sleep(SLEEP)
+                    if task:
+                        task.status = Task.RUNNING
+                        task.save()
+                        pool.apply_async(process_task, args=(task.id,))
+                    else:
+                        purge_tasks()  # If we have a sec, cleanup old tasks
+                        time.sleep(SLEEP)
     except (KeyboardInterrupt, SystemExit):
         log.debug('workers stopped, waiting for lingering tasks...')
         pool.close()

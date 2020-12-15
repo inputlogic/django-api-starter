@@ -17,6 +17,11 @@ class Command(BaseCommand):
             for handler, schedule in scheduled:
                 Task.create_scheduled_task(handler, schedule)
 
+        # Close active db connection so workers create their own
+        # This is REQUIRED for multiprocessing to work with Django
+        from django import db
+        db.connections.close_all()
+
         # Startup workers and run until killed
         from ... import consumer
         consumer.run_forever()
