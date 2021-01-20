@@ -44,5 +44,8 @@ def say_hello_every_30_seconds():
 
 
 @task(schedule=10)
-def scheduled_failing_task():
-    raise Exception('yenk')
+def long_running_task():
+    print('start of long running task')
+    import time
+    time.sleep(30)
+    print('end of long running task')
