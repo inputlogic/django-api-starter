@@ -3,7 +3,6 @@ import logging
 import signal
 import time
 import importlib
-from multiprocessing import Pool, get_context
 
 from django.db import transaction
 from django.utils import timezone
