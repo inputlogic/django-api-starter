@@ -14,6 +14,7 @@ PRODUCTION = 'production'
 TESTING = 'test' in sys.argv
 ENV = os.environ.get('DJANGO_ENV', DEV)
 
+
 def get(variable, default=''):
     """
     To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
