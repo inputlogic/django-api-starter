@@ -3,19 +3,8 @@ import os
 import sys
 
 
-def get(variable):
-    """
-    To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
-    env vars to be present.
-    """
-    if variable not in os.environ:
-        raise Exception('Required environment variable not set: {}'.format(variable))
-
-    return os.environ.get(variable)
-
-
 # ==================================================================================================
-# DJANGO SETTINGS
+# ENVIRONMENT SETTINGS
 # ==================================================================================================
 
 
@@ -23,12 +12,28 @@ DEV = 'dev'
 STAGING = 'staging'
 PRODUCTION = 'production'
 TESTING = 'test' in sys.argv
-ENV = get('DJANGO_ENV')
+ENV = os.environ.get('DJANGO_ENV', DEV)
+
+def get(variable, default=''):
+    """
+    To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
+    env vars to be present.
+    """
+    if ENV == PRODUCTION and variable not in os.environ:
+        raise Exception('Required environment variable not set: {}'.format(variable))
+
+    return os.environ.get(variable, default)
+
+
+# ==================================================================================================
+# DJANGO SETTINGS
+# ==================================================================================================
+
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
-SECRET_KEY = get('SECRET_KEY')
+SECRET_KEY = get('SECRET_KEY', 'local')
 DEBUG = False if ENV == PRODUCTION else True
-ALLOWED_HOSTS = get('ALLOWED_HOSTS')
+ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
 
 AUTH_USER_MODEL = 'user.User'
 
