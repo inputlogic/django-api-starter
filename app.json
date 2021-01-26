@@ -1,17 +1,22 @@
 {
   "name": "Django API Starter",
-  "image": "heroku/python",
+  "env": {
+    "DJANGO_ENV": {
+      "description": "Sets Django run environment",
+      "value": "staging"
+    }
+  },
   "addons": ["heroku-postgresql:hobby-dev"],
   "formation": {
     "web": {
       "quantity": 1,
       "size": "hobby",
       "type": "web"
-    },
-    "worker": {
-      "quantity": 1,
-      "size": "hobby",
-      "type": "worker"
     }
-  }
+  },
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ]
 }
