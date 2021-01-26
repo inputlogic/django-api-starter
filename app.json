@@ -1,10 +1,13 @@
 {
   "name": "Django API Starter",
   "env": {
-    "DJANGO_ENV": {
-      "description": "Sets Django run environment",
-      "value": "staging"
-    }
+    "DJANGO_ENV": {"value": "staging"},
+    "DJANGO_SUPERUSER_USER": {"value": "prs@inputlogic.ca"},
+    "DJANGO_SUPERUSER_EMAIL": {"value": "prs@inputlogic.ca"},
+    "DJANGO_SUPERUSER_PASSWORD": {"value": "superduper"}
+  },
+  "scripts": {
+    "postdeploy": "python manage.py createsuperuser --no-input"
   },
   "addons": ["heroku-postgresql:hobby-dev"],
   "formation": {
