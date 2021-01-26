@@ -10,13 +10,6 @@
     "postdeploy": "python manage.py createsuperuser --no-input"
   },
   "addons": ["heroku-postgresql:hobby-dev"],
-  "formation": {
-    "web": {
-      "quantity": 1,
-      "size": "hobby",
-      "type": "web"
-    }
-  },
   "buildpacks": [
     {
       "url": "heroku/python"
