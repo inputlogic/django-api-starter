@@ -1,4 +1,6 @@
 {
+  "name": "Django API Starter",
+  "image": "heroku/python",
   "addons": ["heroku-postgresql:hobby-dev"],
   "formation": {
     "web": {
