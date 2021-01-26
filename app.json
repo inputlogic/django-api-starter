@@ -3,11 +3,13 @@
   "formation": {
     "web": {
       "quantity": 1,
-      "size": "hobby"
+      "size": "hobby",
+      "type": "web"
     },
     "worker": {
       "quantity": 1,
-      "size": "hobby"
+      "size": "hobby",
+      "type": "worker"
     }
   }
 }
