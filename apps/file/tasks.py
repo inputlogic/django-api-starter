@@ -5,7 +5,7 @@ import mimetypes
 import requests
 from PIL import Image as PImage
 from django.conf import settings
-from workers import task
+from apps.workers import task
 
 from .libs import upload_file, create_read_url
 from .models import File

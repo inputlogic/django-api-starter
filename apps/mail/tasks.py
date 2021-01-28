@@ -5,7 +5,7 @@ from smtplib import SMTPException
 
 from django.conf import settings
 from django.core.mail import send_mail as dj_send_mail
-from workers import task
+from apps.workers import task
 
 
 log = logging.getLogger(__name__)
