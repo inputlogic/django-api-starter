@@ -1,4 +1,4 @@
-# Django Workers
+# Django Workers v1.1
 
 A simple background task worker that uses your Django database and admin for management. This
 project is meant for small to medium scale uses. If you need something more, check out Celery.
