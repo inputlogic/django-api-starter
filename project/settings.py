@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    'graphene_django',
+
     'adminsortable2',
     'corsheaders',
     'django_extensions',
@@ -57,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'rest_framework_tracking',
 
+    'apps.cookbook',  # GraphQL example
     'apps.cms',
     'apps.file',
     'apps.logging',
@@ -313,3 +316,7 @@ if EMAIL_PROVIDER == 'smtp':
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+
+GRAPHENE = {
+    'SCHEMA': 'apps.cookbook.schema.schema'
+}
