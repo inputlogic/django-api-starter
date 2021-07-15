@@ -1,6 +1,6 @@
 import logging
 
-from workers import task
+from apps.workers import task
 
 
 log = logging.getLogger(__name__)

@@ -100,13 +100,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-#  if ENV in [STAGING, PRODUCTION]:
-#      #  import dj_database_url
-#      DATABASES = {
-#          #  'default': dj_database_url.config(conn_max_age=500),
-        #  'default': DATABASE_URL
-#      }
-#  else:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -186,8 +179,6 @@ logging.config.dictConfig(LOGGING)
 # ==================================================================================================
 
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 WORKERS_SLEEP = 1
 WORKERS_PURGE = 1000
 
@@ -217,36 +208,6 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-DJRICHTEXTFIELD_CONFIG = {
-    'js': ['//cdn.quilljs.com/1.3.6/quill.js'],
-    'css': {
-        'all': [
-            '//cdn.quilljs.com/1.3.6/quill.snow.css',
-            'cms/css/admin.css',
-        ]
-    },
-    'init_template': 'editor/init_quill.js',
-    'settings': {
-        'modules': {
-            'toolbar': [
-                [{'header': [1, 2, 3, False]}],
-                ['bold', 'italic', 'underline'],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                ['image', 'blockquote', 'code-block'],
-                [{'align': []}],
-                ['clean']
-            ],
-            'history': {
-                'delay': 2000,
-                'maxStack': 500,
-                'userOnly': True
-            }
-        },
-        'placeholder': 'Compose an epic...',
-        'theme': 'snow'
-    }
-}
-
 AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
 AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
@@ -266,9 +227,7 @@ ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
 # Files
-# Default to local uploads
-LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
-if not LOCAL_FILE_UPLOADS:
+if ENV in [STAGING, PRODUCTION]:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
