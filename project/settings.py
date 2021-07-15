@@ -227,9 +227,9 @@ ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
 # Files
-if ENV in [STAGING, PRODUCTION]:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#  if ENV in [STAGING, PRODUCTION]:
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
@@ -273,4 +273,4 @@ if EMAIL_PROVIDER == 'smtp':
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
 
-django_heroku.settings(locals())
+django_heroku.settings(locals(), staticfiles=False)
