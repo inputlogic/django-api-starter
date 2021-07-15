@@ -104,7 +104,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 #      #  import dj_database_url
 #      DATABASES = {
 #          #  'default': dj_database_url.config(conn_max_age=500),
-        'default': DATABASE_URL
+        #  'default': DATABASE_URL
 #      }
 #  else:
 DATABASES = {
