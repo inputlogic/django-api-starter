@@ -100,20 +100,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-#  if ENV in [STAGING, PRODUCTION]:
-#      import dj_database_url
-#      DATABASES = {
-#          'default': dj_database_url.config(conn_max_age=500),
-#      }
-#  else:
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django', # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': 'postgres'
-    },
-}
+if ENV in [STAGING, PRODUCTION]:
+    #  import dj_database_url
+    DATABASES = {
+        #  'default': dj_database_url.config(conn_max_age=500),
+        'default': DATABASE_URL
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'django', # ___CHANGEME___
+            'USER': 'postgres',
+            'PASSWORD': 'postgres'
+        },
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
