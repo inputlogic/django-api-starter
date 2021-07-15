@@ -1,5 +1,5 @@
 from django.apps import AppConfig
 
 
-class SupportConfig(AppConfig):
-    name = 'support'
+class LoggingConfig(AppConfig):
+    name = 'apps.logging'

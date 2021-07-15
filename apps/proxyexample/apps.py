@@ -2,4 +2,4 @@ from django.apps import AppConfig
 
 
 class ProxyexampleConfig(AppConfig):
-    name = 'proxyexample'
+    name = 'apps.proxyexample'

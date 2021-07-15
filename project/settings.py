@@ -1,6 +1,7 @@
 import logging.config
 import os
 import sys
+import django_heroku
 
 
 # ==================================================================================================
@@ -46,19 +47,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
-    'adminsortable2',
-    'corsheaders',
     'django_extensions',
     'django_filters',
-    'djrichtextfield',
     'facebook',
-    'mptt',  # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
 
-    'apps.cms',
     'apps.file',
+    'apps.firebase',
     'apps.logging',
     'apps.mail',
     'apps.socialmedia',
@@ -67,10 +64,12 @@ INSTALLED_APPS = [
 
     # ___CHANGEME___
     # Example apps
-    'apps.workerexample',
+    # 'apps.proxyexample,
+    # 'apps.workerexample',
 ]
 
 MIDDLEWARE = [
+    'libs.corsmiddleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,7 +77,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -101,20 +99,21 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-if ENV in [STAGING, PRODUCTION]:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=500),
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django',  # ___CHANGEME___
-            'USER': 'postgres',
-            'PASSWORD': 'postgres'
-        },
-    }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+#  if ENV in [STAGING, PRODUCTION]:
+#      import dj_database_url
+#      DATABASES = {
+#          'default': dj_database_url.config(conn_max_age=500),
+#      }
+#  else:
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django', # ___CHANGEME___
+        'USER': 'postgres',
+        'PASSWORD': 'postgres'
+    },
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -313,3 +312,5 @@ if EMAIL_PROVIDER == 'smtp':
 
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+
+django_heroku.settings(locals())
