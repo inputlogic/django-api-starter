@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.db import models
 from django.template import engines
+from django.core.exceptions import ValidationError
 
 from .tasks import send_email
 
@@ -25,7 +26,7 @@ class Layout(models.Model):
                 'body': '''
                     Must include {body} string somewhere in layout body. This is where
                     the template will get rendered.
-                '''
+                '''.strip()
             })
         return super().save(*args, **kwargs)
 

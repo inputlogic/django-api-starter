@@ -1,12 +1,22 @@
 [
 {
+  "model": "mail.layout",
+  "pk": 1,
+  "fields": {
+    "name": "Default",
+    "body": "{body}",
+    "created_at": "2020-09-25T18:27:09.973Z",
+    "updated_at": "2020-10-06T21:18:51.976Z"
+  }
+},
+{
   "model": "mail.template",
   "pk": 1,
   "fields": {
     "name": "ForgotPassword",
     "subject": "{{ app_name }} password reset",
     "body": "<p>Visit <a href='{{ reset_url }}' >{{ reset_url }}</a> to reset your password.</p>",
-    "layout": null,
+    "layout": 1,
     "created_at": "2020-09-25T18:27:09.973Z",
     "updated_at": "2020-10-06T21:18:51.976Z"
   }
@@ -18,9 +28,9 @@
     "name": "WelcomeUser",
     "subject": "Welcome to {{ app_name }}",
     "body": "<p>Welcome to {{ app_name }}!</p>\r\n<p>A new account has been created for {{ email }}</p>",
-    "layout": null,
-    "created_at": "2020-09-25T19:04:33.014Z",
-    "updated_at": "2020-10-06T20:44:19.437Z"
+    "layout": 1,
+    "created_at": "2020-09-25T18:27:09.973Z",
+    "updated_at": "2020-10-06T21:18:51.976Z"
   }
 }
 ]
