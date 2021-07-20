@@ -49,23 +49,14 @@ INSTALLED_APPS = [
 
     'django_extensions',
     'django_filters',
-    'facebook',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
 
     'apps.file',
-    'apps.firebase',
-    'apps.logging',
     'apps.mail',
-    'apps.socialmedia',
     'apps.user',
     'apps.workers',
-
-    # ___CHANGEME___
-    # Example apps
-    # 'apps.proxyexample,
-    # 'apps.workerexample',
 ]
 
 MIDDLEWARE = [
@@ -103,7 +94,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django', # ___CHANGEME___
+        'NAME': 'django',  # ___CHANGEME___
         'USER': 'postgres',
         'PASSWORD': 'postgres'
     },
@@ -208,11 +199,11 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
-AWS_LOCATION = get('AWS_LOCATION')
-AWS_DEFAULT_REGION = get('AWS_DEFAULT_REGION')
+AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID', 'BUCKETEER_AWS_ACCESS_KEY_ID')
+AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY', 'BUCKETEER_AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_STORAGE_BUCKET_NAME', 'BUCKETEER_BUCKET_NAME')
+AWS_LOCATION = os.environ.get('AWS_LOCATION', '')
+AWS_DEFAULT_REGION = os.environ.get('AWS_DEFAULT_REGION', 'BUCKETEER_AWS_REGION')
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
@@ -226,10 +217,13 @@ APP_NAME = '___CHANGEME___'
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
+WEB_URL = get('WEB_URL', 'http://localhost:3000')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+
 # Files
-#  if ENV in [STAGING, PRODUCTION]:
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+if ENV in [STAGING, PRODUCTION]:
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
@@ -239,30 +233,18 @@ FILE_IMAGE_SIZES = (
 )
 
 
-# Facebook Login
-FACEBOOK_GRAPH_VERSION = '3.1'
-FACEBOOK_APP_ID = get('FACEBOOK_APP_ID')
-FACEBOOK_APP_CLIENT_TOKEN = get('FACEBOOK_APP_CLIENT_TOKEN')
-FACEBOOK_APP_SECRET = get('FACEBOOK_APP_SECRET')
-# This must match the URL specified in the Facebook app login settings "Valid OAuth Redirect URIs"
-FACEBOOK_SUCCESSFUL_LOGIN_URL = get('FACEBOOK_SUCCESSFUL_LOGIN_URL')
+# ==================================================================================================
+# EMAIL SETTINGS
+# ==================================================================================================
 
-# Google Login
-GOOGLE_CLIENT_ID = get('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = get('GOOGLE_CLIENT_SECRET')
-GOOGLE_SUCCESSFUL_LOGIN_URL = get('GOOGLE_SUCCESSFUL_LOGIN_URL')
-GOOGLE_PROJECT_ID = get('GOOGLE_PROJECT_ID')
-GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
 
-# MAIL
-SEND_MAIL = get('SEND_MAIL') == 'True'
-EMAIL_PROVIDER = os.environ.get('EMAIL_PROVIDER', 'smtp')  # 'smtp' or 'sendgrid'
+SEND_MAIL = ENV in [STAGING, PRODUCTION]
+EMAIL_PROVIDER = os.environ.get('EMAIL_PROVIDER', 'sendgrid')  # 'smtp' or 'sendgrid'
 
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
 DEFAULT_FROM_NAME = '___CHANGEME___'
 
+# If SMTP, usually Postmark (postmarkapp.com) settings
 if EMAIL_PROVIDER == 'smtp':
     EMAIL_HOST = get('SMTP_SERVER')
     EMAIL_HOST_USER = get('SMTP_LOGIN')
@@ -270,6 +252,7 @@ if EMAIL_PROVIDER == 'smtp':
     EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
     EMAIL_USE_TLS = True
 
+# Default to using Sendgrid, just grab key from Heroku config
 SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
 SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
 
