@@ -40,6 +40,11 @@ ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
+     # Custom Admin settings (must be before django.contrib.admin)
+    'admin_interface',
+    'colorfield',
+
+    # Django core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,12 +52,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
+    # 3rd party
     'django_extensions',
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
 
+    # Local
     'apps.file',
     'apps.mail',
     'apps.user',
@@ -163,6 +170,9 @@ LOGGING = {
     }
 }
 logging.config.dictConfig(LOGGING)
+
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+SILENCED_SYSTEM_CHECKS = ['security.W019']
 
 
 # ==================================================================================================
