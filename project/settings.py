@@ -209,6 +209,19 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
+APP_NAME = 'Dev App'  # ___CHANGEME___
+ADMIN_TITLE = 'Admin'
+ADMIN_HEADER = 'Admin'
+
+WEB_URL = get('WEB_URL', 'http://localhost:3000')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+
+
+# ==================================================================================================
+# FILE SETTINGS
+# ==================================================================================================
+
+
 AWS_ACCESS_KEY_ID = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID')
 AWS_DEFAULT_REGION = os.environ.get('BUCKETEER_AWS_REGION')
 AWS_SECRET_ACCESS_KEY = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY')
@@ -217,20 +230,6 @@ AWS_LOCATION = ''
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
-
-# ==================================================================================================
-# PROJECT SETTINGS
-# ==================================================================================================
-
-
-APP_NAME = '___CHANGEME___'
-ADMIN_TITLE = 'Admin'
-ADMIN_HEADER = 'Admin'
-
-WEB_URL = get('WEB_URL', 'http://localhost:3000')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
-
-# Files
 if ENV in [STAGING, PRODUCTION]:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
@@ -248,22 +247,15 @@ FILE_IMAGE_SIZES = (
 # ==================================================================================================
 
 
-SEND_MAIL = ENV in [STAGING, PRODUCTION]
-EMAIL_PROVIDER = os.environ.get('EMAIL_PROVIDER', 'sendgrid')  # 'smtp' or 'sendgrid'
+DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'  # ___CHANGEME___
+DEFAULT_FROM_NAME = 'Input Logic Dev'  # ___CHANGEME___
 
-DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
-DEFAULT_FROM_NAME = '___CHANGEME___'
+EMAIL_HOST = get('SMTP_SERVER', 'smtp.postmarkapp.com')
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
+EMAIL_HOST_USER = get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
+EMAIL_USE_TLS = True
 
-# If SMTP, usually Postmark (postmarkapp.com) settings
-if EMAIL_PROVIDER == 'smtp':
-    EMAIL_HOST = get('SMTP_SERVER')
-    EMAIL_HOST_USER = get('SMTP_LOGIN')
-    EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD')
-    EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
-    EMAIL_USE_TLS = True
-
-# Default to using Sendgrid, just grab key from Heroku config
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
 django_heroku.settings(locals(), staticfiles=False)
