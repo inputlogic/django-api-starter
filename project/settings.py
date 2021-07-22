@@ -171,9 +171,6 @@ LOGGING = {
 }
 logging.config.dictConfig(LOGGING)
 
-X_FRAME_OPTIONS = 'SAMEORIGIN'
-SILENCED_SYSTEM_CHECKS = ['security.W019']
-
 
 # ==================================================================================================
 # 3RD PARTY SETTINGS
