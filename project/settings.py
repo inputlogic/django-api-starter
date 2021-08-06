@@ -1,6 +1,7 @@
 import logging.config
 import os
 import sys
+import django_heroku
 
 
 # ==================================================================================================
@@ -39,6 +40,11 @@ ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
+     # Custom Admin settings (must be before django.contrib.admin)
+    'admin_interface',
+    'colorfield',
+
+    # Django core
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -46,31 +52,22 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.staticfiles',
 
-    'adminsortable2',
-    'corsheaders',
+    # 3rd party
     'django_extensions',
     'django_filters',
-    'djrichtextfield',
-    'facebook',
-    'mptt',  # Needed for 'apps.cms'
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_tracking',
 
-    'apps.cms',
+    # Local
     'apps.file',
-    'apps.logging',
     'apps.mail',
-    'apps.socialmedia',
     'apps.user',
     'apps.workers',
-
-    # ___CHANGEME___
-    # Example apps
-    'apps.workerexample',
 ]
 
 MIDDLEWARE = [
+    'libs.corsmiddleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -78,7 +75,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'project.urls'
@@ -101,20 +97,15 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-if ENV in [STAGING, PRODUCTION]:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(conn_max_age=500),
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'django',  # ___CHANGEME___
-            'USER': 'postgres',
-            'PASSWORD': 'postgres'
-        },
-    }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'django',  # ___CHANGEME___
+        'USER': 'postgres',
+        'PASSWORD': 'postgres'
+    },
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -186,8 +177,6 @@ logging.config.dictConfig(LOGGING)
 # ==================================================================================================
 
 
-CORS_ORIGIN_ALLOW_ALL = True
-
 WORKERS_SLEEP = 1
 WORKERS_PURGE = 1000
 
@@ -217,58 +206,28 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-DJRICHTEXTFIELD_CONFIG = {
-    'js': ['//cdn.quilljs.com/1.3.6/quill.js'],
-    'css': {
-        'all': [
-            '//cdn.quilljs.com/1.3.6/quill.snow.css',
-            'cms/css/admin.css',
-        ]
-    },
-    'init_template': 'editor/init_quill.js',
-    'settings': {
-        'modules': {
-            'toolbar': [
-                [{'header': [1, 2, 3, False]}],
-                ['bold', 'italic', 'underline'],
-                [{'list': 'ordered'}, {'list': 'bullet'}],
-                ['image', 'blockquote', 'code-block'],
-                [{'align': []}],
-                ['clean']
-            ],
-            'history': {
-                'delay': 2000,
-                'maxStack': 500,
-                'userOnly': True
-            }
-        },
-        'placeholder': 'Compose an epic...',
-        'theme': 'snow'
-    }
-}
-
-AWS_ACCESS_KEY_ID = get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = get('AWS_STORAGE_BUCKET_NAME')
-AWS_LOCATION = get('AWS_LOCATION')
-AWS_DEFAULT_REGION = get('AWS_DEFAULT_REGION')
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False
-
-
-# ==================================================================================================
-# PROJECT SETTINGS
-# ==================================================================================================
-
-
-APP_NAME = '___CHANGEME___'
+APP_NAME = 'Dev App'  # ___CHANGEME___
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
-# Files
-# Default to local uploads
-LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
-if not LOCAL_FILE_UPLOADS:
+WEB_URL = get('WEB_URL', 'http://localhost:3000')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+
+
+# ==================================================================================================
+# FILE SETTINGS
+# ==================================================================================================
+
+
+AWS_ACCESS_KEY_ID = os.environ.get('BUCKETEER_AWS_ACCESS_KEY_ID')
+AWS_DEFAULT_REGION = os.environ.get('BUCKETEER_AWS_REGION')
+AWS_SECRET_ACCESS_KEY = os.environ.get('BUCKETEER_AWS_SECRET_ACCESS_KEY')
+AWS_STORAGE_BUCKET_NAME = os.environ.get('BUCKETEER_BUCKET_NAME')
+AWS_LOCATION = ''
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False
+
+if ENV in [STAGING, PRODUCTION]:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -280,36 +239,20 @@ FILE_IMAGE_SIZES = (
 )
 
 
-# Facebook Login
-FACEBOOK_GRAPH_VERSION = '3.1'
-FACEBOOK_APP_ID = get('FACEBOOK_APP_ID')
-FACEBOOK_APP_CLIENT_TOKEN = get('FACEBOOK_APP_CLIENT_TOKEN')
-FACEBOOK_APP_SECRET = get('FACEBOOK_APP_SECRET')
-# This must match the URL specified in the Facebook app login settings "Valid OAuth Redirect URIs"
-FACEBOOK_SUCCESSFUL_LOGIN_URL = get('FACEBOOK_SUCCESSFUL_LOGIN_URL')
+# ==================================================================================================
+# EMAIL SETTINGS
+# ==================================================================================================
 
-# Google Login
-GOOGLE_CLIENT_ID = get('GOOGLE_CLIENT_ID')
-GOOGLE_CLIENT_SECRET = get('GOOGLE_CLIENT_SECRET')
-GOOGLE_SUCCESSFUL_LOGIN_URL = get('GOOGLE_SUCCESSFUL_LOGIN_URL')
-GOOGLE_PROJECT_ID = get('GOOGLE_PROJECT_ID')
-GOOGLE_REDIRECT_URI = get('GOOGLE_REDIRECT_URI')
 
-# MAIL
-SEND_MAIL = get('SEND_MAIL') == 'True'
-EMAIL_PROVIDER = os.environ.get('EMAIL_PROVIDER', 'smtp')  # 'smtp' or 'sendgrid'
+DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'  # ___CHANGEME___
+DEFAULT_FROM_NAME = 'Input Logic Dev'  # ___CHANGEME___
 
-WEB_URL = get('WEB_URL')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
-DEFAULT_FROM_EMAIL = '___CHANGEME___@example.org'
-DEFAULT_FROM_NAME = '___CHANGEME___'
+EMAIL_HOST = get('SMTP_SERVER', 'smtp.postmarkapp.com')
+EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
+EMAIL_HOST_USER = get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
+EMAIL_USE_TLS = True
 
-if EMAIL_PROVIDER == 'smtp':
-    EMAIL_HOST = get('SMTP_SERVER')
-    EMAIL_HOST_USER = get('SMTP_LOGIN')
-    EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD')
-    EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
-    EMAIL_USE_TLS = True
+SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
-SENDGRID_URL = 'https://api.sendgrid.com/v3/mail/send'
+django_heroku.settings(locals(), staticfiles=False)

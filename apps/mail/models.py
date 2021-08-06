@@ -1,7 +1,7 @@
 from django.conf import settings
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.template import engines
+from django.core.exceptions import ValidationError
 
 from .tasks import send_email
 
@@ -26,7 +26,7 @@ class Layout(models.Model):
                 'body': '''
                     Must include {body} string somewhere in layout body. This is where
                     the template will get rendered.
-                '''
+                '''.strip()
             })
         return super().save(*args, **kwargs)
 
@@ -84,7 +84,7 @@ class Mail(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
-    data = JSONField()
+    data = models.JSONField()
     body = models.TextField(default='')
     subject = models.CharField(max_length=250, default='')
     name = models.CharField(max_length=250, verbose_name='type')

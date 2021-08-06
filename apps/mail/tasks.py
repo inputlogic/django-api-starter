@@ -11,59 +11,6 @@ from apps.workers import task
 log = logging.getLogger(__name__)
 
 
-def _sendgrid_send(mail):
-    """
-    Uses SendGrid API to send email.
-    Do not call this function directly.
-    """
-    from apps.mail.models import Mail
-
-    headers = {
-        'authorization': 'Bearer {0}'.format(settings.SENDGRID_API_KEY),
-        'content-type': 'application/json'
-    }
-
-    to_email = getattr(mail.user, mail.user.get_email_field_name())
-    try:
-        to_name = mail.user.get_full_name()
-    except:
-        to_name = to_email
-
-    payload = {
-        'personalizations': [{
-            'to': [{
-                'email': to_email,
-                'name': to_name,
-            }]
-        }],
-        'from': {
-            'email': settings.DEFAULT_FROM_EMAIL,
-            'name': settings.DEFAULT_FROM_NAME
-        },
-        'subject': mail.subject,
-        'content': [{
-            'value': mail.body,
-            'type': 'text/html'
-        }]
-    }
-
-    response = requests.post(
-        settings.SENDGRID_URL, data=json.dumps(payload), headers=headers
-    )
-    mail.api_response_code = response.status_code
-    mail.api_response_text = response.text
-
-    if (response.status_code < 200) or (response.status_code > 299):
-        mail.status = Mail.ERROR
-        mail.save()
-        raise Exception(response.text)
-
-    mail.status = Mail.SENT
-    mail.save()
-
-    return response
-
-
 def _smtp_send(mail):
     """
     Uses SMTP settings to send an email.
@@ -91,8 +38,10 @@ def _smtp_send(mail):
 
     return sent
 
-
-@task()
+# Should send emails inline by default.
+# ONLY enable workers if we're sending many emails and want to avoid server load
+# 
+#  @task()
 def send_email(mail_id):
     """
     Do not call this task directly. Instead use a subclass of MailBase.
@@ -107,8 +56,4 @@ def send_email(mail_id):
         mail.save()
         return
 
-    # If you want add more providers, handle them here.
-    if settings.EMAIL_PROVIDER == 'sendgrid':
-        return _sendgrid_send(mail)
-    else:
-        return _smtp_send(mail)
+    return _smtp_send(mail)
