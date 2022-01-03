@@ -10,7 +10,7 @@ Create and activate local python environment:
 
 ```
 virtualenv env
-. ./env/bin/activate
+. env/bin/activate
 ```
 
 Create database:
