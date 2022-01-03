@@ -1,5 +1,5 @@
 setup:
-	pip install -IUr requirements.txt
+	pip install -r requirements.txt
 	python manage.py migrate
 	python manage.py loaddata fixtures/admin.json
 	python manage.py loaddata fixtures/mail.json

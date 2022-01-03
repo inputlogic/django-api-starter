@@ -1,44 +1,16 @@
 # Django API Starter
 
 ## Versions
-- Python 3.9.x
-- Django 3.2.x
+- Python 3.8.12
+- Django 4.0
 
 ## Installation
-
-Clone repo:
-```
-git clone https://github.com/inputlogic/django-api-starter.git ___PROJNAME___
-cd ___PROJNAME___
-```
 
 Create and activate local python environment:
 
 ```
-python -m venv env
+virtualenv env
 . ./env/bin/activate
-```
-
-Install requirements:
-
-```
-pip install -r requirements.init.txt
-pip freeze > requirements.txt
-rm requirements.init.txt
-```
-
-A note on `requirements.init.txt` vs `requirements.txt`:
-
-> `requirements.init.txt` installs the latest versions of each package.
->
-> If you have problems with the packages installed from `requirements.init.txt`,
-> try installing django-api-starter's `requirements.txt` instead. It contains
-> specific versions that are expected to work.
-
-Save local environment variables:
-
-```
-mv env.template .env
 ```
 
 Create database:
@@ -58,29 +30,18 @@ DATABASES = {
 }
 ```
 
-Django setup:
+Setup & run Django:
 ```
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py collectstatic
-```
-
-Create a fresh git repo for the new project:
-```
-rm -rf .git
-git init
-git commit -am '___PROJNAME___ initial commit from django-api-starter'
+make setup
+./manage.py createsuperuser
+./manage.py runserver
 ```
 
-## Project Configuration
+A note on `requirements.init.txt` vs `requirements.txt`:
 
-(Note that areas requiring configuration have been marked with `___CHANGEME___`,
-to make them easy to find.)
+> `requirements.init.txt` installs the latest versions of each package.
+>
+> If you have problems with the packages installed from `requirements.init.txt`,
+> try installing django-api-starter's `requirements.txt` instead. It contains
+> specific versions that are expected to work.
 
-Delete example apps:
-```
-rm -rf apps/workerexample
-rm -rf apps/proxyexample
-```
-
-Remove references to example apps from `project/settings.py` & `project/urls.py`
