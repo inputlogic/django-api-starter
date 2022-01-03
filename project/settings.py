@@ -40,7 +40,7 @@ ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
-     # Custom Admin settings (must be before django.contrib.admin)
+    # Custom Admin settings (must be before django.contrib.admin)
     'admin_interface',
     'colorfield',
 
