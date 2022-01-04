@@ -261,3 +261,5 @@ EMAIL_USE_TLS = True
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
 django_heroku.settings(locals(), staticfiles=False)
+
+del DATABASES['default']['OPTIONS']['sslmode']
