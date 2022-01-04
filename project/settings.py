@@ -103,7 +103,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django',  # ___CHANGEME___
         'USER': 'postgres',
-        'PASSWORD': 'postgres'
+        'PASSWORD': 'postgres',
+        'OPTIONS': {
+            'sslmode': os.environ.get('DB_SSL', 'disable'),
+        }
     },
 }
 
