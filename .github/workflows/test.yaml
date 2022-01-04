@@ -25,6 +25,7 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: ""
         DB_PORT: 5432
+        DB_SSL: "allow"
         DJANGO_ENV: staging
         SECRET_KEY: test
         ALLOWED_HOSTS: "*"
