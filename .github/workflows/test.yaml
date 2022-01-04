@@ -20,9 +20,11 @@ jobs:
     container:
       image: python:3.8.12
       env:
-        POSTGRES_DB: django
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: ""
+        DB_HOST: postgres
+        DB_NAME: django
+        DB_USER: postgres
+        DB_PASSWORD: ""
+        DB_PORT: 5432
         DJANGO_ENV: staging
         SECRET_KEY: test
         ALLOWED_HOSTS: "*"

@@ -101,9 +101,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',  # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'NAME': os.environ.get('DB_NAME', 'django'),  # ___CHANGEME___
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'PORT': os.environ.get('DB_PORT', 5432),
         'OPTIONS': {
             'sslmode': os.environ.get('DB_SSL', 'disable'),
         }
