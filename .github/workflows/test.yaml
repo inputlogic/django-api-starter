@@ -18,12 +18,15 @@ jobs:
         image: postgres:10.8
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
-      image: python:3.6
+      image: python:3.8.12
       env:
-        POSTGRES_DB: django
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: ""
-        DJANGO_ENV: staging
+        DB_HOST: postgres
+        DB_NAME: django
+        DB_USER: postgres
+        DB_PASSWORD: ""
+        DB_PORT: 5432
+        DB_SSL: "allow"
+        DJANGO_ENV: test
         SECRET_KEY: test
         ALLOWED_HOSTS: "*"
         WEB_URL: "http://localhost:3000"
@@ -53,12 +56,14 @@ jobs:
         export DATABASE_URL=postgres://postgres:@postgres:5432/django
         apt-get update -qy
         apt-get install -y python3-dev python3-pip
+        pip3 install --upgrade pip
+        pip3 install wheel
         pip3 install -r requirements.txt
         pip3 install flake8
         python3 manage.py test apps
 
     - name: Run linters
-      uses: samuelmeuli/lint-action@v1 
+      uses: samuelmeuli/lint-action@v1
       with:
         github_token: ${{ secrets.github_token }}
         flake8: true

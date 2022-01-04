@@ -40,7 +40,7 @@ ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
-     # Custom Admin settings (must be before django.contrib.admin)
+    # Custom Admin settings (must be before django.contrib.admin)
     'admin_interface',
     'colorfield',
 
@@ -101,9 +101,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',  # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': 'postgres'
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'NAME': os.environ.get('DB_NAME', 'django'),  # ___CHANGEME___
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'postgres'),
+        'PORT': os.environ.get('DB_PORT', 5432),
+        'OPTIONS': {
+            'sslmode': os.environ.get('DB_SSL', 'disable'),
+        }
     },
 }
 
@@ -227,7 +232,9 @@ AWS_LOCATION = ''
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
-if ENV in [STAGING, PRODUCTION]:
+LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
+
+if ENV in [STAGING, PRODUCTION] or not LOCAL_FILE_UPLOADS:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -256,3 +263,5 @@ EMAIL_USE_TLS = True
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
 django_heroku.settings(locals(), staticfiles=False)
+
+del DATABASES['default']['OPTIONS']['sslmode']
