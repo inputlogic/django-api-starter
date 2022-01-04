@@ -18,7 +18,7 @@ jobs:
         image: postgres:10.8
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
-      image: python:3.6
+      image: python:3.8.12
       env:
         POSTGRES_DB: django
         POSTGRES_USER: postgres
@@ -60,7 +60,7 @@ jobs:
         python3 manage.py test apps
 
     - name: Run linters
-      uses: samuelmeuli/lint-action@v1 
+      uses: samuelmeuli/lint-action@v1
       with:
         github_token: ${{ secrets.github_token }}
         flake8: true
