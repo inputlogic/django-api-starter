@@ -232,7 +232,9 @@ AWS_LOCATION = ''
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
-if ENV in [STAGING, PRODUCTION]:
+LOCAL_FILE_UPLOADS = os.environ.get('LOCAL_FILE_UPLOADS', 'True') == 'True'
+
+if ENV in [STAGING, PRODUCTION] or not LOCAL_FILE_UPLOADS:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
