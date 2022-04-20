@@ -12,8 +12,9 @@ import django_heroku
 DEV = 'dev'
 STAGING = 'staging'
 PRODUCTION = 'production'
-TESTING = 'test' in sys.argv
+TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
+TESTING = 'test' in sys.argv or ENV == TEST
 
 
 # ==================================================================================================
@@ -92,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django',  # ___CHANGEME___
         'USER': 'postgres',
-        'PASSWORD': 'postgres'
+        'PASSWORD': ''
     },
 }
 
@@ -247,9 +248,11 @@ SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
 
 # ==================================================================================================
-# HEROKU
+# HEROKU & GITHUB
 # ==================================================================================================
 
+if TESTING:
+    del DATABASES['default']['OPTIONS']['sslmode']
 
 if ENV in [STAGING, PRODUCTION]:
     django_heroku.settings(locals(), staticfiles=False)
