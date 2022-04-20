@@ -1,11 +1,8 @@
 import logging
-import json
-import requests
 from smtplib import SMTPException
 
 from django.conf import settings
 from django.core.mail import send_mail as dj_send_mail
-from apps.workers import task
 
 
 log = logging.getLogger(__name__)
@@ -38,13 +35,15 @@ def _smtp_send(mail):
 
     return sent
 
+
 # Should send emails inline by default.
 # ONLY enable workers if we're sending many emails and want to avoid server load
-# 
+#
 #  @task()
 def send_email(mail_id):
     """
     Do not call this task directly. Instead use a subclass of MailBase.
+
     """
     from apps.mail.models import Mail
 
