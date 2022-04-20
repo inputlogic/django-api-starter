@@ -16,26 +16,15 @@ TESTING = 'test' in sys.argv
 ENV = os.environ.get('DJANGO_ENV', DEV)
 
 
-def get(variable, default=''):
-    """
-    To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
-    env vars to be present.
-    """
-    if ENV == PRODUCTION and variable not in os.environ:
-        raise Exception('Required environment variable not set: {}'.format(variable))
-
-    return os.environ.get(variable, default)
-
-
 # ==================================================================================================
 # DJANGO SETTINGS
 # ==================================================================================================
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
-SECRET_KEY = get('SECRET_KEY', 'local')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'local')
 DEBUG = False if ENV == PRODUCTION else True
-ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*')
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -210,7 +199,7 @@ APP_NAME = 'Dev App'  # ___CHANGEME___
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
-WEB_URL = get('WEB_URL', 'http://localhost:3000')
+WEB_URL = os.environ.get('WEB_URL', 'http://localhost:3000')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 
 
@@ -227,7 +216,7 @@ AWS_LOCATION = ''
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
-if ENV in [STAGING, PRODUCTION]:
+if ENV in [STAGING, PRODUCTION] and AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -247,10 +236,10 @@ FILE_IMAGE_SIZES = (
 DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'  # ___CHANGEME___
 DEFAULT_FROM_NAME = 'Input Logic Dev'  # ___CHANGEME___
 
-EMAIL_HOST = get('SMTP_SERVER', 'smtp.postmarkapp.com')
+EMAIL_HOST = os.environ.get('SMTP_SERVER', 'smtp.postmarkapp.com')
 EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
-EMAIL_HOST_USER = get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
-EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_USER = os.environ.get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
 EMAIL_USE_TLS = True
 
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
