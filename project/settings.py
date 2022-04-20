@@ -12,19 +12,9 @@ import django_heroku
 DEV = 'dev'
 STAGING = 'staging'
 PRODUCTION = 'production'
-TESTING = 'test' in sys.argv
+TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
-
-
-def get(variable, default=''):
-    """
-    To be used over os.environ.get() to avoid deploying local/dev keys in production. Forced
-    env vars to be present.
-    """
-    if ENV == PRODUCTION and variable not in os.environ:
-        raise Exception('Required environment variable not set: {}'.format(variable))
-
-    return os.environ.get(variable, default)
+TESTING = 'test' in sys.argv or ENV == TEST
 
 
 # ==================================================================================================
@@ -33,14 +23,14 @@ def get(variable, default=''):
 
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
-SECRET_KEY = get('SECRET_KEY', 'local')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'local')
 DEBUG = False if ENV == PRODUCTION else True
-ALLOWED_HOSTS = get('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
-     # Custom Admin settings (must be before django.contrib.admin)
+    # Custom Admin settings (must be before django.contrib.admin)
     'admin_interface',
     'colorfield',
 
@@ -103,7 +93,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'django',  # ___CHANGEME___
         'USER': 'postgres',
-        'PASSWORD': 'postgres'
+        'PASSWORD': ''
     },
 }
 
@@ -190,7 +180,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # SessionAuthentication may interfere with mobile API requests. If you are experiencing ssues, try commenting out the following line.
+        # SessionAuthentication may interfere with mobile API requests.
+        # If you are experiencing ssues, try commenting out the following line.
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -210,7 +201,7 @@ APP_NAME = 'Dev App'  # ___CHANGEME___
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
-WEB_URL = get('WEB_URL', 'http://localhost:3000')
+WEB_URL = os.environ.get('WEB_URL', 'http://localhost:3000')
 RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
 
 
@@ -227,7 +218,7 @@ AWS_LOCATION = ''
 AWS_DEFAULT_ACL = 'public-read'
 AWS_QUERYSTRING_AUTH = False
 
-if ENV in [STAGING, PRODUCTION]:
+if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -247,12 +238,24 @@ FILE_IMAGE_SIZES = (
 DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'  # ___CHANGEME___
 DEFAULT_FROM_NAME = 'Input Logic Dev'  # ___CHANGEME___
 
-EMAIL_HOST = get('SMTP_SERVER', 'smtp.postmarkapp.com')
+EMAIL_HOST = os.environ.get('SMTP_SERVER', 'smtp.postmarkapp.com')
 EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
-EMAIL_HOST_USER = get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
-EMAIL_HOST_PASSWORD = get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_USER = os.environ.get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
 EMAIL_USE_TLS = True
 
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
-django_heroku.settings(locals(), staticfiles=False)
+
+# ==================================================================================================
+# HEROKU & GITHUB
+# ==================================================================================================
+
+if ENV in [STAGING, PRODUCTION]:
+    django_heroku.settings(locals(), staticfiles=False)
+
+if TESTING:
+    try:
+        del DATABASES['default']['OPTIONS']['sslmode']
+    except KeyError:
+        pass
