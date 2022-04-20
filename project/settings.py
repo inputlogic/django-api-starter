@@ -180,7 +180,7 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # SessionAuthentication may interfere with mobile API requests. 
+        # SessionAuthentication may interfere with mobile API requests.
         # If you are experiencing ssues, try commenting out the following line.
         'rest_framework.authentication.SessionAuthentication',
     ),
@@ -251,8 +251,12 @@ SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 # HEROKU & GITHUB
 # ==================================================================================================
 
-if TESTING:
-    del DATABASES['default']['OPTIONS']['sslmode']
-
 if ENV in [STAGING, PRODUCTION]:
     django_heroku.settings(locals(), staticfiles=False)
+
+if TESTING:
+    try:
+        del DATABASES['default']['OPTIONS']['sslmode']
+    except KeyError:
+        pass
+
