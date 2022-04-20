@@ -18,33 +18,11 @@ jobs:
         image: postgres:10.8
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
-      image: python:3.6
+      image: python:3.9
       env:
         POSTGRES_DB: django
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: ""
-        DJANGO_ENV: staging
-        SECRET_KEY: test
-        ALLOWED_HOSTS: "*"
-        WEB_URL: "http://localhost:3000"
-        AWS_ACCESS_KEY_ID: "test"
-        AWS_SECRET_ACCESS_KEY: "test"
-        AWS_STORAGE_BUCKET_NAME: "test"
-        AWS_LOCATION: "test"
-        AWS_DEFAULT_REGION: "test"
-        AWS_QUERYSTRING_AUTH: False
-        SEND_MAIL: False
-        EMAIL_PROVIDER: "sendgrid"
-        SENDGRID_API_KEY: "test"
-        FACEBOOK_APP_ID: "test"
-        FACEBOOK_APP_CLIENT_TOKEN: "test"
-        FACEBOOK_APP_SECRET: "test"
-        FACEBOOK_SUCCESSFUL_LOGIN_URL: "test"
-        GOOGLE_CLIENT_ID: "test"
-        GOOGLE_CLIENT_SECRET: "test"
-        GOOGLE_SUCCESSFUL_LOGIN_URL: "test"
-        GOOGLE_PROJECT_ID: "test"
-        GOOGLE_REDIRECT_URI: "test"
     steps:
     - uses: actions/checkout@v2
 
