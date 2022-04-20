@@ -259,4 +259,3 @@ if TESTING:
         del DATABASES['default']['OPTIONS']['sslmode']
     except KeyError:
         pass
-
