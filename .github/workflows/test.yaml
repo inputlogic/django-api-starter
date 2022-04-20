@@ -22,7 +22,9 @@ jobs:
       env:
         POSTGRES_DB: django
         POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: ""
+        POSTGRES_PASSWORD:
+        DJANGO_ENV: staging
+        SECRET_KEY: test
     steps:
     - uses: actions/checkout@v2
 

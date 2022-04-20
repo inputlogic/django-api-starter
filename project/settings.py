@@ -24,7 +24,7 @@ ENV = os.environ.get('DJANGO_ENV', DEV)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
 SECRET_KEY = os.environ.get('SECRET_KEY', 'local')
 DEBUG = False if ENV == PRODUCTION else True
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*')
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
 
 AUTH_USER_MODEL = 'user.User'
 
@@ -179,7 +179,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        # SessionAuthentication may interfere with mobile API requests. If you are experiencing ssues, try commenting out the following line.
+        # SessionAuthentication may interfere with mobile API requests. 
+        # If you are experiencing ssues, try commenting out the following line.
         'rest_framework.authentication.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
@@ -244,4 +245,11 @@ EMAIL_USE_TLS = True
 
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 
-django_heroku.settings(locals(), staticfiles=False)
+
+# ==================================================================================================
+# HEROKU
+# ==================================================================================================
+
+
+if ENV in [STAGING, PRODUCTION]:
+    django_heroku.settings(locals(), staticfiles=False)
