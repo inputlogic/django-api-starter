@@ -17,6 +17,9 @@ urlpatterns = [
     path('', include('apps.file.urls')),
     path('', include('apps.user.urls')),
 
+    # Examples
+    path('', include('apps.examples.urls')),
+
     # DRF API
     path('api/', api_root, name='index'),
     path('api-auth/', include('rest_framework.urls')),

@@ -54,6 +54,10 @@ INSTALLED_APPS = [
     'apps.mail',
     'apps.user',
     'apps.workers',
+
+    # Examples
+    # !!! REMOVE ME IN PRODUCTION !!!
+    'apps.examples',
 ]
 
 MIDDLEWARE = [
