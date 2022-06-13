@@ -90,10 +90,15 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 DATABASES = {
     'default': {
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django',  # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': ''
+        'NAME': os.environ.get('DB_NAME', 'django'),
+        'USER': os.environ.get('DB_USER', 'postgres'),
+        'PASSWORD': os.environ.get('DB_PASS', 'postgres'),
+        'PORT': os.environ.get('DB_PORT', 5432),
+        'OPTIONS': {
+            'sslmode': os.environ.get('DB_SSL', 'disable'),
+        }
     },
 }
 
