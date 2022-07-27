@@ -1,8 +1,6 @@
-from datetime import timedelta
 import logging
 
 from django.db import models
-from django.utils import timezone
 
 
 log = logging.getLogger(__name__)
@@ -45,10 +43,11 @@ class Task(models.Model):
             return
 
         log.debug('scheduling task: {0} for {1}'.format(handler, run_at))
-        Task.objects.create(
+        Task.objects.get_or_create(
             handler=handler,
             args={},
             kwargs={},
             schedule=schedule,
             run_at=run_at,
+            status=Task.WAITING
         )

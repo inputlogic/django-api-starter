@@ -1,6 +1,7 @@
 import json
 from functools import wraps
 
+from django.db.models import Q
 from django.utils import timezone
 
 from . import registry
@@ -26,6 +27,7 @@ def task(schedule=None, run_at=timezone.now()):
                 args=json.dumps(args),
                 kwargs=json.dumps(kwargs),
                 run_at=run_at_time,
+                status=Task.WAITING
             )
         return wrapper
     return handler
