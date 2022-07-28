@@ -1,5 +1,4 @@
 import importlib
-import inspect
 import json
 import logging
 from functools import wraps
@@ -7,7 +6,6 @@ from functools import wraps
 from django.utils import timezone
 
 from . import registry
-from inspect import getcallargs
 
 log = logging.getLogger(__name__)
 
@@ -39,7 +37,6 @@ def task(schedule=None, run_at=timezone.now()):
                 run_at_time = run_at
 
             if kwargs.pop('now', False):
-                call_args = inspect.getcallargs(f, *args, **kwargs)
                 return run_now(path, *args, **kwargs)
             else:
                 from .models import Task
