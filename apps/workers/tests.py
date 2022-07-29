@@ -47,5 +47,3 @@ class WorkerTests(APITestCase):
         self.assertEqual(new_task_count - old_task_count, 1)
         self.assertEqual(new_task.args, f'["{string}"]')
         self.assertEqual(new_task.run_at, future_time)
-
-
