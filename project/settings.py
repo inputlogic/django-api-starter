@@ -16,8 +16,6 @@ TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
 TESTING = 'test' in sys.argv or ENV == TEST
 
-print('ENV:', ENV)
-
 # Admin Banner
 if ENV == DEV:
     ENVIRONMENT_NAME = "Development Environment"
