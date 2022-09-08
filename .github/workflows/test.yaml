@@ -23,6 +23,7 @@ jobs:
         POSTGRES_DB: django
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD:
+        POSTGRES_HOST: postgres
         DJANGO_ENV: staging
         SECRET_KEY: test
     steps:
