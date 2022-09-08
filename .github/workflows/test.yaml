@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres
+        image: postgres:13
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
       image: python:3.9
