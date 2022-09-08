@@ -20,7 +20,7 @@ jobs:
     container:
       image: python:3.9
       env:
-        POSTGRES_DB: django
+        POSTGRES_DB: postgres
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD:
         POSTGRES_HOST: postgres
@@ -31,7 +31,6 @@ jobs:
 
     - name: Django test
       run: |
-        export DATABASE_URL=postgres://postgres:@postgres:5432/django
         apt-get update -qy
         apt-get install -y python3-dev python3-pip
         pip3 install -r requirements.txt
