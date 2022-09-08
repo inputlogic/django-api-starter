@@ -24,7 +24,7 @@ def init_pool():
 
 
 def process_task(task_id, handler, args, kwargs):
-    log.debug(f'[{os.getpid()}] started task {task_id}')
+    log.info(f'[{os.getpid()}] started task {task_id}')
     success = False
     error = 'Task failed without error.'
 
@@ -43,7 +43,7 @@ def process_task(task_id, handler, args, kwargs):
         success = False
         error = str(e)
 
-    log.debug(f'[{os.getpid()}] finished task {task_id} ({success}, {error})')
+    log.info(f'[{os.getpid()}] finished task {task_id} ({success}, {error})')
     return task_id, success, error
 
 
@@ -75,6 +75,7 @@ def handle_callback(result):
 def run_forever():
     try:
         with get_context("spawn").Pool(initializer=init_pool, maxtasksperchild=1) as pool:
+            log.info('waiting for tasks...')
             while True:
                 with transaction.atomic():
                     task = (
@@ -96,10 +97,9 @@ def run_forever():
                     else:
                         purge_tasks()  # If we have a sec, cleanup old tasks
                         time.sleep(SLEEP)
-                    log.debug('waiting for tasks...')
 
     except (KeyboardInterrupt, SystemExit):
-        log.debug('workers stopped, waiting for lingering tasks...')
+        log.warn('workers stopped, waiting for lingering tasks...')
         pool.close()
         pool.join()
     finally:

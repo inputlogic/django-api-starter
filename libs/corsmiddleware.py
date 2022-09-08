@@ -7,7 +7,7 @@ class CorsMiddleware(object):
 
     def __call__(self, request):
         response = self.get_response(request)
-        if(request.method == "OPTIONS" and "HTTP_ACCESS_CONTROL_REQUEST_METHOD" in request.META):
+        if (request.method == "OPTIONS" and "HTTP_ACCESS_CONTROL_REQUEST_METHOD" in request.META):
             response = http.HttpResponse()
             response["Content-Length"] = "0"
             response["Access-Control-Max-Age"] = 86400

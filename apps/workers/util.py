@@ -28,5 +28,5 @@ def autodiscover():
             log.error('failed to autodiscover {0}: does it have an __init__.py file?'.format(app))
             continue
 
-        log.debug('discovered {0}.tasks'.format(app))
+        log.info('discovered {0}.tasks'.format(app))
         import_module("%s.tasks" % app)

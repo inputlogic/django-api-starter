@@ -1,0 +1,58 @@
+services:
+  db:
+    container_name: db
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migrations:
+    container_name: migrations
+    build: . 
+    command: ['python', 'manage.py', 'migrate']
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+    volumes:
+      - .:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
+  web:
+    container_name: web
+    build: . 
+    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000']
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - migrations
+
+  workers:
+    container_name: workers
+    build: . 
+    command: ['python', 'manage.py', 'runworkers']
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_HOST=db
+    volumes:
+      - .:/app
+    depends_on:
+      - migrations
