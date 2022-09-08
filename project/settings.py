@@ -16,6 +16,18 @@ TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
 TESTING = 'test' in sys.argv or ENV == TEST
 
+print('ENV:', ENV)
+
+# Admin Banner
+if ENV == DEV:
+    ENVIRONMENT_NAME = "Development Environment"
+    ENVIRONMENT_COLOR = "#828282"
+elif ENV == STAGING:
+    ENVIRONMENT_NAME = "Staging Staging Environment"
+    ENVIRONMENT_COLOR = "#FF2222"
+else:
+    ENVIRONMENT_NAME = None
+    ENVIRONMENT_COLOR = None
 
 # ==================================================================================================
 # DJANGO SETTINGS
@@ -31,6 +43,7 @@ AUTH_USER_MODEL = 'user.User'
 
 INSTALLED_APPS = [
     # Custom Admin settings (must be before django.contrib.admin)
+    'django_admin_env_notice',
     'admin_interface',
     'colorfield',
 
@@ -80,6 +93,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django_admin_env_notice.context_processors.from_settings'
             ],
         },
     },
