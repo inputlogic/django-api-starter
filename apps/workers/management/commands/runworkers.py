@@ -14,8 +14,8 @@ class Command(BaseCommand):
         scheduled = registry.get()
         if scheduled:
             from ...models import Task
-            for handler, schedule in scheduled:
-                Task.create_scheduled_task(handler, schedule)
+            for handler, schedule, run_at in scheduled:
+                Task.create_scheduled_task(handler, schedule, run_at)
 
         # Close active db connection so workers create their own
         # This is REQUIRED for multiprocessing to work with Django

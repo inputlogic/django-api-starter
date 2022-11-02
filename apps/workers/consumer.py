@@ -4,6 +4,7 @@ import logging
 import signal
 import time
 import importlib
+from datetime import timedelta
 from multiprocessing import get_context
 
 from django.db import transaction
@@ -69,7 +70,7 @@ def handle_callback(result):
     task.save()
 
     if task.schedule:
-        Task.create_scheduled_task(task.handler, task.schedule)
+        Task.create_scheduled_task(task.handler, task.schedule, run_at=task.run_at + timedelta(seconds=task.schedule))
 
 
 def run_forever():
