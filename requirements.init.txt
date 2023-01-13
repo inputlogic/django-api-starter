@@ -6,6 +6,7 @@ boto3
 dj-database-url
 django
 django-admin-interface
+django-admin-env-notice
 django-dotenv
 django-extensions
 django-filter
