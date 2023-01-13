@@ -46,16 +46,9 @@ Create database:
 createdb ___PROJNAME___
 ```
 
-Change database name in `project/settings.py` to match the one you just created:
+Change database name in `.env` to match the one you just created:
 ```
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django', # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': 'postgres'
-    },
-}
+POSTGRES_DB=__PROJNAME__
 ```
 
 Django setup:
