@@ -20,16 +20,16 @@ jobs:
           POSTGRES_PASSWORD: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
-      image: python:3.9
+      image: python:3.11.1
       env:
-        POSTGRES_DB: postgres
+        POSTGRES_DB: django
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
         POSTGRES_HOST: postgres
         DJANGO_ENV: staging
         SECRET_KEY: test
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Django test
       run: |
