@@ -1,4 +1,8 @@
+import logging
 from django import http
+
+
+log = logging.getLogger(__name__)
 
 
 class CorsMiddleware(object):
@@ -6,6 +10,7 @@ class CorsMiddleware(object):
         self.get_response = get_response
 
     def __call__(self, request):
+        log.debug('Setting CORS headers')
         response = self.get_response(request)
         if (request.method == "OPTIONS" and "HTTP_ACCESS_CONTROL_REQUEST_METHOD" in request.META):
             response = http.HttpResponse()
