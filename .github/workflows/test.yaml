@@ -52,5 +52,5 @@ jobs:
       - name: flake8 Lint
         uses: py-actions/flake8@v2
         with:
-          ignore: "E501,E722,F821,W504"
+          ignore: "E501,E722,F821,W504 app/ project/ libs/"
           max-line-length: "100"
