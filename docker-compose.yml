@@ -3,7 +3,7 @@ services:
     container_name: db
     image: postgres
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=django
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     healthcheck:
@@ -17,7 +17,7 @@ services:
     build: . 
     command: ['python', 'manage.py', 'migrate']
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=django
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
@@ -30,9 +30,9 @@ services:
   web:
     container_name: web
     build: . 
-    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000']
+    command: ['python', 'manage.py', 'runserver_plus', '0.0.0.0:8000']
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=django
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
@@ -48,7 +48,7 @@ services:
     build: . 
     command: ['python', 'manage.py', 'runworkers']
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_DB=django
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
