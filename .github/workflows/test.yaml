@@ -1,4 +1,4 @@
-name: django-test
+name: Django
 
 on:
   # Trigger the workflow on push or pull request,
@@ -41,7 +41,7 @@ jobs:
 
   flake8-lint:
     runs-on: ubuntu-latest
-    name: Lint
+    name: lint
     steps:
       - name: Check out source repository
         uses: actions/checkout@v3
