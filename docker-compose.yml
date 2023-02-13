@@ -6,31 +6,18 @@ services:
       - POSTGRES_DB=django
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 3s
       retries: 5
-
-  migrations:
-    container_name: migrations
-    build: . 
-    command: ['python', 'manage.py', 'migrate']
-    environment:
-      - POSTGRES_DB=django
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_HOST=db
-    volumes:
-      - .:/app
-    depends_on:
-      db:
-        condition: service_healthy
 
   web:
     container_name: web
     build: . 
-    command: ['python', 'manage.py', 'runserver_plus', '0.0.0.0:8000']
+    command: sh -c 'python manage.py migrate && python manage.py runserver_plus 0.0.0.0:8000'
     environment:
       - POSTGRES_DB=django
       - POSTGRES_USER=postgres
@@ -40,13 +27,19 @@ services:
       - .:/app
     ports:
       - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/admin/login/"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
     depends_on:
-      - migrations
+      db:
+        condition: service_healthy
 
   workers:
     container_name: workers
     build: . 
-    command: ['python', 'manage.py', 'runworkers']
+    command: sh -c 'python manage.py runworkers'
     environment:
       - POSTGRES_DB=django
       - POSTGRES_USER=postgres
@@ -55,4 +48,5 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - migrations
+      web:
+        condition: service_healthy
