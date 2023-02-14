@@ -18,4 +18,4 @@ run:
 	python manage.py runserver_plus
 
 shell:
-	docker exec -it web /bin/bash
+	docker exec -it <web-container-name> /bin/bash
