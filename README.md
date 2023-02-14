@@ -11,7 +11,9 @@
 3. Profit.
 
 If you'd like to run commands like `./manage.py <command>` on the Docker instance, connect to
-the web shell first, with:
+the web shell.
+
+First update the `Makefile` to match your web container name in the `shell` command and run:
 
 ```
 $ make shell
