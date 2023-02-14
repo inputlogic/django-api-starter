@@ -1,86 +1,43 @@
 # Django API Starter
 
 ## Versions
-- Python 3.9.x
-- Django 3.2.x
+- Python 3.11.x
+- Django 4.1.x
 
-## Installation
+## Docker Setup
 
-Clone repo:
-```
-git clone https://github.com/inputlogic/django-api-starter.git ___PROJNAME___
-cd ___PROJNAME___
-```
+1. Install Docker.
+2. Run `docker compose up`.
+3. Profit.
 
-Create and activate local python environment:
-
-```
-python -m venv env
-. ./env/bin/activate
-```
-
-Install requirements:
+If you'd like to run commands like `./manage.py <command>` on the Docker instance, connect to
+the web shell first, with:
 
 ```
-pip install -r requirements.init.txt
-pip freeze > requirements.txt
-rm requirements.init.txt
+$ make shell
 ```
 
-A note on `requirements.init.txt` vs `requirements.txt`:
+## Manual Setup
 
-> `requirements.init.txt` installs the latest versions of each package.
->
-> If you have problems with the packages installed from `requirements.init.txt`,
-> try installing django-api-starter's `requirements.txt` instead. It contains
-> specific versions that are expected to work.
-
-Save local environment variables:
+1. Setup a virtual environment and activate.
 
 ```
-mv env.template .env
+$ virtualenv env
+$ . env/bin/activate
+(env) $
 ```
 
-Create database:
+2. Create Postgres database.
 ```
-createdb ___PROJNAME___
-```
-
-Change database name in `project/settings.py` to match the one you just created:
-```
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'django', # ___CHANGEME___
-        'USER': 'postgres',
-        'PASSWORD': 'postgres'
-    },
-}
+(env) $ createdb django
 ```
 
-Django setup:
+3. Install Django dependencies and build database.
 ```
-python manage.py migrate
-python manage.py createsuperuser
-python manage.py collectstatic
+(env) $ make setup
 ```
 
-Create a fresh git repo for the new project:
+4. Run the project (using improved dev server).
 ```
-rm -rf .git
-git init
-git commit -am '___PROJNAME___ initial commit from django-api-starter'
+(env) $ make run
 ```
-
-## Project Configuration
-
-(Note that areas requiring configuration have been marked with `___CHANGEME___`,
-to make them easy to find.)
-
-Delete example apps:
-```
-rm -rf apps/workerexample
-rm -rf apps/proxyexample
-```
-
-Remove references to example apps from `project/settings.py` & `project/urls.py`

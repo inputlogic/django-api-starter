@@ -1,5 +1,6 @@
 setup:
-	pip install -IUr requirements.txt
+	pip install -r requirements.txt
+	python manage.py makemigrations
 	python manage.py migrate
 	python manage.py loaddata fixtures/admin.json
 	python manage.py loaddata fixtures/mail.json
@@ -13,5 +14,8 @@ tests:
 coverage:
 	python manage.py test apps --with-coverage --cover-package=apps.user
 
-localhost:
+run:
 	python manage.py runserver_plus
+
+shell:
+	docker exec -it web /bin/bash

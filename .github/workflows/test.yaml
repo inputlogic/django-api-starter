@@ -1,4 +1,4 @@
-name: django-test
+name: Django
 
 on:
   # Trigger the workflow on push or pull request,
@@ -20,16 +20,16 @@ jobs:
           POSTGRES_PASSWORD: postgres
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s
     container:
-      image: python:3.9
+      image: python:3.11.1
       env:
-        POSTGRES_DB: postgres
+        POSTGRES_DB: django
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
         POSTGRES_HOST: postgres
         DJANGO_ENV: staging
         SECRET_KEY: test
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Django test
       run: |
@@ -39,9 +39,19 @@ jobs:
         pip3 install flake8
         python3 manage.py test apps
 
-    - name: Run linters
-      uses: samuelmeuli/lint-action@v1 
-      with:
-        github_token: ${{ secrets.github_token }}
-        flake8: true
-        flake8_args: "--ignore E501,E722,F821,W504 apps/ project/ libs/"
+  flake8-lint:
+    runs-on: ubuntu-latest
+    name: lint
+    steps:
+      - name: Check out source repository
+        uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
+        with:
+          path: 'apps/ project/ libs/'
+          ignore: "E501,E722,F821,W504"
+          max-line-length: "100"

@@ -6,10 +6,12 @@ services:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./.db:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 10s
-      timeout: 5s
+      interval: 5s
+      timeout: 3s
       retries: 5
 
   migrations:
@@ -30,7 +32,7 @@ services:
   web:
     container_name: web
     build: . 
-    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000']
+    command: ['python', 'manage.py', 'runserver_plus', '0.0.0.0:8000']
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
@@ -41,7 +43,8 @@ services:
     ports:
       - "8000:8000"
     depends_on:
-      - migrations
+      migrations:
+        condition: service_completed_successfully
 
   workers:
     container_name: workers
@@ -55,4 +58,5 @@ services:
     volumes:
       - .:/app
     depends_on:
-      - migrations
+      migrations:
+        condition: service_completed_successfully

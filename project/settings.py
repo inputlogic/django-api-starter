@@ -15,6 +15,7 @@ PRODUCTION = 'production'
 TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
 TESTING = 'test' in sys.argv or ENV == TEST
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG' if ENV == DEV else 'WARNING')
 
 # Admin Banner
 if ENV == DEV:
@@ -26,6 +27,7 @@ elif ENV == STAGING:
 else:
     ENVIRONMENT_NAME = None
     ENVIRONMENT_COLOR = None
+
 
 # ==================================================================================================
 # DJANGO SETTINGS
@@ -58,7 +60,6 @@ INSTALLED_APPS = [
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_framework_tracking',
 
     # Local
     'apps.file',
@@ -142,8 +143,8 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
-        'level': 'WARNING',
-        'handlers': ['console', 'sentry'],
+        'level': LOG_LEVEL,
+        'handlers': ['console'],
     },
     'formatters': {
         'custom': {
@@ -153,23 +154,13 @@ LOGGING = {
     },
     'handlers': {
         'console': {
-            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'custom'
         },
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-            'tags': {'custom-tag': 'x'},
-        },
     },
     'loggers': {
-        'apps': {'level': 'DEBUG'},
-        'project': {'level': 'DEBUG'},
-        'libs': {'level': 'DEBUG'},
         'django': {'level': 'INFO'},
         'gunicorn': {'level': 'WARNING'},
-        'workers': {'level': 'DEBUG'}
     }
 }
 logging.config.dictConfig(LOGGING)

@@ -3,8 +3,8 @@
 # If there are compatibility problems, install from `requirements.txt` instead.
 arrow
 boto3
-dj-database-url
 django
+django-admin-env-notice
 django-admin-interface
 django-dotenv
 django-extensions
@@ -13,13 +13,11 @@ django-heroku
 django-storages
 djangorestframework
 djangorestframework-camel-case
-drf-api-tracking
 factory_boy
 flake8
 gunicorn
 pillow
-pygments
 psycopg2-binary
-raven
+pygments
 requests
 werkzeug
