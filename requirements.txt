@@ -5,7 +5,7 @@ botocore==1.29.68
 certifi==2022.12.7
 charset-normalizer==3.0.1
 dj-database-url==1.2.0
-Django==4.1.6
+Django==4.1.7
 django-admin-env-notice==1.0
 django-admin-interface==0.24.2
 django-colorfield==0.8.0
