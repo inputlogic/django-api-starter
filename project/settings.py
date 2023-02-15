@@ -143,7 +143,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
-        'level': LOG_LEVEL,
+        'level': 'ERROR',
         'handlers': ['console'],
     },
     'formatters': {
@@ -159,8 +159,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {'level': 'INFO'},
-        'gunicorn': {'level': 'WARNING'},
+        'django': {'level': 'WARNING' if ENV in [STAGING, PRODUCTION] else 'INFO'},
+        'apps': {'level': LOG_LEVEL},
+        'libs': {'level': LOG_LEVEL},
+        'project': {'level': LOG_LEVEL}
     }
 }
 logging.config.dictConfig(LOGGING)
