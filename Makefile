@@ -1,21 +1,26 @@
-setup:
-	pip install -r requirements.txt
-	python manage.py makemigrations
-	python manage.py migrate
-	python manage.py loaddata fixtures/admin.json
-	python manage.py loaddata fixtures/mail.json
+# Run on host (your) machine
+build:
+	docker compose build
 
+run:
+	docker compose up
+
+restart:
+	docker compose restart
+
+stop:
+	docker compose down
+
+shell:
+	docker exec -it django-api-starter-web-1 /bin/bash
+
+
+# Run on docker instance (run `make shell` first)
 lint:
 	python -m flake8 --ignore E501,E722,F821,W504 apps/ project/ libs/
 
-tests:
+test:
 	python manage.py test apps
 
 coverage:
 	python manage.py test apps --with-coverage --cover-package=apps.user
-
-run:
-	python manage.py runserver_plus
-
-shell:
-	docker exec -it <web-container-name> /bin/bash
