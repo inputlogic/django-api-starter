@@ -3,15 +3,15 @@ from unittest import skipIf
 from django.conf import settings
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.urls import reverse
+from mixer.backend.django import mixer
 from rest_framework.test import APITestCase
 
-from apps.user.factories import UserFactory
 from .models import File
 
 
 class FileTests(APITestCase):
     def setUp(self):
-        self.user = UserFactory(email='test@example.org')
+        self.user = mixer.blend('user.User')
         self.client.force_authenticate(user=self.user)
 
     def test_upload_file(self):

@@ -13,11 +13,10 @@ django-heroku
 django-storages
 djangorestframework
 djangorestframework-camel-case
-factory_boy
 flake8
 gunicorn
+mixer
 pillow
 psycopg2-binary
 pygments
 requests
-werkzeug
