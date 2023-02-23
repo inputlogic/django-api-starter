@@ -276,7 +276,8 @@ CELERY_BROKER_URL = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
-CELERY_RESULT_EXTENDED = True
+CELERY_ALWAYS_EAGER = TESTING  # Process tasks inline (no queue) if we're in test mode
+CELERY_RESULT_EXTENDED = True  # Provide more data in Django Admin results
 CELERY_BEAT_SCHEDULE = {
     'example-seconds': {
         'task': 'apps.user.tasks.example_scheduled_task',
