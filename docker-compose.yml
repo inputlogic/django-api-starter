@@ -20,7 +20,9 @@ services:
 
   migrations:
     build: . 
-    command: sh -c "python manage.py migrate"
+    command: sh -c "python manage.py migrate &&
+                    python manage.py loaddata fixtures/admin.json &&
+                    python manage.py loaddata fixtures/mail.json"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
