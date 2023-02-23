@@ -2,10 +2,10 @@ import io
 import logging
 import mimetypes
 
-import requests
-from PIL import Image as PImage
+from celery import shared_task
 from django.conf import settings
-from apps.workers import task
+from PIL import Image as PImage
+import requests
 
 from .libs import upload_file, create_read_url
 from .models import File
@@ -41,7 +41,6 @@ def _get_format(file_obj):
     raise Exception('unsupported image mime type: {0}'.format(file_mime))
 
 
-# @task(schedule=settings.FILE_IMAGE_RESIZE_SCHEDULE)
 def resize_images():
     """
     Get all images to be resized and push into their own tasks
@@ -51,10 +50,10 @@ def resize_images():
         is_resized=False,
         is_private=False
     ).all()
-    [resize_image(img.id) for img in images]
+    [resize_image.delay(img.id) for img in images]
 
 
-@task()
+@shared_task
 def resize_image(file_id):
     file_obj = File.objects.get(pk=file_id)
     file_url = create_read_url(file_obj.s3_object_key)

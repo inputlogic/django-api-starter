@@ -68,7 +68,6 @@ INSTALLED_APPS = [
     'apps.file',
     'apps.mail',
     'apps.user',
-    'apps.workers',
 ]
 
 MIDDLEWARE = [
