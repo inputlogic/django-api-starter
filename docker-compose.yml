@@ -6,21 +6,27 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ./.db:/var/lib/postgresql/data
+      - ./.data/postgres:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+      interval: 1s
+      timeout: 1s
+      retries: 10
+
+  redis:
+    image: redis
+    volumes:
+      - ./.data/redis:/data
 
   migrations:
     build: . 
-    command: ['python', 'manage.py', 'migrate']
+    command: sh -c "python manage.py migrate"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
+      - REDIS_HOST=redis
     volumes:
       - .:/app
     depends_on:
@@ -29,12 +35,13 @@ services:
 
   web:
     build: . 
-    command: ['python', 'manage.py', 'runserver', '0.0.0.0:8000']
+    command: sh -c "python manage.py runserver 0.0.0.0:8000"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
+      - REDIS_HOST=redis
     volumes:
       - .:/app
     ports:
@@ -44,13 +51,14 @@ services:
         condition: service_completed_successfully
 
   workers:
-    build: . 
-    command: ['python', 'manage.py', 'runworkers']
+    build: .
+    command: sh -c "celery -A project worker -B -l INFO"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_HOST=db
+      - REDIS_HOST=redis
     volumes:
       - .:/app
     depends_on:

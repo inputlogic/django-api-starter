@@ -2,10 +2,11 @@
 *.pyc
 .DS_Store
 .env
+celery*
 
 ## Dirs
 env/
 __pycache__/
 staticfiles/
 media/
-.db/
+.data/

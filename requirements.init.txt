@@ -3,9 +3,11 @@
 # If there are compatibility problems, install from `requirements.txt` instead.
 arrow
 boto3
+celery
 django
 django-admin-env-notice
 django-admin-interface
+django-celery-results
 django-dotenv
 django-extensions
 django-filter
@@ -19,4 +21,5 @@ mixer
 pillow
 psycopg2-binary
 pygments
+redis
 requests
