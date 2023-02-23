@@ -1,6 +1,8 @@
 import logging.config
 import os
 import sys
+
+from celery.schedules import crontab
 import django_heroku
 
 
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # 3rd party
+    'django_celery_results',
     'django_extensions',
     'django_filters',
     'rest_framework',
@@ -65,7 +68,6 @@ INSTALLED_APPS = [
     'apps.file',
     'apps.mail',
     'apps.user',
-    'apps.workers',
 ]
 
 MIDDLEWARE = [
@@ -143,7 +145,7 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
-        'level': LOG_LEVEL,
+        'level': 'ERROR',
         'handlers': ['console'],
     },
     'formatters': {
@@ -159,7 +161,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django': {'level': 'INFO'},
+        'apps': {'level': LOG_LEVEL},
+        'libs': {'level': LOG_LEVEL},
+        'project': {'level': LOG_LEVEL},
+        'django': {'level': 'INFO' if ENV == DEV else 'WARNING'},
         'gunicorn': {'level': 'WARNING'},
     }
 }
@@ -249,6 +254,40 @@ EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', None)  # Required, add to 
 EMAIL_USE_TLS = True
 
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
+
+
+# ==================================================================================================
+# REDIS
+# ==================================================================================================
+
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+REDIS_PORT = os.environ.get('REDIS_PORT', 6379)
+REDIS_DB = os.environ.get('REDIS_DB', 0)
+REDIS_URL = os.environ.get('REDIS_URL', f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}')
+
+
+# ==================================================================================================
+# CELERY / WORKERS
+# ==================================================================================================
+
+
+CELERY_BROKER_URL = REDIS_URL
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ALWAYS_EAGER = TESTING  # Process tasks inline (no queue) if we're in test mode
+CELERY_RESULT_EXTENDED = True  # Provide more data in Django Admin results
+CELERY_BEAT_SCHEDULE = {
+    'example-seconds': {
+        'task': 'apps.user.tasks.example_scheduled_task',
+        'schedule': 60.0,  # Call every 60 seconds
+    },
+    'example-cron': {
+        'task': 'apps.user.tasks.example_scheduled_task',
+        'schedule': crontab(minute=0, hour=0)  # Call at midnight every day
+    }
+}
 
 
 # ==================================================================================================
