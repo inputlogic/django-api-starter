@@ -1,0 +1,184 @@
+{
+  "public": [
+    {
+      "name": "posts",
+      "crud": {
+        "read": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string",
+            "publishedAt": "datetime",
+            "author": "user",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "filters": {
+            "isPublished": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "name": "signup",
+      "procedure": {
+        "give": {
+          "password": "string",
+          "email": "string"
+        },
+        "get": {
+          "id": "string",
+          "token": "string"
+        }
+      }
+    }
+  ],
+  "user": [
+    {
+      "name": "myPosts",
+      "crud": {
+        "read": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string",
+            "publishedAt": "datetime",
+            "author": "user",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "filters": {
+            "isPublished": "boolean"
+          }
+        },
+        "update": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string"
+          }
+        },
+        "create": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string"
+          }
+        },
+        "delete": {}
+      }
+    },
+    {
+      "name": "likePost",
+      "procedure": {
+        "give": {
+          "isLiked": "boolean",
+          "postId": "number"
+        },
+        "get": {
+          "isLiked": "boolean"
+        }
+      }
+    },
+    {
+      "name": "myProfile",
+      "crud": {
+        "readOne": {
+          "fields": {
+            "id": "number",
+            "name": "string",
+            "email": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        "updateOne": {
+          "fields": {
+            "id": "number",
+            "name": "string",
+            "email": "string"
+          }
+        },
+        "delete": {}
+      }
+    }
+  ],
+  "admin": [
+    {
+      "name": "posts",
+      "crud": {
+        "read": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string",
+            "publishedAt": "datetime",
+            "author": "user",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "filters": {
+            "isPublished": "boolean"
+          }
+        },
+        "update": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string",
+            "publishedAt": "datetime",
+            "author": "user",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        "create": {
+          "fields": {
+            "id": "number",
+            "title": "string",
+            "body": "string",
+            "publishedAt": "datetime",
+            "author": "user",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        "delete": {}
+      }
+    },
+    {
+      "name": "users",
+      "crud": {
+        "read": {
+          "fields": {
+            "id": "number",
+            "name": "string",
+            "email": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          },
+          "filters": {}
+        },
+        "update": {
+          "fields": {
+            "id": "number",
+            "name": "string",
+            "email": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        "create": {
+          "fields": {
+            "id": "number",
+            "name": "string",
+            "email": "string",
+            "createdAt": "datetime",
+            "updatedAt": "datetime"
+          }
+        },
+        "delete": {}
+      }
+    }
+  ]
+}

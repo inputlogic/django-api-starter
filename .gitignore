@@ -10,3 +10,4 @@ __pycache__/
 staticfiles/
 media/
 .data/
+.db/

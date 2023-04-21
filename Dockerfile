@@ -19,5 +19,6 @@ COPY --from=base /usr/local/lib/python3.11/site-packages/ /usr/local/lib/python3
 COPY --from=base /usr/local/bin/ /usr/local/bin/
 COPY --from=base /usr/bin/make /usr/bin/make
 COPY --from=base /bin/bash /bin/bash
+COPY .ipython/ /root/.ipython/
 COPY . /app
 ENV PYTHONUNBUFFERED 1
