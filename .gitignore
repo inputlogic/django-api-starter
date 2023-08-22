@@ -1,5 +1,6 @@
 ## Files
 *.pyc
+*.swp
 .DS_Store
 .env
 celerybeat*
