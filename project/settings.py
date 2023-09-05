@@ -2,8 +2,17 @@ import logging.config
 import os
 import sys
 
-from celery.schedules import crontab
-import django_heroku
+import dj_database_url
+
+
+# ==================================================================================================
+# CHANGE FIELDS
+# ==================================================================================================
+
+
+APP_NAME = 'Dev App'
+DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'
+DEFAULT_FROM_NAME = 'Input Logic Dev'
 
 
 # ==================================================================================================
@@ -18,17 +27,6 @@ TEST = 'test'
 ENV = os.environ.get('DJANGO_ENV', DEV)
 TESTING = 'test' in sys.argv or ENV == TEST
 LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG' if ENV == DEV else 'WARNING')
-
-# Admin Banner
-if ENV == DEV:
-    ENVIRONMENT_NAME = "Development Environment"
-    ENVIRONMENT_COLOR = "#828282"
-elif ENV == STAGING:
-    ENVIRONMENT_NAME = "Staging Staging Environment"
-    ENVIRONMENT_COLOR = "#FF2222"
-else:
-    ENVIRONMENT_NAME = None
-    ENVIRONMENT_COLOR = None
 
 
 # ==================================================================================================
@@ -73,6 +71,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'libs.corsmiddleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,15 +102,21 @@ TEMPLATES = [
 WSGI_APPLICATION = 'project.wsgi.application'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST'),
-    },
-}
+
+if ENV in (STAGING, PRODUCTION):
+    DATABASES = {
+        'default': dj_database_url.config(conn_max_age=600, ssl_require=True)
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB', 'django'),
+            'USER': os.environ.get('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD', ''),
+            'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
+        },
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -140,17 +145,51 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
+
+# ==================================================================================================
+# ADMIN SETTINGS
+# ==================================================================================================
+
+
+# Set Django admin banner colour based on environment
+if ENV == DEV:
+    ENVIRONMENT_NAME = "Development Environment"
+    ENVIRONMENT_COLOR = "#828282"
+elif ENV == STAGING:
+    ENVIRONMENT_NAME = "Staging Staging Environment"
+    ENVIRONMENT_COLOR = "#FF2222"
+else:
+    ENVIRONMENT_NAME = None
+    ENVIRONMENT_COLOR = None
+
+
+# ==================================================================================================
+# LOGGING
+# ==================================================================================================
+
+
+LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG' if ENV == DEV else 'WARNING')
+LOG_APPNAME = os.environ.get('LOG_APPNAME', 'DJANGO')
+LOG_SYSNAME = f'{APP_NAME}-{ENV.upper()}'
 LOGGING_CONFIG = None
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'root': {
         'level': 'ERROR',
-        'handlers': ['console'],
+        'handlers': ['console', 'papertrail'],
     },
     'formatters': {
         'custom': {
-            'format': '%(levelname)s %(message)s (in %(module)s.%(funcName)s:%(lineno)s by %(name)s)',
+            'format': '\
+                %(levelname)s %(message)s \
+                (in %(module)s.%(funcName)s:%(lineno)s by %(name)s)',
+            'datefmt': '%Y-%m-%dT%H:%M:%S',
+        },
+        'simple': {
+            'format': f'\
+                %(asctime)s {LOG_SYSNAME} {LOG_APPNAME} \
+                [%(process)d]: %(levelname)s %(message)s',
             'datefmt': '%Y-%m-%dT%H:%M:%S',
         },
     },
@@ -158,6 +197,11 @@ LOGGING = {
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'custom'
+        },
+        'papertrail': {
+            'class': 'logging.handlers.SysLogHandler',
+            'formatter': 'simple',
+            'address': ('logs7.papertrailapp.com', 52333)
         },
     },
     'loggers': {
@@ -175,9 +219,6 @@ logging.config.dictConfig(LOGGING)
 # 3RD PARTY SETTINGS
 # ==================================================================================================
 
-
-WORKERS_SLEEP = 1
-WORKERS_PURGE = 1000
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
@@ -206,7 +247,6 @@ REST_FRAMEWORK = {
     'EXCEPTION_HANDLER': 'libs.exception_handler.exception_handler'
 }
 
-APP_NAME = 'Dev App'  # ___CHANGEME___
 ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
@@ -229,7 +269,6 @@ AWS_QUERYSTRING_AUTH = False
 
 if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
 FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
@@ -243,9 +282,6 @@ FILE_IMAGE_SIZES = (
 # EMAIL SETTINGS
 # ==================================================================================================
 
-
-DEFAULT_FROM_EMAIL = 'hello@inputlogic.ca'  # ___CHANGEME___
-DEFAULT_FROM_NAME = 'Input Logic Dev'  # ___CHANGEME___
 
 EMAIL_HOST = os.environ.get('SMTP_SERVER', 'smtp.postmarkapp.com')
 EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
@@ -278,24 +314,27 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
 CELERY_ALWAYS_EAGER = TESTING  # Process tasks inline (no queue) if we're in test mode
 CELERY_RESULT_EXTENDED = True  # Provide more data in Django Admin results
-CELERY_BEAT_SCHEDULE = {
-    'example-seconds': {
-        'task': 'apps.user.tasks.example_scheduled_task',
-        'schedule': 60.0,  # Call every 60 seconds
-    },
-    'example-cron': {
-        'task': 'apps.user.tasks.example_scheduled_task',
-        'schedule': crontab(minute=0, hour=0)  # Call at midnight every day
-    }
-}
+
+# Example of how to schedule tasks
+# =================================
+# from celery.schedules import crontab  # Import at top of file
+#
+#  CELERY_BEAT_SCHEDULE = {
+#      'example-seconds': {
+#          'task': 'apps.user.tasks.example_scheduled_task',
+#          'schedule': 60.0,  # Call every 60 seconds
+#      },
+#      'example-cron': {
+#          'task': 'apps.user.tasks.example_scheduled_task',
+#          'schedule': crontab(minute=0, hour=0)  # Call at midnight every day
+#      }
+#  }
 
 
 # ==================================================================================================
-# HEROKU & GITHUB
+# GITHUB
 # ==================================================================================================
 
-if ENV in [STAGING, PRODUCTION]:
-    django_heroku.settings(locals(), staticfiles=False)
 
 if TESTING:
     try:
