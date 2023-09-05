@@ -15,6 +15,7 @@ django-heroku
 django-storages
 djangorestframework
 djangorestframework-camel-case
+dj-database-url
 flake8
 gunicorn
 mixer
