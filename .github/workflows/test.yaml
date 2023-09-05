@@ -26,7 +26,7 @@ jobs:
         POSTGRES_USER: postgres
         POSTGRES_PASSWORD: postgres
         POSTGRES_HOST: postgres
-        DJANGO_ENV: staging
+        DJANGO_ENV: test
         SECRET_KEY: test
     steps:
     - uses: actions/checkout@v3
