@@ -1,10 +1,11 @@
 from unittest.mock import patch
-from urllib.parse import urlparse
 
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
+
+from libs.encode import base64_to_dict
 
 
 class ForgotPasswordStep1Tests(APITestCase):
@@ -20,8 +21,10 @@ class ForgotPasswordStep1Tests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         email_values = mock_send.mock_calls[0]
-        reset_url = email_values[-1]['reset_url']
-        token = urlparse(reset_url).path.split('/')[-2]
+        data = base64_to_dict(
+            email_values[-1]['reset_url'].split('?state=')[-1]
+        )
+        token = data['token']
 
         response = self.client.post(
             reverse('public-user-forgot-password-step-2'),
