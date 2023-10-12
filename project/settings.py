@@ -34,7 +34,8 @@ LOG_LEVEL = os.environ.get('LOG_LEVEL', 'DEBUG' if ENV == DEV else 'WARNING')
 # ==================================================================================================
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__))).replace('/project', '')
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))).replace('/project', '')
 SECRET_KEY = os.environ.get('SECRET_KEY', 'local')
 DEBUG = False if ENV == PRODUCTION else True
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '*').split(',')
@@ -251,7 +252,7 @@ ADMIN_TITLE = 'Admin'
 ADMIN_HEADER = 'Admin'
 
 WEB_URL = os.environ.get('WEB_URL', 'http://localhost:3000')
-RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password/{reset_token}/{user_id}')
+RESET_PASSWORD_URL = '{}{}'.format(WEB_URL, '/reset-password?state={state}')
 
 
 # ==================================================================================================
@@ -271,7 +272,8 @@ if AWS_ACCESS_KEY_ID:
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 # Enable file resize task by uncommenting the task decorator for apps.file.tasks.resize_images()
-FILE_IMAGE_RESIZE_SCHEDULE = 60  # How often to check for images to resizes (in seconds)
+# How often to check for images to resizes (in seconds)
+FILE_IMAGE_RESIZE_SCHEDULE = 60
 FILE_IMAGE_SIZES = (
     {'key': 'th', 'width': 350, 'quality': 90},
     {'key': 'md', 'width': 800},
@@ -285,8 +287,10 @@ FILE_IMAGE_SIZES = (
 
 EMAIL_HOST = os.environ.get('SMTP_SERVER', 'smtp.postmarkapp.com')
 EMAIL_PORT = os.environ.get('SMTP_PORT', 587)
-EMAIL_HOST_USER = os.environ.get('SMTP_USERNAME', None)  # Required, add to Heroku config or .env file
-EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', None)  # Required, add to Heroku config or .env file
+# Required, add to Heroku config or .env file
+EMAIL_HOST_USER = os.environ.get('SMTP_USERNAME', None)
+# Required, add to Heroku config or .env file
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', None)
 EMAIL_USE_TLS = True
 
 SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
@@ -300,7 +304,8 @@ SEND_MAIL = True if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD else False
 REDIS_HOST = os.environ.get('REDIS_HOST')
 REDIS_PORT = os.environ.get('REDIS_PORT', 6379)
 REDIS_DB = os.environ.get('REDIS_DB', 0)
-REDIS_URL = os.environ.get('REDIS_URL', f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}')
+REDIS_URL = os.environ.get(
+    'REDIS_URL', f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}')
 
 
 # ==================================================================================================
@@ -312,7 +317,8 @@ CELERY_BROKER_URL = REDIS_URL
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_BACKEND = 'django-db'
-CELERY_ALWAYS_EAGER = TESTING  # Process tasks inline (no queue) if we're in test mode
+# Process tasks inline (no queue) if we're in test mode
+CELERY_ALWAYS_EAGER = TESTING
 CELERY_RESULT_EXTENDED = True  # Provide more data in Django Admin results
 
 # Example of how to schedule tasks
