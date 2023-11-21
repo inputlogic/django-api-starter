@@ -14,8 +14,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # Apps
-    path('', include('apps.file.urls')),
-    path('', include('apps.user.urls')),
+    path('api/', include('apps.file.urls')),
+    path('api/', include('apps.user.urls')),
 
     # DRF API
     path('api/', api_root, name='index'),
