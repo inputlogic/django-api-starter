@@ -82,25 +82,23 @@ def signed_url(
 
     Returns a dict:
         result = {
-            'data': dict
+            'presigned_url': string,
+            'content_type': string,
             'url': string
         }
 
     To upload a file:
-        - send a post request to result['data']['url']
-        - include the following form data:
-            - 'file': the file from the file html input
-            - each key/value in result['data']['fields']
+        - send a PUT request to result['presigned_url']
+        - make sure Content-Type header is result['content_type']
+        - make the file the body of the request
 
     Once uploaded, the file will be at result['url']
-
-    reference:
-        https://devcenter.heroku.com/articles/s3-upload-python
     '''
     content_type = content_type or mimetypes.guess_type(file_name)[0]
+    has_file_ext = len(file_name.split('.')) > 1
     file_ext = file_name.split('.')[-1]
-    file_name = uuid4().hex if file_name is None else file_name
-    if file_name.endswith(file_ext):
+    file_name = uuid4().hex if file_name is None else f'{uuid4().hex}-{file_name}'
+    if has_file_ext:
         ext_len = len(file_ext) + 1
         file_name = file_name[:-ext_len]
 
@@ -111,21 +109,19 @@ def signed_url(
         aws_secret_access_key=secret
     )
 
-    presigned_post = s3.generate_presigned_post(
-        Bucket=bucket,
-        Key=destination_name,
-        Fields={'acl': permissions, 'Content-Type': content_type},
-        Conditions=[
-            {'acl': permissions},
-            {'Content-Type': content_type}
-        ],
-        ExpiresIn=expires_in
+    presigned_url = s3.generate_presigned_url(
+        'put_object',
+        Params={
+            'Bucket': bucket,
+            'Key': destination_name,
+            'ACL': permissions,
+            'ContentType': content_type
+        },
+        ExpiresIn=3600
     )
 
     return {
-        'data': presigned_post,
-        'url': 'https://{}.s3.amazonaws.com/{}'.format(
-            bucket,
-            destination_name
-        )
+        'presigned_url': presigned_url,
+        'content_type': content_type,
+        'url': presigned_url.split('?')[0]
     }

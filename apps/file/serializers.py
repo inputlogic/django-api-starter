@@ -1,5 +1,3 @@
-import mimetypes
-
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
@@ -43,7 +41,8 @@ class CreateSignedFileSerializer(serializers.Serializer):
 
     file_id = serializers.IntegerField(read_only=True)
     url = serializers.URLField(read_only=True)
-    s3_data = serializers.JSONField(read_only=True)
+    presigned_url = serializers.URLField(read_only=True)
+    content_type = serializers.CharField(read_only=True)
 
     def create(self, validated_data):
         file_name = validated_data['file_name'].replace(' ', '_')
@@ -53,18 +52,15 @@ class CreateSignedFileSerializer(serializers.Serializer):
             content_type=validated_data.get('content_type', None)
         )
 
-        mime_type, encoding = mimetypes.guess_type(signed['url'])
-
         file_obj = File.objects.create(
             owner=self.context['request'].user,
-            mime_type=mime_type or ''
+            mime_type=signed['content_type']
         )
 
-        file_obj.upload.name = file_name
+        file_obj.upload.name = signed['url'].split('/')[-1]
         file_obj.save()
 
         return {
-            's3_data': signed['data'],
-            'url': signed['url'],
+            **signed,
             'file_id': file_obj.id
         }
