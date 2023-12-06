@@ -1,5 +1,7 @@
 Django API Starter
-=================
+==================
+
+A sentence or two about the project. What is it? Who is the [client](https://inputlogic.ca)?. This makes it easier for new members on the project to understand what its supposed to do. For example, this starter is meant as a boilerplate for all new projects and includes common tooling such as user authentication, email notifications and local development tooling.
 
 
 Requirements
@@ -40,7 +42,7 @@ This will open a bash shell on the web container.
 
 Integrations
 ------------
-This section is meant to detail integrations used on a project as well as their purpose.
+This section is meant to outline integrations and their purpose.
 
 - [Postmark](https://postmarkapp.com) for sending emails.
 - [Firebase](https://firebase.google.com) for sending push notifications to mobile.
@@ -50,12 +52,12 @@ This section is meant to detail integrations used on a project as well as their 
 
 Additional
 ----------
-This section is meant for project-specific logic. Ideally, each of these are linked to a [Loom](https://www.loom.com) video walking through the implemention.
+This section is meant for project-specific logic. Include a [Loom](https://www.loom.com) if more detail is required.
 
 ### Stripe
-We use Stripe's subscription model to bill clients on a monthly or annual basis. Each plan includes a 14 day free trail. 
+We use Stripe's subscription model to bill clients on a monthly or annual basis. Each plan includes a 14 day free trial.
 
 - [Loom walkthrough](https://loom.com)
-- All payment logic is stored on stripe
-- Our database only stores client and subscription ids, nothing else
-- All payment logic is handled via [webhooks](https://stripe.com/docs/billing/subscriptions/webhooks)
+- All payment logic is stored on Stripe.
+- Our database only stores client and subscription ids, nothing else.
+- All payment logic is handled via [webhooks](https://stripe.com/docs/billing/subscriptions/webhooks).
